@@ -1,0 +1,605 @@
+@charset "UTF-8";
+/*
+Variables
+----------------------------------------------------------------
+*/
+
+// *** Colors
+//
+
+// Color swatches
+
+$this-system-keycolor: #3650a5;
+
+$astro-blue: #029df4;
+$turquoise: #11b7a8;
+$olive: #b9ca14;
+$orange: #ffa531;
+$rose: #f55361;
+$violet: #826bd3;
+
+$gray-darker: #121618;
+$gray-dark: #2d383c;
+$gray: #45545b;
+$gray-light: #657a84;
+$gray-lighter: #98a9b0;
+$gray-subtle: #d0d6da;
+$gray-subtler: #e4e9ea;
+$gray-subtlest: adjust-hue(mix($gray-subtler, white, 48%), 16deg);
+
+$inverse: white;
+
+// Additive
+$blue: $astro-blue;
+$green: $turquoise;
+$yellow: $olive;
+$orange: $orange;
+$red: $rose;
+$purple: $violet;
+$bluegreen: mix($blue, $green, 50%);
+$greenyellow: mix($green, $yellow, 50%);
+$yelloworange: mix($yellow, $orange, 50%);
+$orangered: mix($orange, $red, 50%);
+$redpurple: mix($red, $purple, 50%);
+$purpleblue: mix($purple, $blue, 50%);
+
+// Brand colors
+$brand-primary: $this-system-keycolor;
+$brand-secondary: $blue;
+$brand-success: $bluegreen;
+$brand-warning: $yelloworange;
+$brand-danger: $rose;
+$brand-info: $greenyellow;
+
+$brand-additional1: $orange;
+$brand-additional2: $violet;
+
+// Color swatches for graph charts
+$cool-1: #daf0ca;
+$cool-2: #bee6b4;
+$cool-3: #92dbb3;
+$cool-4: #56cec4;
+$cool-5: #2dc3cf;
+$cool-6: #0baacf;
+$cool-7: #0b95c0;
+$cool-8: #0c82b1;
+$cool-9: #1b6494;
+$cool-10: #22507e;
+$cool-11: #223e69;
+$cool-12: #1b2b4c;
+
+$warm-1: #feef9b;
+$warm-2: #fed98d;
+$warm-3: #feb882;
+$warm-4: #fe997b;
+$warm-5: #fe7572;
+$warm-6: #f75b69;
+$warm-7: #e2495e;
+$warm-8: #c63f52;
+$warm-9: #a33745;
+$warm-10: #802f37;
+$warm-11: #64242b;
+$warm-12: #43191d;
+
+$neon-1: #ffdabf;
+$neon-2: #fdc2a8;
+$neon-3: #f4a19e;
+$neon-4: #e7789a;
+$neon-5: #dd6099;
+$neon-6: #ca4596;
+$neon-7: #b73893;
+$neon-8: #a03392;
+$neon-9: #863291;
+$neon-10: #66318e;
+$neon-11: #4e3087;
+$neon-12: #25205d;
+
+// *** Image
+//
+$image-path: '~@/assets/images/';
+
+// *** Scaffolding
+//
+
+$body-bg: #fff;
+$text-color: $gray-dark;
+
+$link-color: $brand-primary;
+$link-hover-color: lighten($brand-primary, 10%);
+
+// *** Typography
+//
+
+$font-family-base: 'Lato', 'SpicaNeueP-Regular', YuGothic, 'Yu Gothic', sans-serif;
+$font-family-demo: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-family-monospace: Monaco, Menlo, Consolas, 'Courier New', monospace;
+$font-size-base: 16px;
+$font-weight-base: normal;
+
+$font-size-h1: floor($font-size-base * 3.5); // ~56px
+$font-size-h2: ceil($font-size-base * 2.812); // ~45px
+$font-size-h3: ceil($font-size-base * 2.125); // ~34px
+$font-size-h4: ceil($font-size-base * 1.5); // ~24px
+$font-size-h5: floor($font-size-base * 1.25); // ~20px
+$font-size-h6: ceil($font-size-base * 1.125); // ~18px
+
+$line-height-base: 1.75; // 28/16
+$line-height-computed: floor($font-size-base * $line-height-base); // ~28px
+
+$letter-spacing-base: 0.05em;
+
+$headings-font-family: inherit;
+$headings-font-weight: 700;
+$headings-line-height: 1.3;
+$headings-color: inherit;
+
+// *** Iconography
+//
+
+$icon-normal: 16px;
+$icon-medium: 18px;
+$icon-large: 32px;
+
+// *** Components
+//
+
+$component-font-size-base: ceil($font-size-base * 0.833); // ~14px
+
+// Border-radius
+$border-radius-base: 2px;
+$border-radius-large: 3px;
+$border-radius-small: 1px;
+
+// *** Buttons
+//
+
+$btn-font-size-base: $component-font-size-base;
+$btn-font-size-xs: ceil($component-font-size-base * 0.785); // ~11px
+$btn-font-size-sm: ceil($component-font-size-base * 1); // ~14px
+$btn-font-size-lg: ceil($component-font-size-base * 1.142); // ~16px
+$btn-font-size-hg: ceil($component-font-size-base * 1.428); // ~20px
+
+$btn-line-height-base: 1.429; // ~20px
+$btn-line-height-hg: 1.3; // ~26px
+$btn-line-height-lg: 1.5; // ~24px
+$btn-line-height-sm: 1.34; // ~16px
+$btn-line-height-xs: 1.181; // ~13px
+
+$btn-social-font-size-base: ceil($component-font-size-base * 0.857); // ~12px
+$btn-social-line-height-base: 1.083; // ~13px
+
+$btn-font-weight: normal;
+
+$btn-default-color: $inverse;
+$btn-default-bg: $gray-light;
+$btn-hover-bg: mix($gray-light, white, 80%);
+$btn-active-bg: mix($gray-light, black, 85%);
+
+$btn-primary-hover-bg: mix($brand-primary, white, 80%);
+$btn-primary-active-bg: saturate(mix($brand-primary, black, 90%), 20%);
+
+$btn-info-hover-bg: mix($brand-info, white, 80%);
+$btn-info-active-bg: saturate(mix($brand-info, black, 85%), 20%);
+
+$btn-success-hover-bg: mix($brand-success, white, 80%);
+$btn-success-active-bg: saturate(mix($brand-success, black, 85%), 20%);
+
+$btn-danger-hover-bg: mix($brand-danger, white, 80%);
+$btn-danger-active-bg: saturate(mix($brand-danger, black, 85%), 20%);
+
+$btn-warning-hover-bg: mix($brand-warning, white, 80%);
+$btn-warning-active-bg: saturate(mix($brand-warning, black, 85%), 20%);
+
+$btn-inverse-hover-bg: mix($gray-subtle, white, 80%);
+$btn-inverse-active-bg: $gray-lighter;
+
+$btn-flat-default-hover-bg: mix($gray-subtle, white, 80%);
+$btn-flat-default-active-bg: $gray-lighter;
+
+$btn-flat-primary-hover-bg: mix($brand-primary, white, 16%);
+$btn-flat-primary-active-bg: mix($brand-primary, white, 28%);
+
+$btn-flat-info-hover-bg: mix($brand-info, white, 16%);
+$btn-flat-info-active-bg: mix($brand-info, white, 28%);
+
+$btn-flat-success-hover-bg: mix($brand-success, white, 16%);
+$btn-flat-success-active-bg: mix($brand-success, white, 28%);
+
+$btn-flat-danger-hover-bg: mix($brand-danger, white, 16%);
+$btn-flat-danger-active-bg: mix($brand-danger, white, 28%);
+
+$btn-flat-warning-hover-bg: mix($brand-warning, white, 16%);
+$btn-flat-warning-active-bg: mix($brand-warning, white, 28%);
+
+$btn-input-hover-bg: mix($gray-subtle, white, 10%);
+$btn-input-active-bg: $inverse;
+
+$btn-link-disabled-color: $gray-subtle;
+
+// *** padding margin
+// p,m           = padding,margin
+// a,t,r,b,l,h,v = all,top,right,bottom,left,horizontal,vertical
+// x,s,m,l,n     = extra-small($x),small($s),medium($m),large($l),none(0px)
+$x: 4px;
+$s: 8px;
+$m: 12px;
+$l: 16px;
+
+// *** Forms
+//
+
+$input-font-size-base: $component-font-size-base;
+$input-font-size-xs: ceil($component-font-size-base * 0.785); // ~11px
+$input-font-size-small: ceil($component-font-size-base * 1); // ~14px
+$input-font-size-large: floor($component-font-size-base * 1.143); // ~16px
+$input-font-size-huge: ceil($component-font-size-base * 1.428); // ~20px
+
+$input-line-height-base: 1.429; // ~20px
+$input-line-height-xs: 1.181; // ~13px
+$input-line-height-small: 1.417; // ~17px
+$input-line-height-large: 1.25; // ~20px
+$input-line-height-huge: 1.3; // ~26px
+
+$input-icon-font-size: ceil($component-font-size-base * 1.285); // ~18px
+
+$input-bg: white;
+$input-bg-disabled: mix($gray-subtle, white, 55%);
+$input-bg-error: mix($brand-danger, white, 16%);
+$input-viewonly-bg: transparent;
+
+$input-height-xs: 24px;
+$input-height-small: 36px;
+$input-height-base: 44px;
+$input-height-large: 52px;
+$input-height-huge: 64px;
+
+$input-border-radius: $border-radius-base;
+
+$legend-color: inherit;
+
+$input-border-color: $gray-subtle;
+$input-text-color: $gray;
+$input-placeholder-color: mix($gray-lighter, white, 75%);
+
+// *** Pagination
+//
+
+$pagination-color: rgba($brand-primary, 0);
+
+// *** Pager
+//
+
+$pager-padding: $m $l ($m + 1);
+
+// *** Dropdown Menu
+//
+
+$dropdown-bg: mix($gray-subtler, white, 60%);
+$dropdown-inverse-bg: $gray-light;
+$dropdown-inverse-divider: mix($inverse, $dropdown-inverse-bg, 16%);
+$dropdown-inverse-link-hover-bg: lighten($dropdown-inverse-bg, 8%);
+$dropdown-inverse-link-color: $gray-subtler;
+
+// *** Navbar
+//
+
+// Basics of a navbar
+$zindex-navbar: 1000;
+$zindex-navbar-fixed: 1030;
+$navbar-height-base: 48px;
+$navbar-height-large: 64px;
+$navbar-input-line-height: 1.4; // ~21px
+$navbar-margin-bottom: $line-height-computed;
+$navbar-border-radius: 0;
+
+$navbar-default-bg: mix($gray-subtle, white, 80%);
+
+// Navbar links
+$navbar-default-link-color: $gray;
+$navbar-default-link-hover-color: $brand-primary;
+$navbar-default-link-hover-bg: transparent;
+$navbar-default-link-active-color: $gray-light;
+$navbar-default-link-active-bg: $navbar-default-bg;
+$navbar-default-link-disabled-color: $gray-lighter;
+$navbar-default-link-disabled-bg: transparent;
+
+// Navbar nav carets
+$navbar-default-caret-color: $gray-lighter;
+$navbar-default-caret-hover-color: $navbar-default-link-hover-color;
+$navbar-default-caret-active-color: $navbar-default-link-active-color;
+
+// Navbar brand label
+$navbar-default-brand-color: $navbar-default-link-color;
+$navbar-default-brand-hover-color: $navbar-default-link-hover-color;
+$navbar-default-brand-hover-bg: transparent;
+
+// Navbar toggle
+$navbar-default-toggle-color: $navbar-default-link-color;
+$navbar-default-toggle-hover-color: $navbar-default-link-hover-color;
+
+// Navbar form
+$navbar-default-form-placeholder: spin(tint($brand-primary, 60%), 2);
+$navbar-default-form-icon: $gray-subtle;
+$navbar-default-form-border: shade($navbar-default-bg, 3%);
+
+// Reset inverted navbar basics
+$navbar-inverse-color: $inverse;
+$navbar-inverse-bg: $brand-primary;
+$navbar-inverse-bg-end: $purpleblue;
+$navbar-inverse-bg-gradient: linear-gradient(90deg, $navbar-inverse-bg, $navbar-inverse-bg-end);
+$navbar-inverse-border: darken($navbar-inverse-bg, 10%);
+
+// Inverted navbar
+// Reset inverted navbar basics
+$navbar-inverse-divider: darken($navbar-inverse-bg, 3%);
+
+// Inverted navbar links
+$navbar-inverse-link-color: rgba($navbar-inverse-color, 0.8);
+$navbar-inverse-link-hover-color: rgba($navbar-inverse-color, 0.95);
+$navbar-inverse-link-hover-bg: transparent;
+$navbar-inverse-link-active-color: $navbar-inverse-link-color;
+$navbar-inverse-link-active-bg: darken($navbar-inverse-bg, 5%);
+$navbar-inverse-link-disabled-color: mix($navbar-inverse-bg, $navbar-inverse-link-color, 25%);
+$navbar-inverse-link-disabled-bg: transparent;
+
+// Navbar nav carets
+$navbar-inverse-caret-color: lighten(desaturate($navbar-inverse-bg, 7%), 20%);
+$navbar-inverse-caret-hover-color: $navbar-inverse-link-hover-color;
+$navbar-inverse-caret-active-color: $navbar-inverse-link-active-color;
+
+// Inverted navbar brand label
+$navbar-inverse-brand-color: $inverse;
+$navbar-inverse-brand-hover-color: $navbar-inverse-link-hover-color;
+$navbar-inverse-brand-hover-bg: transparent;
+
+// Inverted navbar toggle
+$navbar-inverse-toggle-color: $navbar-inverse-link-color;
+$navbar-inverse-toggle-hover-color: $navbar-inverse-link-hover-color;
+
+// Navbar form
+$navbar-inverse-form-bg: rgba(black, 0.1);
+$navbar-inverse-form-color: mix($navbar-inverse-bg, white, 5%);
+$navbar-inverse-form-placeholder: rgba($navbar-inverse-form-color, 0.2);
+$navbar-inverse-form-icon: $navbar-inverse-link-color;
+$navbar-inverse-form-border: $navbar-inverse-link-color;
+
+// Dropdown menu
+$navbar-inverse-dropdown-bg: $dropdown-inverse-bg;
+$navbar-inverse-dropdown-arrow: $navbar-inverse-dropdown-bg;
+$navbar-inverse-dropdown-link-color: $dropdown-inverse-link-color;
+$navbar-inverse-dropdown-link-hover-color: $inverse;
+$navbar-inverse-dropdown-link-hover-bg: $dropdown-inverse-link-hover-bg;
+$navbar-inverse-dropdown-header: lighten($navbar-inverse-dropdown-bg, 25%);
+
+// *** Tab
+//
+
+$nab-tabs-bg: darken($gray-subtlest, 4%);
+$nab-tabs-active-bg: mix($brand-primary, white, 32%);
+
+// *** Progress bars
+//
+
+$progress-font-size: round($component-font-size-base * 0.85714); //12px
+$progress-height: 4px;
+
+// *** Slider
+//
+
+$slider-height: 4px;
+$slider-width: $slider-height;
+$slider-value-font-size: floor($component-font-size-base * 0.867); // ~13px;
+
+$slider-handle-bg: $brand-primary;
+$slider-handle-hover-bg: mix($brand-primary, white, 80%);
+$slider-handle-active-bg: saturate(mix($brand-primary, black, 90%), 20%);
+
+$slider-range-bg: $brand-primary;
+$slider-segment-bg: $gray-lighter;
+
+// *** Switch
+//
+$switch-border-radius: 25px;
+$switch-width: 80px;
+
+// *** Thumbnails
+//
+
+$thumbnail-padding: 0;
+$thumbnail-bg: $body-bg;
+$thumbnail-border: $gray-light;
+$thumbnail-border-radius: $border-radius-base;
+
+$thumbnail-caption-color: $gray-light;
+$thumbnail-caption-padding: 12px;
+
+// *** Media queries
+//
+
+// Extra small screen - phone
+$screen-xs-min: 480px;
+
+// Small screen - tablet
+$screen-sm-min: 768px;
+
+// Medium screen - desktop
+$screen-md-min: 992px;
+
+// Large screen - wide desktop
+$screen-lg-min: 1600px;
+
+//
+$screen-xs-max: ($screen-sm-min - 1);
+$screen-sm-max: ($screen-md-min - 1);
+$screen-md-max: ($screen-lg-min - 1);
+
+// *** Grid system
+//
+
+$grid-columns: 12;
+$grid-gutter-width: $m * 2;
+
+// Navbar collapse
+$grid-float-breakpoint: $screen-md-min;
+$grid-float-breakpoint-max: ($grid-float-breakpoint - 1);
+
+// *** Form states and alerts
+//
+
+$state-success-text: $brand-success;
+$state-success-bg: mix($brand-success, white, 16%);
+$state-success-border: darken($state-success-bg, 5%);
+
+$state-info-text: $brand-info;
+$state-info-bg: mix($brand-info, white, 16%);
+$state-info-border: darken($state-info-bg, 7%);
+
+$state-warning-text: $brand-warning;
+$state-warning-bg: mix($brand-warning, white, 16%);
+$state-warning-border: darken($state-warning-bg, 5%);
+
+$state-danger-text: $brand-danger;
+$state-danger-bg: mix($brand-danger, white, 16%);
+$state-danger-border: darken($state-danger-bg, 5%);
+
+// *** Tables
+//
+
+$table-cell-padding: 8px;
+$table-border-color: $gray-subtle;
+$table-border-th-color: $gray-subtle;
+$table-condensed-cell-padding: 2px;
+$table-bg-th: white;
+$table-bg-th-emphasis: darken($table-bg-th, 5%);
+$table-bg-accent: adjust-hue(mix($gray-subtler, white, 48%), 16deg);
+$table-bg-hover: mix($brand-primary, white, 8%);
+$table-bg-active: mix($brand-primary, white, 24%);
+$table-state-primary-bg: mix($brand-primary, white, 16%);
+$table-state-success-bg: $state-success-bg;
+$table-state-info-bg: $state-info-bg;
+$table-state-warning-bg: $state-warning-bg;
+$table-state-danger-bg: $state-danger-bg;
+$table-state-muted-bg: mix($gray-subtler, white, 80%);
+$table-state-primary-bg-hover: mix($table-state-primary-bg, white, 50%);
+$table-state-success-bg-hover: mix($table-state-success-bg, white, 50%);
+$table-state-info-bg-hover: mix($table-state-info-bg, white, 50%);
+$table-state-warning-bg-hover: mix($table-state-warning-bg, white, 50%);
+$table-state-danger-bg-hover: mix($table-state-danger-bg, white, 50%);
+$table-state-muted-bg-hover: mix($table-state-muted-bg, white, 50%);
+
+// *** Code
+//
+
+$code-color: darken($rose, 30%);
+$code-bg: mix($rose, white, 10%);
+
+$kbd-color: $inverse;
+$kbd-bg: $brand-primary;
+
+$pre-bg: mix($gray-subtler, white, 5%);
+$pre-color: inherit;
+$pre-border-color: $gray-subtler;
+$pre-scrollable-max-height: 320px;
+$pre-border-radius: $border-radius-base;
+
+// *** Type
+//
+
+$text-muted: $gray-lighter;
+$abbr-border-color: $gray-light;
+$headings-small-color: inherit;
+$blockquote-small-color: $gray-light;
+$blockquote-border-color: $gray-subtle;
+$page-header-border-color: mix($brand-primary, $inverse, 12%);
+
+// *** Miscellaneous
+//
+
+$hr-border: mix($brand-primary, $inverse, 64%);
+
+$component-offset-horizontal: 180px;
+
+// *** Sidebar
+//
+
+$sidebar-width: 192px;
+$sidebar-width-xs: 272px;
+// $sidebar-width:                            48px;
+// $sidebar-width-xs:                         272px;
+$sidebar-bg: $gray;
+$sidebar-inverse-bg: $gray-subtlest;
+$sidebar-padding: 16px;
+$sidebar-padding-l: 32px;
+$sidebar-width-narrow: 240px;
+
+// *** Panels
+//
+
+$panel-bg: white;
+$panel-footer-bg: mix($gray-subtlest, white, 75%);
+$panel-body-padding: $l;
+$panel-heading-padding: $l;
+$panel-footer-padding: $l;
+$panel-inner-border: $gray-subtler;
+
+$panel-default-border: $gray-subtle;
+$panel-default-text: $gray-dark;
+
+// *** Alert
+//
+
+$alert-padding: 24px;
+$alert-border-radius: $border-radius-base;
+$alert-link-font-weight: 700;
+
+$alert-default-bg: $gray-dark;
+$alert-default-border: $gray-dark;
+$alert-default-text: $inverse;
+
+$alert-primary-bg: $brand-primary;
+$alert-primary-border: $brand-primary;
+$alert-primary-text: $inverse;
+
+$alert-success-bg: $brand-success;
+$alert-success-border: $brand-success;
+$alert-success-text: $inverse;
+
+$alert-info-bg: $brand-info;
+$alert-info-border: $brand-info;
+$alert-info-text: $inverse;
+
+$alert-warning-bg: $brand-warning;
+$alert-warning-border: $brand-warning;
+$alert-warning-text: $inverse;
+
+$alert-danger-bg: $brand-danger;
+$alert-danger-border: $brand-danger;
+$alert-danger-text: $inverse;
+
+// *** Login
+//
+
+$login-bg: #f1f2f7;
+
+// *** Photoswipe
+//
+
+$pswp__show-hide-transition-duration: 333ms !default;
+$pswp__controls-transition-duration: 333ms !default;
+$pswp__background-color: #fff !default;
+$pswp__placeholder-color: #222 !default;
+$pswp__box-sizing-border-box: true !default; // disable .pswp * {box-sizing:border-box} (in case you already haveblock it in your site css)
+$pswp__root-z-index: 1500 !default;
+$pswp__assets-path: '~@/assets/images/photoswipe/'; // path to skin assets folder (preloader, PNG and SVG sprite)
+$pswp__error-text-color: #ccc !default; // "Image not loaded" text color
+$pswp__include-minimal-style: true !default;
+
+// *** iOS
+//
+
+$font-family-ios: 'HiraginoSans-W3', sans-serif;
+// $font-family-ios:                          "SF-UI-Text-Regular", "HiraginoSans-W3", sans-serif;
+$rotate-transelateX: 0px;
+$color-iOS-control: #007aff;
+
+$camera--background-color: #fff;

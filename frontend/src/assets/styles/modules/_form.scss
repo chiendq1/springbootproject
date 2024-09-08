@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+.form-control {
+  @include placeholder($input-placeholder-color);
+}
+
+.form-control {
+  font-size: $input-font-size-base;
+  line-height: $input-line-height-base;
+  color: $input-text-color;
+  background-color: $inverse;
+  background-image: none;
+  border: 1px solid $input-border-color;
+  border-radius: $input-border-radius;
+  height: 44px;
+  width: 100%;
+  padding: $s $m;
+  appearance: none;
+  transition: .25s;
+  display: block;
+}

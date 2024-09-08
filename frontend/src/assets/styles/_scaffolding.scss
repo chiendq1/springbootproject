@@ -1,0 +1,43 @@
+@charset "UTF-8";
+/*
+Scaffolding
+----------------------------------------------------------------
+*/
+
+//  abui IE,Edge reset
+html {
+  -ms-overflow-style: auto;
+}
+
+// Body reset
+body {
+  font-family: 'Lato', 'SpicaNeueP-Regular', YuGothic, 'Yu Gothic', sans-serif;
+  font-feature-settings: 'palt' 1;
+  font-size: $font-size-base;
+  color: $text-color;
+  line-height: $line-height-base;
+  // letter-spacing: $letter-spacing-base;
+  background-color: $body-bg;
+}
+
+// Links
+a {
+  color: $link-color;
+  text-decoration: none;
+  // @include transition(.25s);
+
+  &:hover,
+  &:focus {
+    color: $link-hover-color;
+    text-decoration: none;
+  }
+  &:focus {
+    outline: none;
+    outline-offset: -2px;
+  }
+}
+
+button:hover,
+button:focus {
+  outline: none !important;
+}

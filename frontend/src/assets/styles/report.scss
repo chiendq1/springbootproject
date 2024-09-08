@@ -1,0 +1,299 @@
+/* report */
+.report {
+  padding: 0 32px 30px;
+  @media (max-width: 1024px) {
+    padding: 0 16px 30px;
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .switch-menu {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+
+      .el-switch {
+        margin-left: 8px;
+      }
+    }
+  }
+
+  .table {
+    border-radius: 6px;
+    box-shadow: 0px 2px 10px 0px #0000001a;
+    margin-top: 24px;
+
+    .table-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #ececec;
+      @media (max-width: 600px) {
+        display: block;
+        padding-bottom: 0 !important;
+      }
+
+      @media (max-width: 426px) {
+        font-size: 14px;
+      }
+
+      @media (max-width: 356px) {
+        font-size: 11px;
+      }
+
+      h3 {
+        color: #082431;
+
+        .title {
+          color: #787878;
+          font-size: 18px;
+
+          @media (max-width: 426px) {
+            font-size: 14px;
+          }
+
+          @media (max-width: 356px) {
+            font-size: 11px;
+          }
+        }
+      }
+
+      .table__ttl {
+        padding: 17px 19px;
+        margin: 0;
+        @media (max-width: 600px) {
+          padding-bottom: 0;
+        }
+      }
+
+      .table-text-right {
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        color: #212529;
+
+        p {
+          background-color: #f8f9fa;
+          border-radius: 100px;
+          padding: 5.25px 9.75px;
+          text-align: center;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          strong {
+            margin-left: 5px;
+          }
+          &:nth-child(2) {
+            margin: 14.75px 16px 14.75px 10px;
+          }
+
+          @media (max-width: 426px) {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    /* -- TABLE -- */
+    .report-table {
+      max-height: 65dvh;
+      overflow: auto;
+
+      .report-table-scroll {
+        .el-table {
+          font-family: 'Noto Sans JP', sans-serif;
+          --el-table-row-hover-bg-color: none !important;
+          --el-table-border: none !important;
+          --el-table-border-bottom: 1px solid #b9b9b980 !important;
+          border-radius: 4px;
+
+          .el-table__header {
+            background: linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.06),
+                rgba(0, 0, 0, 0.06)
+              ),
+              linear-gradient(
+                0deg,
+                rgba(185, 185, 185, 0.5),
+                rgba(185, 185, 185, 0.5)
+              ) !important;
+            --el-table-border: 1px solid #b9b9b980 !important;
+
+            .cell {
+              text-align: center;
+              font-weight: medium;
+              padding: 6px 12px;
+            }
+          }
+
+          td.el-table__cell {
+            border-bottom: 1px solid #b9b9b980 !important;
+          }
+
+          .cell {
+            color: #000000;
+          }
+
+          .el-table__cell {
+            padding: 0 !important;
+
+            > .cell {
+              padding: 4.5px 12px !important;
+            }
+          }
+
+          .el-table__row {
+            border-bottom: 1px solid #ddd;
+            height: 33px;
+          }
+
+          .total-row {
+            background: #fffaee;
+
+            .cell {
+              font-weight: bold;
+            }
+
+            .el-table__cell {
+              text-align: right;
+            }
+          }
+
+          .division-row {
+            background: #f0e8f2;
+
+            .cell {
+              font-weight: bold;
+            }
+
+            .el-table__cell {
+              text-align: right;
+            }
+          }
+
+          .total-cell-text-left,
+          .division-cell-text-left {
+            text-align: left !important;
+          }
+
+          .customer-row {
+            background: #deecfe !important;
+
+            .cell {
+              font-weight: bold;
+            }
+
+            .el-table__cell {
+              text-align: right;
+            }
+          }
+
+          .customer-cell-text-left {
+            text-align: left !important;
+
+            .cell {
+              padding: 6px 28px !important;
+            }
+          }
+
+          .contract-row {
+            .el-table__cell {
+              text-align: right;
+            }
+          }
+
+          .contract-cell-text-center {
+            text-align: center !important;
+          }
+
+          .el-table__cell {
+            padding: 0 !important;
+          }
+
+          .paid-cell,
+          .approved-cell {
+            color: #5a6acf;
+          }
+
+          .remain-cell,
+          .rejected-cell {
+            color: #ec5252;
+          }
+
+          .total-cell {
+            color: #3b5a9a;
+          }
+        }
+      }
+    }
+  }
+
+  .show-search {
+    display: block;
+  }
+  .btn-search {
+    background-color: #e8eafb;
+    border: 1px solid #3b5a9a;
+    color: #3b5a9a;
+    height: 30px;
+  }
+
+  .btn-export {
+    background: #764c9e;
+    color: #ffffff;
+    border: 1px solid #3b5a9a;
+    height: 32px;
+  }
+
+  @media (max-width: 600px) {
+    .report-search {
+      position: absolute;
+      height: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.3s all;
+      z-index: 2001;
+      width: 90%;
+      &.show-search {
+        height: max-content;
+        visibility: visible;
+        opacity: 1;
+        transition: 0.3s all;
+      }
+    }
+  }
+
+  .modal-container {
+    .modal-header {
+      h3 {
+        margin: 0;
+      }
+    }
+  }
+
+  .el-input__inner {
+    height: unset !important;
+  }
+
+  .el-select {
+    height: 32px !important;
+    .el-input {
+      height: 32px !important;
+    }
+  }
+
+  .planning-search-item.button-search {
+    width: unset !important;
+
+    button {
+      padding: 0 16px;
+    }
+  }
+}

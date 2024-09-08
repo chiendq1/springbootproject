@@ -1,0 +1,145 @@
+@charset "UTF-8";
+*,
+*::before,
+*::after {
+  box-sizing: border-box; // 1
+}
+
+a,
+area,
+button,
+[role="button"],
+input:not([type="range"]),label,select,summary,textarea {
+  touch-action: manipulation;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+figure {
+  margin: 0;
+}
+
+img {
+  vertical-align: middle;
+}
+
+ul {
+  list-style-type: none;
+}
+  // IE10以降ハック
+  _:-ms-lang(x), ul:not(.dropdown-menu):not(.navbar-nav) {
+    list-style-image: url(data:0);
+  }
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+input {
+  &[type="file"] {
+    display: block;
+    &:focus {
+      outline: 5px auto -webkit-focus-ring-color;
+      outline-offset: -2px;
+    }
+  }
+  &[type="range"] {
+    display: block;
+    width: 100%;
+  }
+}
+
+.btn {
+  &:focus, &:active:focus, &.active:focus, &.focus, &:active.focus, &.active.focus {
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+  }
+  &:hover, &:focus, &.focus {
+    color: #333;
+    text-decoration: none;
+  }
+  &:active, &.active {
+    background-image: none;
+
+  }
+  &.disabled, &[disabled] {
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.nav {
+  padding-left: 0;
+  margin-bottom: 0;
+  > li {
+    position: relative;
+    display: block;
+    > a {
+      position: relative;
+      display: block;
+      padding: 10px 15px;
+      &:hover, &:focus {
+        text-decoration: none;
+        background-color: #eee;
+      }
+    }
+    &.disabled > a {
+      color: #777;
+      &:hover, &:focus {
+        color: #777;
+        text-decoration: none;
+        cursor: not-allowed;
+        background-color: transparent;
+      }
+    }
+  }
+  .open > a {
+    background-color: #eee;
+    border-color: #337ab7;
+    &:hover, &:focus {
+      background-color: #eee;
+      border-color: #337ab7;
+    }
+  }
+  .nav-divider {
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+  }
+  > li > a > img {
+    max-width: none;
+  }
+}

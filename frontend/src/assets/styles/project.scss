@@ -1,0 +1,27 @@
+@charset "UTF-8";
+/*!
+for This Project Only
+v1.0.7
+----------------------------------------------------------------
+プロジェクト固有のスタイル定義用
+htmlの<head> ~ </head>内、"abui.css"の後で読み込んでください
+*/
+
+// Loading Compass
+// @import "compass";
+// Loading config with variables
+@import "dashboard.scss";
+@import "planning.scss";
+@import "bidding.scss";
+@import "lead.scss";
+@import "lead_import.scss";
+@import "customer.scss";
+@import "contract.scss";
+@import "change_request.scss";
+@import "report.scss";
+@import "payment.scss";
+@import "incentive.scss";
+@import "accountant.scss";
+@import "allocation.scss";
+
+$image-path: "~@/assets/images/";

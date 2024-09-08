@@ -1,0 +1,338 @@
+.payment {
+  .payment_table-data {
+    .color-dark {
+      color: #000;
+      font-weight: 500;
+    }
+
+    .el-table__cell {
+      &:nth-child(1) {
+        text-align: right !important;
+      }
+    }
+  }
+
+  padding: 0 20px 0;
+  @media (min-width: 1025px) {
+    padding: 0 32px 0;
+  }
+  height: 100%;
+
+  &-body-table {
+    @media (min-width: 1025px) {
+      height: 70vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .el-table {
+      z-index: 1;
+    }
+    .el-table thead.is-group th.el-table__cell {
+      color: #000;
+      border-color: #b9b9b980;
+      background: #f0f0f0;
+    }
+
+    .el-table--border .el-table__inner-wrapper::after,
+    .el-table--border::after,
+    .el-table--border::before,
+    .el-table__inner-wrapper::before,
+    .el-table--border::before {
+      background: #b9b9b980 !important;
+    }
+
+    .el-table--enable-row-transition .el-table__body td.el-table__cell {
+      border-right: none;
+    }
+
+    .el-table--border::before {
+      width: 1px;
+    }
+
+    .el-table .el-table__cell {
+      border-color: #b9b9b980 !important;
+    }
+  }
+  &_status {
+    border-radius: 100px;
+    color: #fff;
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+  }
+  p {
+    margin: 0;
+  }
+  @media (max-width: 1024px) {
+    padding: 15px 20px 0;
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @media (max-width: 1024px) {
+      display: block;
+    }
+
+    .btn {
+      width: 123px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      margin-left: 8px !important;
+      transition: 0.3s all;
+      color: #fff;
+      &-back {
+        cursor: pointer;
+        img {
+          margin-right: 12px;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        width: auto;
+        height: 27px;
+      }
+
+      @media (max-width: 575px) {
+        margin: 0 0 10px !important;
+        width: 49%;
+      }
+
+      &:hover,
+      &:focus {
+        transition: 0.3s all;
+        opacity: 0.8;
+      }
+
+      &:first-child {
+        margin-left: 0 !important;
+      }
+
+      &-save {
+        background: #5a6acf;
+        border: 1px solid #3c4ec0;
+        &:hover,
+        &:focus {
+          background: #5a6acf;
+          border: 1px solid #3c4ec0;
+        }
+      }
+    }
+  }
+
+  &-body {
+    &-search {
+      margin: 16px 0 16px;
+      padding: 16px;
+      background: #f7f7f7;
+    }
+
+    &-box {
+      display: flex;
+      align-items: end;
+      .item {
+        flex: 0 0 auto;
+        width: 50%;
+      }
+    }
+  }
+  .attachment-box {
+    display: flex;
+    svg {
+      flex: 0 0 auto;
+      width: 18px;
+      margin-right: 6px;
+    }
+    .text-attachment {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 25px;
+      -webkit-line-clamp: 1;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .modal-payment {
+    .modal-container {
+      max-width: 1000px !important;
+      width: 70%;
+
+      .modal-header {
+        padding: 8px 24px;
+        h3 {
+          margin: 0;
+        }
+      }
+
+      .modal-body {
+        .lead-import {
+          margin: 0 !important;
+          padding: 0 !important;
+
+          p {
+            margin-top: 0 !important;
+            padding: 0 !important;
+          }
+        }
+      }
+    }
+
+    .el-form-item {
+      width: 100% !important;
+      margin: 8px 0 0 0 !important;
+
+      .el-form-item__label {
+        display: block;
+        color: #212529;
+        &:before {
+          display: none;
+        }
+      }
+    }
+
+    .payment-input {
+      display: flex;
+      flex-direction: row;
+      position: relative;
+      margin-bottom: 6px;
+
+      .currency {
+        align-self: flex-end;
+        margin: 4px;
+      }
+
+      .error {
+        position: absolute;
+        bottom: 8px;
+        transform: translateY(calc(100% + 4px));
+        color: var(--color-5, #ec5252) !important;
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      .lead-import {
+        width: 100%;
+
+        .lead-file {
+          width: 100% !important;
+        }
+
+        input {
+          width: 100%;
+        }
+
+        .upload-container {
+          background-color: var(
+            --el-input-bg-color,
+            var(--el-fill-color-blank)
+          ) !important;
+        }
+
+        .lead-import-note {
+          position: absolute;
+          transition: 0.3s ease;
+        }
+
+        .el-form-item.is-error + .lead-import-note {
+          margin-top: 10px !important;
+        }
+
+        .error {
+          position: relative;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .modal-cr.modal-mask.modal-allocation {
+    .modal-body {
+      overflow: auto;
+    }
+    .modal-container {
+      max-width: 80% !important;
+
+      .modal-footer {
+        padding: 0px !important;
+      }
+    }
+    .btn-submit {
+      border: 1px solid #5c3582 !important;
+      background: #764c9e !important;
+      color: #fff;
+    }
+    .allocation-table {
+      .el-table__body-wrapper {
+        .el-table__cell {
+          position: relative;
+
+          &:nth-child(1),
+          &:nth-child(4),
+          &:nth-child(5) {
+            text-align: right;
+            .input-allocation {
+              text-align: right !important;
+
+              .el-input__wrapper {
+                .el-input__inner {
+                  text-align: right !important;
+                }
+              }
+            }
+          }
+
+          .error-message{
+            display: block;
+            position: absolute;
+            bottom: -4px;
+          }
+        }
+      }
+    }
+  }
+
+  .el-form-item.is-required .el-form-item__label:after {
+    content: '*';
+    color: var(--color-5, #ec5252);
+  }
+}
+
+.allocation {
+  .remain {
+    .remain-title {
+      margin-left: 565px;
+    }
+
+    .remain-box {
+      .input-allocation {
+        text-align: right !important;
+        padding: 0 8px;
+      }
+    }
+  }
+
+  .info {
+    p {
+      font-size: 14px;
+      font-weight: 500;
+      color: #b2b2b2;
+    }
+  }
+
+  @media screen and (max-width: 1300px) {
+    .remain .remain-title {
+      margin-left: auto;
+    }
+  }
+}

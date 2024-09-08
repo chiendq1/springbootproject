@@ -1,0 +1,233 @@
+@charset "UTF-8";
+/*
+for Dashboard
+v1.0.6
+----------------------------------------------------------------
+htmlの<head> ~ </head>内で読み込んでください
+*/
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght&display=swap');
+
+.dashboard {
+  padding: 0 22px 22px;
+  @media (max-width: 1025px) {
+    padding-top: 20px;
+  }
+
+  .container {
+    width: 100%;
+  }
+
+  &-date {
+    margin-bottom: 19px;
+    cursor: pointer;
+    .el-input__inner {
+      padding:  8px;
+      background: #f6f6fb;
+      color: #7d858d;
+      border: 1px solid #ced4da;
+      height: 31px !important;
+      border-radius: 4px !important;
+      cursor: pointer;
+    }
+
+    .el-input__wrapper {
+      box-shadow: none !important;
+      &:hover, &:focus, &:active {
+        box-shadow: none !important;
+      }
+    }
+
+    .el-date-editor .el-input__prefix {
+      display: none;
+    }
+
+    .el-icon.el-input__icon.clear-icon {
+      display: none !important;
+    }
+  }
+
+  &-header {
+    display: flex;
+    align-items: start;
+    justify-content:space-between;
+    @media (max-width: 575px) {
+      display: block;
+    }
+  }
+
+  &-body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    &__ttl {
+      padding: 16px 23px;
+      margin: 0;
+      position: relative;
+      &::after {
+        position: absolute;
+        content: "";
+        background: #ececec;
+        width: 99%;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+      }
+    }
+    &__txt {
+      color: #A6ABC8;
+      font-weight: 700;
+      text-align: center;
+      margin: 0;
+      font-size: 16px;
+      padding-bottom: 28px;
+    }
+    &__total {
+      font-size: 14px;
+      color: #808080;
+      margin: -15px 0 30px;
+      display: flex;
+      align-items: center;
+      strong {
+        font-size: 30px;
+        margin-left: 20px;
+        color: #000;
+      }
+    }
+  }
+
+  &-left {
+    flex: 0 0 auto;
+    width: 61.5%;
+    margin-right: 23px;
+    @media (max-width:1833px) {
+      margin-right: 15px;
+    }
+    @media ( max-width:1284px ) {
+      width: 100%;
+      margin: 0 0 16px;
+    }
+  }
+  
+  &-right {
+    width: 37%;
+    @media ( max-width:1284px ) {
+      width: 100%;
+    }
+  }
+
+  &-left, &-right {
+    flex: 0 0 auto;
+    box-shadow: 0px 2px 10px 0px #0000001A;
+    background: #fff;
+    border-radius: 6px;
+    flex-direction: column;
+    justify-content: space-between;
+    display: flex;
+  }
+
+  &-chart {
+    padding: 30px 20px 17px 21px;
+  }
+}
+
+.custom-tooltip {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.tooltip-label {
+  font-weight: bold;
+}
+
+.tooltip-value {
+  font-size: 16px;
+}
+
+.chart-pie__txt {
+  font-size: 16px;
+  position: absolute;
+  margin: 0;
+  width: 100%;
+  top: 8px;
+  right: 0;
+  color: #707FDD;
+  text-align: end;
+  
+  .chart-pie {
+    text-align: center;
+  }
+
+  &::after {
+    position: absolute;
+    content: "";
+    background: #cacaca;
+    width: 25px;
+    height: 1px;
+    right: 34px;
+    top:50%;
+    transform: translateY(-50%);
+  }
+  &::before {
+    position: absolute;
+    content: "";
+    background: #cacaca;
+    width: 50px;
+    height: 1px;
+    right: 48px;
+    top: 33px;
+    transform: rotate(127deg);
+    border-radius: 2px;
+  }
+  &--custom {
+    font-size: 16px;
+    position: absolute;
+    bottom: 60px;
+    margin: 0;
+    left: 64px;
+    color: #707FDD;
+    &::after {
+      position: absolute;
+      content: "";
+      background: #cacaca;
+      width: 25px;
+      height: 1px;
+      right: -28px;
+      top:50%;
+      transform: translateY(-50%);
+    }
+    &::before {
+      position: absolute;
+      content: "";
+      background: #cacaca;
+      width: 50px;
+      height: 1px;
+      right: -65px;
+      top: -8px;
+      transform: rotate(118deg);
+      border-radius: 2px;
+    }
+  }
+}
+
+.box {
+  position: absolute;
+  max-width: 450px;
+  height: 450px;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translate(-58%, -50%);
+  z-index: 1;
+}
+
+#pieChart {
+  width: 100% !important;
+  height: 400px;
+  margin: 0 auto;
+  z-index: 2;
+  position: relative;
+}
