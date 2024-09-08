@@ -1,4 +1,4 @@
-package entity;
+package org.example.springbootproject.entity;
 
 import jakarta.persistence.*;
 
@@ -8,8 +8,6 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    @Column
     private int id;
 
     @Column(unique = true, nullable = false)
@@ -20,6 +18,18 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(unique = true, nullable = false)
+    private String role;
+
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public int getId() {
         return id;
