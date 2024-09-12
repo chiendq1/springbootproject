@@ -17,6 +17,7 @@ public class Constants {
     public static String SECRET_KEY;
     public static long TOKEN_EXPIRE_TIME;
     public static String FRONT_END_URL = "http://localhost:9999";
+    public static long REFRESH_TOKEN_EXPIRE_TIME;
 
     @Value("${app.secret_key}")
     private String secretKey;
@@ -27,10 +28,14 @@ public class Constants {
     @Value("${app.front_end_url}")
     private String frontEndUrl;
 
+    @Value("${jwt.refresh_token_expire:86400000}")
+    private long refreshTokenExpireTime;
+
     @PostConstruct
     private void init() {
         SECRET_KEY = secretKey;
         TOKEN_EXPIRE_TIME = tokenExpireTime;
         FRONT_END_URL = frontEndUrl;
+        REFRESH_TOKEN_EXPIRE_TIME = refreshTokenExpireTime;
     }
 }

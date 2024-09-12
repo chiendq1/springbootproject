@@ -32,9 +32,6 @@ public class ApiResponse<T> implements Serializable {
     @JsonIgnore
     private HttpStatus status;
 
-    public ApiResponse() {
-
-    }
 
     public ApiResponse(Boolean success, String message, T data, HttpStatus httpStatus) {
         this.success = success;

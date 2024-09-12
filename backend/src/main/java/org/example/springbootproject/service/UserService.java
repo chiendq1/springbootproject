@@ -22,7 +22,7 @@ public class UserService extends BaseService {
 
         User user = userRepository.findUserById(id);
 
-        return userMapper.toDto(user);
+        return userMapper.toDTO(user);
     }
 
     public List<UserDto> getAllDtoUsers() {

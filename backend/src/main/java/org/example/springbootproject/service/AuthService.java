@@ -2,9 +2,9 @@ package org.example.springbootproject.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.example.springbootproject.entity.Role;
 import org.example.springbootproject.payload.request.LoginRequest;
 import org.example.springbootproject.payload.request.RegisterRequest;
 import org.example.springbootproject.repository.UserRepository;
@@ -14,6 +14,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,13 +25,12 @@ import org.springframework.stereotype.Service;
 
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
-public class AuthService extends BaseService implements UserDetailsService{
+public class AuthService extends BaseService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -37,36 +38,47 @@ public class AuthService extends BaseService implements UserDetailsService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             org.example.springbootproject.entity.User user = userRepository.findUserByUsername(username);
 
+            // Get roles and convert them to GrantedAuthority
+            Set<Role> roles = user.getRoles();
+            List<GrantedAuthority> authorities = roles.stream()
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
+                    .collect(Collectors.toList());
+
+            // Return UserDetails with authorities (roles)
             return User.builder()
                     .username(user.getUsername())
                     .password(user.getPassword())
-                    .roles(user.getRole()).build();
+                    .authorities(authorities)
+                    .build();
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new UsernameNotFoundException(e.getMessage());
         }
     }
 
-    public void registerUser(RegisterRequest registerRequest) {
-        org.example.springbootproject.entity.User user = new org.example.springbootproject.entity.User();
-        user.setUsername(registerRequest.username());
-        user.setPassword(passwordEncoder.encode(registerRequest.password()));
-        user.setRole("USER");
-        user.setEmail("chiendam12030@gmail.com");
-
-        userRepository.save(user);
-    }
-
     // Generate token with given user name
-    public String generateToken(String userName) {
+    public String generateToken(String userName, boolean isRefreshToken) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("sub", userName);
+        org.example.springbootproject.entity.User user = userRepository.findUserByUsername(userName);
+
+        if(user.isExist(userName)) {
+            claims.put("sub", userName);
+            claims.put("exp", new Date(System.currentTimeMillis() + Constants.REFRESH_TOKEN_EXPIRE_TIME));
+
+            if (!isRefreshToken) {
+                Set<Role> roles = user.getRoles();
+                List<String> roleNames = roles.stream()
+                        .map(Role::getRoleName)
+                        .toList();
+                claims.put("roles", roleNames);
+                claims.put("exp", new Date(System.currentTimeMillis() + Constants.TOKEN_EXPIRE_TIME));
+            }
+        }
 
         return createToken(claims, userName);
     }
@@ -74,16 +86,13 @@ public class AuthService extends BaseService implements UserDetailsService{
     // Create a JWT token with specified claims and subject (username)
     private String createToken(Map<String, Object> claims, String userName) {
         try {
-            long expMillis = System.currentTimeMillis() + Constants.TOKEN_EXPIRE_TIME;
-
-           return Jwts.builder()
+            return Jwts.builder()
                     .claims(claims)
                     .issuer(userName)
                     .issuedAt(new Date(System.currentTimeMillis()))
-                    .expiration(new Date(expMillis))
-                    .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                    .signWith(getSignKey())
                     .compact();
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
 
             return null;
@@ -130,8 +139,8 @@ public class AuthService extends BaseService implements UserDetailsService{
     // Validate the token against user details and expiration
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        boolean result = (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return result;
     }
 
     public Authentication authenticate(LoginRequest loginRequest, AuthenticationManager authenticationManager) {

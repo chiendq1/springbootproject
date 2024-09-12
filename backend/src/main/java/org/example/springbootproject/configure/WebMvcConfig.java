@@ -1,7 +1,6 @@
 package org.example.springbootproject.configure;
 
 import org.example.springbootproject.utils.Constants;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
