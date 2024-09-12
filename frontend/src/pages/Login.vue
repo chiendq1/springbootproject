@@ -133,7 +133,7 @@ export default {
 
     watch(() => authStore.loggedIn, (newVal) => {
       if (newVal) {
-        router.push({ path: '/home' }); // Redirect to home if logged in
+        router.push($PAGES.HOME); // Redirect to home if logged in
       }
     });
 

@@ -19,17 +19,6 @@ const processResponse = (response) => {
 const logError = (e, error) => {
   if (error && e.response) {
     if (e.response.hasOwnProperty('status')) {
-      if (e.response.status === 401) {
-        Cookies.remove('access_token');
-        Cookies.remove('role');
-        const previousUserId = Cookies.get('user_id') || '';
-        const queryString = `${window.location.pathname}${window.location.search}`;
-        Cookies.set('previous_user_id', previousUserId, { expires: 90 });
-        Cookies.set('redirectPath', queryString, { expires: 90 });
-        window.location.href = '/login';
-        return;
-      }
-
       const errors = e.response.data.errors
         ? Object.fromEntries(
             Object.entries(e.response.data.errors).map(([key, value]) => [key, value[0]])

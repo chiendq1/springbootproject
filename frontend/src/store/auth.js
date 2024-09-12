@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import Cookies from "js-cookie";
 import { mixinMethods, $services, $PAGES } from "@/utils/variables";
 import { COOKIE_EXPIRE_TIME } from "@/constants/application";
@@ -14,8 +14,10 @@ export const useAuthStore = defineStore("auth", () => {
     await $services.AuthenticationAPI.login(
       params,
       (response) => {
-        const access_token = response.data;
+        const access_token = response.data.token;
+        const refresh_token = response.data.refreshToken;
         Cookies.set("access_token", access_token, { expires: parseInt(COOKIE_EXPIRE_TIME) });
+        Cookies.set("refresh_token", refresh_token, { expires: parseInt(COOKIE_EXPIRE_TIME) });
         loggedIn.value = true;
 
         mixinMethods.endLoading();
