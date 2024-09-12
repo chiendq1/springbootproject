@@ -1,33 +1,21 @@
 package org.example.springbootproject.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
+import java.util.Set;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
 
-    @Id
     private int id;
-
-    @Setter
-    @Size(max = 50)
     private String username;
-
-    @NotBlank()
-    @Size(min = 8, max = 20)
-    private String password;
-
-    @Setter
-    @NotBlank()
-    @Email()
-    @Size(max = 100)
     private String email;
-
-    @Setter
-    @NotBlank()
-    private String role;
+    private String fullName;
+    private String location;
+    private Set<RoleDto> roles;
 }

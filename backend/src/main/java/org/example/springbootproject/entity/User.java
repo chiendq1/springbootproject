@@ -1,9 +1,15 @@
 package org.example.springbootproject.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Setter
+@Getter
 public class User {
 
     @Id
@@ -13,49 +19,37 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+
+    @Column(name = "location", unique = true)
+    private String location;
+
     @Column(unique = true, nullable = false)
     private String password;
 
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true, nullable = false)
-    private String role;
+    @Column(name = "phone_number", unique = true, nullable = false)
+    private String phoneNumber;
 
+    // One User can own multiple Rooms
+    @OneToMany(mappedBy = "landlord", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Room> rooms;
 
-    public String getRole() {
-        return role;
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+    private Set<User> tenantsRooms = new HashSet<>();
 
-    public int getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public boolean isExist(String username) {
+        return this.username.equals(username);
     }
 }
