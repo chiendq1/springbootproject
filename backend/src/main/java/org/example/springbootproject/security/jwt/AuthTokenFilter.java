@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.springbootproject.payload.response.ApiResponse;
 import org.example.springbootproject.service.AuthService;
-import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,13 +33,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try {
             // Retrieve the Authorization header
-            String authHeader = request.getHeader("Authorization");
-            String token = null;
+            String token = authService.getTokenFromRequest(request);
             String username = null;
 
             // Check if the header starts with "Bearer "
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                token = authHeader.substring(7); // Extract token
+            if (token != null) {
                 username = authService.extractUsername(token); // Extract username from token
             }
 
@@ -71,10 +69,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().contains("api/auth");
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getServletPath().startsWith("api/auth/", 1);
     }
+
     // Helper method to handle exceptions and set response
     private void handleException(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setContentType("application/json");

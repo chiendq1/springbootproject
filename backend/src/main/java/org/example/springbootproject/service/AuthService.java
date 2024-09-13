@@ -4,9 +4,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.example.springbootproject.entity.Role;
 import org.example.springbootproject.payload.request.LoginRequest;
-import org.example.springbootproject.payload.request.RegisterRequest;
 import org.example.springbootproject.repository.UserRepository;
 import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
@@ -34,9 +33,6 @@ public class AuthService extends BaseService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -81,6 +77,16 @@ public class AuthService extends BaseService implements UserDetailsService {
         }
 
         return createToken(claims, userName);
+    }
+
+    public String getTokenFromRequest(HttpServletRequest request) {
+        String token = null;
+        String authHeader = request.getHeader("Authorization");
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        return token;
     }
 
     // Create a JWT token with specified claims and subject (username)
@@ -139,8 +145,8 @@ public class AuthService extends BaseService implements UserDetailsService {
     // Validate the token against user details and expiration
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        boolean result = (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-        return result;
+
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     public Authentication authenticate(LoginRequest loginRequest, AuthenticationManager authenticationManager) {
@@ -154,5 +160,19 @@ public class AuthService extends BaseService implements UserDetailsService {
 
             return null;
         }
+    }
+
+    public boolean hasId(int id, String userName) {
+        org.example.springbootproject.entity.User user = userRepository.findUserById(id);
+
+        return user != null && user.getUsername().equalsIgnoreCase(userName);
+    }
+
+    public boolean verifyPassword(int id, String currentPassword) {
+        org.example.springbootproject.entity.User user = userRepository.findUserById(id);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(currentPassword);
+
+        return passwordEncoder.matches(user.getPassword(), encodedPassword);
     }
 }

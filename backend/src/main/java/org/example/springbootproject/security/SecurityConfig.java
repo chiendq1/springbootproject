@@ -38,7 +38,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(Constants.ALLOW_ENDPOINT).permitAll()
+                        .requestMatchers(
+                                Constants.ALLOW_ENDPOINTS.get("AUTH_API"),
+                                Constants.ALLOW_ENDPOINTS.get("API_DOCS"),
+                                Constants.ALLOW_ENDPOINTS.get("SWAGGER")
+                        ).permitAll()
                         .requestMatchers("api/admin/**").hasRole("ADMIN")
                         .requestMatchers("api/landlord/**").hasRole("LANDLORD")
                         .requestMatchers("api/tenant/**").hasRole("TENANT")
