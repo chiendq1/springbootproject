@@ -46,9 +46,6 @@ public class User {
     )
     private Set<Role> roles;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
-    private Set<User> tenantsRooms = new HashSet<>();
-
     public boolean isExist(String username) {
         return this.username.equals(username);
     }

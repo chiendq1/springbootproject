@@ -1,6 +1,6 @@
 package org.example.springbootproject.payload.response;
 
-import lombok.Data;
+import lombok.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,6 +15,10 @@ import java.io.Serializable;
         "message",
         "data"
 })
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class ApiResponse<T> implements Serializable {
 
     @JsonIgnore
@@ -23,20 +27,12 @@ public class ApiResponse<T> implements Serializable {
     @JsonProperty("success")
     private Boolean success;
 
-    @JsonProperty("data")
-    private T data;
-
     @JsonProperty("message")
     private String message;
 
+    @JsonProperty("data")
+    private T data;
+
     @JsonIgnore
     private HttpStatus status;
-
-
-    public ApiResponse(Boolean success, String message, T data, HttpStatus httpStatus) {
-        this.success = success;
-        this.message = message;
-        this.data = data;
-        this.status = httpStatus;
-    }
 }

@@ -44,7 +44,7 @@ public class Room {
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "utility_id")
     )
-    private Set<Role> utilities;
+    private Set<Utility> utilities;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

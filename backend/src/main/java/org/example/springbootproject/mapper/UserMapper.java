@@ -16,7 +16,7 @@ public class UserMapper {
         Set<RoleDto> roles = user.getRoles().stream()
                 .map(this::roleToDTO)
                 .collect(Collectors.toSet());
-        return new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getFullName(), user.getLocation(), roles);
+        return new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getFullName(), user.getPhoneNumber(), user.getLocation(), roles);
     }
 
     public User toEntity(UserDto userDTO) {
