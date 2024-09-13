@@ -1,7 +1,7 @@
 const PAGES = {
-  HOME: '/',
+  HOME: '/home',
   LOGIN: '/login',
-  DASHBOARD: '/admin/dashboard',
+  PROFILE: '/user-profile',
   USERMANAGEMENT: '/admin/user-management',
   ROLECLAIMMANAGEMENT: '/admin/role-claim-management',
 };

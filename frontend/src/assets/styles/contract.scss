@@ -283,12 +283,12 @@
           position: relative;
         }
 
+        align-items: end;
+        background: #f7f7f7;
         @media (max-width: 767px) {
           justify-content: space-between;
         }
 
-        align-items: end;
-        background: #f7f7f7;
 
         &__ttl {
           margin: 0 0 4px;

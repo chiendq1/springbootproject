@@ -1,10 +1,10 @@
 .bidding {
   padding: 0 20px 0;
+  height: 100%;
   @media (min-width:1025px) {
     padding: 0 32px 0;
   }
 
-  height: 100%;
   
   &-body-table {
     .el-table {
@@ -152,10 +152,10 @@
         &:nth-child(1) {
           margin-left: 0;
           width: calc(100% - 532px);
+          flex: 0 0 auto;
           @media (max-width: 500px) {
             width: 100%;
           }
-          flex: 0 0 auto;
         }
         .btn {
           &-bidding {

@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 // import pages
 import Login from '@/pages/Login.vue';
 import Home from '@/pages/Home.vue';
+import UserProfile from '@/pages/User/Profile.vue';
 
 const routes = [
   {
@@ -14,6 +15,15 @@ const routes = [
   {
     path: PAGES.HOME,
     component: Home,
+    meta: {
+      middleware: [
+        'authentication'
+      ],
+    }
+  },
+  {
+    path: PAGES.PROFILE,
+    component: UserProfile,
     meta: {
       middleware: [
         'authentication'

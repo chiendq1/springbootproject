@@ -361,9 +361,22 @@ input::-webkit-inner-spin-button {
   justify-content: end;
 }
 
+.btn-save {
+  border: 1px solid;
+  background: #3c4ec0 !important;
+  color: #fff !important;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #606ecc;
+    opacity: 0.8;
+    color: #fff !important;
+  }
+}
+
 .btn-refuse {
-  color: #fff;
-  background-color: #EC5252 !important;
+  color: #fff !important;
+  background-color: #e16060 !important;
 
   &:hover {
     background-color: #EC5252;

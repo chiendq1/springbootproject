@@ -505,10 +505,10 @@ $screen-adjustment: $screen-lg-min + $sidebar-width-narrow - $breakpoint-wide;
   transition: .5s all;
   transform: translateX(0);
   .main-block { 
+    padding-top: 80px;
     @media (min-width: 1025px) {
       padding-left: 240px;
     }
-    padding-top: 80px;
   }
   &.set-width__block {
     transition: .5s all;

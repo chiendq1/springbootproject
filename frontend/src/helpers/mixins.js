@@ -11,17 +11,6 @@ const mixins = {
       screenLoading: false,
     };
   },
-  computed: {
-    currentRouteName() {
-      return this.$route.name || "";
-    },
-    userRole() {
-      return this.$store.state.auth?.user?.role?.code;
-    },
-    userId() {
-      return this.$store.state.auth?.user?.id || "";
-    },
-  },
   methods: {
     startLoading() {
       this.screenLoading = ElLoading.service({
@@ -30,7 +19,6 @@ const mixins = {
         background: "rgba(0, 0, 0, 0.7)",
       });
     },
-
     async endLoading() {
       if (!this.checkEmpty(this.screenLoading)) {
         await this.screenLoading.close();
@@ -181,7 +169,6 @@ const mixins = {
         showClose: false,
       });
     },
-
     notifySuccess(messages, useHTML = false, notify = null) {
       let message = "";
       if (useHTML && Array.isArray(messages)) {

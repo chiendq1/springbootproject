@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import Cookies from "js-cookie";
@@ -127,12 +127,8 @@ export default {
       );
     });
 
-    onMounted(() => {
-      if (loggedIn.value) router.push($PAGES.HOME);
-    });
-
-    watch(() => authStore.loggedIn, (newVal) => {
-      if (newVal) {
+    watch(() => {
+      if (loggedIn.value) {
         router.push($PAGES.HOME); // Redirect to home if logged in
       }
     });

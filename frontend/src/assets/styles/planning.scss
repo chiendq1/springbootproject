@@ -536,6 +536,7 @@
 
           &-tow {
             display: flex;
+            height: 142px;
             .title {
               width: 87px;
               flex: 0 0 auto;
@@ -548,7 +549,6 @@
               padding-left: 12px;
             }
 
-            height: 142px;
             .table-types {
               width: calc(100% - 69px);
               flex: 0 0 auto;
