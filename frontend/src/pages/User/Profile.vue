@@ -55,13 +55,13 @@
                 :placeholder="$t('user.placeholder_email')"
               ></el-input>
               <p
-                v-if="validation.value.profileUpdateRequest"
+                v-if="validation.value.email"
                 class="error-feedback"
               >
                 {{
                   $t(
-                    validation.value.profileUpdateRequest.code,
-                    validation.value.profileUpdateRequest.options
+                    validation.value.email.code,
+                    validation.value.email.options
                   )
                 }}
               </p>
@@ -73,13 +73,13 @@
                 :placeholder="$t('user.placeholder_phone')"
               ></el-input>
               <p
-                v-if="validation.value.profileUpdateRequest"
+                v-if="validation.value.phoneNumber"
                 class="error-feedback"
               >
                 {{
                   $t(
-                    validation.value.profileUpdateRequest.code,
-                    validation.value.profileUpdateRequest.options
+                    validation.value.phoneNumber.code,
+                    validation.value.phoneNumber.options
                   )
                 }}
               </p>

@@ -15,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -32,8 +34,7 @@ public class UserController extends BaseController {
     public ResponseEntity<ApiResponse<List<UserDto>>> index(
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "id") String sortBy)
-    {
+            @RequestParam(defaultValue = "id") String sortBy) {
 //        List<UserDto> list = userService.listUsersByRole(pageNo, pageSize, sortBy);
         return new ResponseEntity<>(new ApiResponse<>(false, "get users failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
@@ -53,7 +54,17 @@ public class UserController extends BaseController {
 
     @PutMapping("/{id}")
     @PreAuthorize("@userService.hasId(#id, authentication.name)")
-    public ResponseEntity<ApiResponse<UserDto>> update(@PathVariable int id, @RequestBody @Valid ProfileUpdateRequest request) {
+    public ResponseEntity<?> update(@PathVariable int id, @RequestBody @Valid ProfileUpdateRequest request) {
+        String emailErrorCode = userService.checkFieldDuplicated("email", request.getEmail(), id);
+        String phoneErrorCode = userService.checkFieldDuplicated("phoneNumber", request.getPhoneNumber(), id);
+        Map<String, String> errors = new HashMap<>();
+
+        if (!emailErrorCode.isEmpty() || !phoneErrorCode.isEmpty()) {
+            errors.put("email", emailErrorCode);
+            errors.put("phoneNumber", phoneErrorCode);
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
         UserDto updatedUser = userService.updateUserDtoById(id, request);
 
         if (updatedUser == null) {

@@ -1,10 +1,12 @@
 package org.example.springbootproject.service;
 
+import jakarta.validation.Valid;
 import org.example.springbootproject.dto.UserDto;
 import org.example.springbootproject.entity.User;
 import org.example.springbootproject.mapper.UserMapper;
 import org.example.springbootproject.payload.request.ProfileUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -88,13 +90,13 @@ public class UserService extends BaseService {
         return false;
     }
 
-    public boolean checkFieldDuplicated(String fieldName, String fieldValue, Integer id) {
+    public String checkFieldDuplicated(String fieldName, String fieldValue, Integer id) {
         if(fieldName.equals("email")) {
-            return userRepository.duplicateEmail(fieldValue, id);
+            if(userRepository.duplicateEmail(fieldValue, id)) return "E-CM-007";
         } else if(fieldName.equals("phoneNumber")) {
-            return userRepository.duplicatePhone(fieldValue, id);
+            if(userRepository.duplicatePhone(fieldValue, id)) return "E-CM-009";
         }
 
-        return false;
+        return "";
     }
 }

@@ -6,12 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import org.example.springbootproject.utils.Constants;
-import org.example.springbootproject.validation.FieldDuplicate;
 
 @Data
 @Getter
-@FieldDuplicate(fieldName = "email", idField = "id", message = "{email.duplicated}")
-@FieldDuplicate(fieldName = "phoneNumber", idField = "id", message = "{phone.duplicated}")
 public class ProfileUpdateRequest {
 
     private int id;
