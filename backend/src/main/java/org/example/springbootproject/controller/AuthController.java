@@ -1,12 +1,17 @@
 package org.example.springbootproject.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.example.springbootproject.dto.UserDto;
+import org.example.springbootproject.payload.request.ForgotPasswordRequest;
 import org.example.springbootproject.payload.request.LoginRequest;
+import org.example.springbootproject.payload.request.ResetPasswordRequest;
 import org.example.springbootproject.payload.request.TokenRefreshRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
 import org.example.springbootproject.payload.response.LoginResponse;
 import org.example.springbootproject.service.AuthService;
+import org.example.springbootproject.service.EmailService;
 import org.example.springbootproject.service.RefreshTokenService;
 import org.example.springbootproject.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -15,6 +20,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController extends BaseController {
@@ -22,16 +29,19 @@ public class AuthController extends BaseController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+    private final EmailService emailService;
 
     public AuthController(AuthService authService,
                           AuthenticationManager authenticationManager,
                           RefreshTokenService refreshTokenService,
-                          UserService userService
+                          UserService userService,
+                          EmailService emailService
     ) {
         this.authService = authService;
         this.authenticationManager = authenticationManager;
         this.refreshTokenService = refreshTokenService;
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/login")
@@ -73,6 +83,36 @@ public class AuthController extends BaseController {
             // Handle other unexpected exceptions
             logger.error(e.getMessage());
             return new ResponseEntity<>(new ApiResponse<>(false, "An error occurred while refreshing the token", null, HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/get-otp")
+    public ResponseEntity<?> getOtpCode(@RequestBody @Valid ForgotPasswordRequest request) {
+        try {
+            emailService.sendResetPasswordEmail(request.getType(), request.getEmail(), request.getSubject());
+
+            return new ResponseEntity<>(new ApiResponse<>(true, "send message success", null, HttpStatus.OK), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "send message failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) {
+        try {
+            String otpCode = emailService.getOtpFromCache(resetPasswordRequest.getEmail());
+            boolean result = authService.resetPassword(resetPasswordRequest, otpCode);
+            if(result) {
+                return new ResponseEntity<>(new ApiResponse<>(true, "reset password success", null, HttpStatus.OK), HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "reset password failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "reset password failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -5,16 +5,16 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import org.example.springbootproject.utils.Constants;
+import org.example.springbootproject.validation.FieldExist;
 
 @Data
 @Getter
-public class LoginRequest {
+public class ForgotPasswordRequest {
 
     @NotBlank(message = "{common.required}")
     @Size(max = Constants.STRING_MAX_LENGTH, message = "{common.string_max_length}")
-    private String username;
-
-    @NotBlank(message = "{common.required}")
-    @Size(min = Constants.PASSWORD_MIN_LENGTH, max = Constants.PASSWORD_MAX_LENGTH, message = "{password.between}")
-    private String password;
+    @FieldExist(fieldName = "email", message = "{email.not_exist}")
+    private String email;
+    private String type;
+    private String subject;
 }

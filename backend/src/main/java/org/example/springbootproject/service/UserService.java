@@ -3,7 +3,14 @@ package org.example.springbootproject.service;
 import org.example.springbootproject.dto.UserDto;
 import org.example.springbootproject.entity.User;
 import org.example.springbootproject.mapper.UserMapper;
+import org.example.springbootproject.payload.request.ProfileUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.example.springbootproject.repository.UserRepository;
 
@@ -16,6 +23,9 @@ public class UserService extends BaseService {
     private UserRepository userRepository;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserMapper userMapper;
 
     public UserDto getUserDtoByById(int id) {
@@ -24,13 +34,13 @@ public class UserService extends BaseService {
         return userMapper.toDTO(user);
     }
 
-    public UserDto updateUserDtoById(int id, UserDto userDto) {
+    public UserDto updateUserDtoById(int id, ProfileUpdateRequest request) {
         User user = userRepository.findUserById(id);
         if(user != null) {
-            user.setFullName(userDto.getFullName());
-            user.setEmail(userDto.getEmail());
-            user.setPhoneNumber(userDto.getPhoneNumber());
-            user.setLocation(userDto.getLocation());
+            user.setFullName(request.getFullName());
+            user.setEmail(request.getEmail());
+            user.setPhoneNumber(request.getPhoneNumber());
+            user.setLocation(request.getLocation());
             userRepository.save(user);
 
             return userMapper.toDTO(user);
@@ -45,16 +55,17 @@ public class UserService extends BaseService {
         return userMapper.toDTO(user);
     }
 
-    public List<UserDto> getAllDtoUsers() {
-        List<User> users = userRepository.findAll();
-
-        return userMapper.toDtoList(users);
-    }
+//    public List<UserDto> listUsersByRole(int pageNo, int pageSize, String sortBy) {
+//        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+//        Page<User> users = userRepository.findAll(paging);
+//
+//        return userMapper.toDtoList(users);
+//    }
 
     public boolean resetPassword(int id, String verifiedPassword) {
         User user = userRepository.findUserById(id);
         if(user != null) {
-            user.setPassword(verifiedPassword);
+            user.setPassword(passwordEncoder.encode(verifiedPassword));
             userRepository.save(user);
 
             return true;
@@ -62,5 +73,28 @@ public class UserService extends BaseService {
 
         return true;
     }
-}
 
+    public boolean hasId(int id, String userName) {
+        User user = userRepository.findUserById(id);
+
+        return user != null && user.getUsername().equalsIgnoreCase(userName);
+    }
+
+    public boolean checkFieldExisted(String fieldName, String fieldValue) {
+        if(fieldName.equals("email")) {
+            return userRepository.existsEmail(fieldValue);
+        }
+
+        return false;
+    }
+
+    public boolean checkFieldDuplicated(String fieldName, String fieldValue, Integer id) {
+        if(fieldName.equals("email")) {
+            return userRepository.duplicateEmail(fieldValue, id);
+        } else if(fieldName.equals("phoneNumber")) {
+            return userRepository.duplicatePhone(fieldValue, id);
+        }
+
+        return false;
+    }
+}

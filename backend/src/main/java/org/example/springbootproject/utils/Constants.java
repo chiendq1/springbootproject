@@ -22,6 +22,9 @@ public class Constants {
     public static long TOKEN_EXPIRE_TIME;
     public static String FRONT_END_URL = "http://localhost:9999";
     public static long REFRESH_TOKEN_EXPIRE_TIME;
+    public static String SYSTEM_EMAIL;
+    public static int OTP_COOKIE_EXPIRE_TIME = 600;
+    public static int OTP_LENGTH = 6;
 
     @Value("${app.secret_key}")
     private String secretKey;
@@ -35,12 +38,16 @@ public class Constants {
     @Value("${jwt.refresh_token_expire:86400000}")
     private long refreshTokenExpireTime;
 
+    @Value("${app.system_email}")
+    private String SystemEmail;
+
     @PostConstruct
     private void init() {
         SECRET_KEY = secretKey;
         TOKEN_EXPIRE_TIME = tokenExpireTime;
         FRONT_END_URL = frontEndUrl;
         REFRESH_TOKEN_EXPIRE_TIME = refreshTokenExpireTime;
+        SYSTEM_EMAIL = SystemEmail;
         ALLOW_ENDPOINTS.put("AUTH_API", "api/auth/**");
         ALLOW_ENDPOINTS.put("SWAGGER", "swagger-ui/**");
         ALLOW_ENDPOINTS.put("API_DOCS", "v3/api-docs/**");

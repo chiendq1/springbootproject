@@ -5,8 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.example.springbootproject.entity.Role;
 import org.example.springbootproject.payload.request.LoginRequest;
+import org.example.springbootproject.payload.request.ResetPasswordRequest;
 import org.example.springbootproject.repository.UserRepository;
 import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +27,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
@@ -33,6 +38,9 @@ public class AuthService extends BaseService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -62,7 +70,7 @@ public class AuthService extends BaseService implements UserDetailsService {
         Map<String, Object> claims = new HashMap<>();
         org.example.springbootproject.entity.User user = userRepository.findUserByUsername(userName);
 
-        if(user.isExist(userName)) {
+        if (user.isExist(userName)) {
             claims.put("sub", userName);
             claims.put("exp", new Date(System.currentTimeMillis() + Constants.REFRESH_TOKEN_EXPIRE_TIME));
 
@@ -82,7 +90,7 @@ public class AuthService extends BaseService implements UserDetailsService {
     public String getTokenFromRequest(HttpServletRequest request) {
         String token = null;
         String authHeader = request.getHeader("Authorization");
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         }
 
@@ -162,17 +170,28 @@ public class AuthService extends BaseService implements UserDetailsService {
         }
     }
 
-    public boolean hasId(int id, String userName) {
-        org.example.springbootproject.entity.User user = userRepository.findUserById(id);
-
-        return user != null && user.getUsername().equalsIgnoreCase(userName);
-    }
-
     public boolean verifyPassword(int id, String currentPassword) {
         org.example.springbootproject.entity.User user = userRepository.findUserById(id);
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(currentPassword);
 
-        return passwordEncoder.matches(user.getPassword(), encodedPassword);
+        return passwordEncoder.matches(currentPassword, user.getPassword());
+    }
+
+    public boolean resetPassword(ResetPasswordRequest request, String otpCode) {
+        org.example.springbootproject.entity.User user = userRepository.findUserByEmail(request.getEmail());
+        if (otpCode.equals(request.getOtpCode()) && user != null) {
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public String getCurrentUserName() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+
+        return ((UserDetails) authentication.getPrincipal()).getUsername();
     }
 }
