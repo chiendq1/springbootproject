@@ -9,7 +9,12 @@ const update = async (id, params, success, error) => {
   await put(API_CODE.API_USER_001 + id, params, success, error);
 };
 
+const changePassword = async (id, params, success, error) => {
+  await put(API_CODE.API_USER_002 + id, params, success, error);
+};
+
 export const UserAPI = {
     show,
     update,
+    changePassword,
 };

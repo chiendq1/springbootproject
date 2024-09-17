@@ -45,6 +45,14 @@
                 id="login-name"
               />
               <ErrorMessage name="username" class="error-feedback" as="p" />
+              <p v-if="validation.value.username" class="error-feedback">
+                {{
+                  $t(
+                    validation.value.username.code,
+                    validation.value.username.options
+                  )
+                }}
+              </p>
             </div>
             <div class="form-group">
               <p class="login_label">{{ $t("common.password") }}</p>
@@ -58,12 +66,20 @@
                 id="login-pass"
               />
               <ErrorMessage name="password" class="error-feedback" as="p" />
+              <p v-if="validation.value.password" class="error-feedback">
+                {{
+                  $t(
+                    validation.value.password.code,
+                    validation.value.password.options
+                  )
+                }}
+              </p>
             </div>
-
-            <p
-              class="error-feedback"
-              v-text="errors_message.login && $t(errors_message.login)"
-            ></p>
+            <div class="form-group forgot-password">
+              <a @click="openResetPassModal()" href="#"
+                ><span>{{ $t("common.forgot_password") }}</span></a
+              >
+            </div>
 
             <button
               class="btn btn-primary btn-block js--btn-login"
@@ -75,11 +91,97 @@
         </div>
       </div>
     </div>
+    <Modal
+      :show="isShowModal.value"
+      :width="'60%'"
+      :isShowFooter="false"
+      @close="handleCloseModal"
+    >
+      <template #body>
+        <el-form :model="resetPasswordForm.value" label-width="18%">
+          <el-form-item :label="$t('user.label_email')">
+            <div class="input-button-group">
+              <el-input
+                v-model="resetPasswordForm.value.email"
+                :placeholder="$t('user.placeholder_email')"
+              ></el-input>
+              <el-button
+                :loading="loadingButton.value"
+                class="btn btn-save"
+                @click="getOtpCode()"
+                >{{ $t("common.get_otp") }}</el-button
+              >
+            </div>
+            <p v-if="validation.value.email" class="error-feedback">
+              {{
+                $t(validation.value.email.code, validation.value.email.options)
+              }}
+            </p>
+          </el-form-item>
+
+          <el-form-item :label="$t('user.label_otp')">
+            <el-input
+              v-model="resetPasswordForm.value.otp"
+              :placeholder="$t('user.placeholder_otp')"
+            ></el-input>
+            <p v-if="validation.value.otpCode" class="error-feedback">
+              {{
+                $t(
+                  validation.value.otpCode.code,
+                  validation.value.otpCode.options
+                )
+              }}
+            </p>
+          </el-form-item>
+
+          <el-form-item :label="$t('user.label_new_password')">
+            <el-input
+              type="password"
+              v-model="resetPasswordForm.value.newPassword"
+              :placeholder="$t('user.placeholder_new_password')"
+            ></el-input>
+            <p v-if="validation.value.newPassword" class="error-feedback">
+              {{
+                $t(
+                  validation.value.newPassword.code,
+                  validation.value.newPassword.options
+                )
+              }}
+            </p>
+          </el-form-item>
+
+          <el-form-item :label="$t('user.label_confirmed_password')">
+            <el-input
+              type="password"
+              v-model="resetPasswordForm.value.confirmPassword"
+              :placeholder="$t('user.placeholder_confirmed_password')"
+            ></el-input>
+            <p v-if="validation.value.confirmPassword" class="error-feedback">
+              {{
+                $t(
+                  validation.value.confirmPassword.code,
+                  validation.value.confirmPassword.options
+                )
+              }}
+            </p>
+          </el-form-item>
+
+          <el-form-item class="confirm-button">
+            <el-button
+              :loading="loadingSaveButton.value"
+              class="btn btn-save"
+              @click="resetPassword"
+              >{{ $t("common.save") }}</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, reactive } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import Cookies from "js-cookie";
@@ -90,24 +192,32 @@ import { useRouter } from "vue-router";
 import { $PAGES, $globalLocale } from "@/utils/variables";
 import { i18n } from "@/utils/i18n";
 import { COOKIE_EXPIRE_TIME } from "@/constants/application";
+import Modal from "@/components/common/Modal.vue";
 
 export default {
   name: "Login",
-  components: { Form, Field, ErrorMessage },
+  components: { Form, Field, ErrorMessage, Modal },
   setup() {
     const { t } = useI18n();
     const router = useRouter();
     const authStore = useAuthStore();
-    const { loggedIn, handleLogin } = authStore;
+    const {
+      loggedIn,
+      loadingButton,
+      loadingSaveButton,
+      handleLogin,
+      validation,
+      getOTPCode,
+      resetNewPassword,
+      resetPasswordForm,
+      isShowModal,
+    } = authStore;
     const selectedLanguage = ref(Cookies.get("CurrentLanguage") || EN_LOCALE);
-    const showPasscode = ref(false);
-    const errors_message = ref({
-      login: "",
-    });
     const dataRequest = ref({
       username: "",
       password: "",
     });
+    
     const validate = computed(() => {
       return yup.object().shape({
         username: yup
@@ -133,6 +243,10 @@ export default {
       }
     });
 
+    onMounted(() => {
+      handleCloseModal();
+    });
+
     const changeLocale = (val) => {
       selectedLanguage.value = val;
       // Save the new language in cookies
@@ -143,22 +257,56 @@ export default {
       $globalLocale.update(val);
     };
 
+    const openResetPassModal = () => {
+      isShowModal.value = true;
+    };
+
     const handleSubmit = (user) => {
-      errors_message.value.login = "";
       handleLogin(user);
     };
 
+    const getOtpCode = () => {
+      getOTPCode(resetPasswordForm.value.email);
+    };
+
+    const resetPassword = async () => {
+      // Validate that passwords match and the form is complete
+      if (
+        resetPasswordForm.value.newPassword !==
+        resetPasswordForm.value.confirmPassword
+      ) {
+        validation.value.confirmPassword = {};
+        validation.value.confirmPassword.code = "E-CM-005";
+        validation.value.confirmPassword.options = {};
+        return;
+      }
+      await resetNewPassword();
+    };
+
+    const handleCloseModal = () => {
+      isShowModal.value = false;
+      validation.value = {};
+      resetPasswordForm.value = {};
+    }
+
     return {
       selectedLanguage,
+      resetPasswordForm,
       JA_LOCALE,
       EN_LOCALE,
-      showPasscode,
-      errors_message,
       dataRequest,
       validate,
+      validation,
       disabledSubmit,
       changeLocale,
       handleSubmit,
+      isShowModal,
+      openResetPassModal,
+      resetPassword,
+      getOtpCode,
+      loadingButton,
+      loadingSaveButton,
+      handleCloseModal
     };
   },
 };
@@ -174,6 +322,34 @@ export default {
 .login-logo {
   img {
     width: 60%;
+  }
+}
+
+.forgot-password {
+  display: flex;
+  justify-content: end;
+  a {
+    span {
+      color: #ec8448;
+      font-size: 0.85em;
+    }
+  }
+}
+
+.confirm-button {
+  margin-left: 80%;
+}
+
+.input-button-group {
+  width: 100%;
+  .el-input {
+    width: 80%;
+    margin-right: 10px; /* Space between input and button */
+  }
+
+  .el-button {
+    width: 15%;
+    white-space: nowrap; /* Ensure button text stays in one line */
   }
 }
 </style>

@@ -212,21 +212,25 @@ const mixins = {
       ]).format(formatString);
     },
     getDayOfMonth(type, offset = 0, formatString = undefined) {
-      let currentDate = moment().add(offset, 'months');
+      let currentDate = moment().add(offset, "months");
       switch (type) {
-        case 'first':
-          currentDate.startOf('month');
+        case "first":
+          currentDate.startOf("month");
           break;
-        case 'mid':
-          currentDate.startOf('month').add(Math.floor(currentDate.daysInMonth() / 2), 'days');
+        case "mid":
+          currentDate
+            .startOf("month")
+            .add(Math.floor(currentDate.daysInMonth() / 2), "days");
           break;
-        case 'last':
-          currentDate.endOf('month');
+        case "last":
+          currentDate.endOf("month");
           break;
         default:
-          throw new Error('Invalid type. Choose from "first", "mid", or "last".');
+          throw new Error(
+            'Invalid type. Choose from "first", "mid", or "last".'
+          );
       }
-      return this.showDateTime(currentDate.format('YYYY-MM-DD'), formatString);
+      return this.showDateTime(currentDate.format("YYYY-MM-DD"), formatString);
     },
     splitEndLine(data) {
       return data.split(/(?:\r\n|\r|\n|↵)/g);
@@ -495,7 +499,7 @@ const mixins = {
     splitThousandYen(number) {
       return number != undefined
         ? this.$t("common.money") +
-        String(number).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+            String(number).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
         : "";
     },
     splitThousandNumber(number) {
@@ -643,11 +647,11 @@ const mixins = {
       if (splitLength == 3) {
         return dataIndex == -1
           ? this[`${dataNameArr[0]}`][`${dataNameArr[1]}`][
-          `${dataNameArr.pop()}`
-          ]
+              `${dataNameArr.pop()}`
+            ]
           : this[`${dataNameArr[0]}`][`${dataNameArr[1]}`][dataIndex][
-          `${dataNameArr.pop()}`
-          ];
+              `${dataNameArr.pop()}`
+            ];
         //Default with 2 level of split name
       } else {
         return dataIndex == -1
@@ -715,8 +719,8 @@ const mixins = {
             data == 0
               ? 0
               : String(parseFloat(data).toFixed(2))
-                .replace(/^(?!00[^0])0/, "")
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  .replace(/^(?!00[^0])0/, "")
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           splitDataName
             ? this.setDataSplitNameCommon(dataName, returnStr, index)
             : (this[`${dataName}`][index] = returnStr);
@@ -727,9 +731,9 @@ const mixins = {
             data == 0
               ? 0
               : data
-                .replace(/(\..*?)\..*/g, "$1")
-                .replace(/^(?!00[^0])0/, "")
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  .replace(/(\..*?)\..*/g, "$1")
+                  .replace(/^(?!00[^0])0/, "")
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           splitDataName
             ? this.setDataSplitNameCommon(dataName, returnStr, index)
             : (this[`${dataName}`][index] = returnStr);
@@ -751,8 +755,8 @@ const mixins = {
           data == 0
             ? 0
             : String(parseFloat(data).toFixed(2))
-              .replace(/^(?!00[^0])0/, "")
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                .replace(/^(?!00[^0])0/, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         splitDataName
           ? this.setDataSplitNameCommon(dataName, returnStr)
           : (this[`${dataName}`] = returnStr);
@@ -763,9 +767,9 @@ const mixins = {
           data == 0
             ? 0
             : data
-              .replace(/(\..*?)\..*/g, "$1")
-              .replace(/^(?!00[^0])0/, "")
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                .replace(/(\..*?)\..*/g, "$1")
+                .replace(/^(?!00[^0])0/, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
         splitDataName
           ? this.setDataSplitNameCommon(dataName, returnStr)
@@ -874,7 +878,7 @@ const mixins = {
 
     formatInputCurrency(value, isEmpty = false, withoutComma = false) {
       if (!value) {
-        return isEmpty ? '' : 0;
+        return isEmpty ? "" : 0;
       }
       let stringValue = String(value).replace(/[^0-9.+-]/g, "");
       if (withoutComma) return Math.round(parseFloat(stringValue) * 100) / 100;
@@ -899,7 +903,7 @@ const mixins = {
       const dataTransfer = new DataTransfer();
       dataTransfer.items.add(file);
 
-      return fileInput.files = dataTransfer.files;
+      return (fileInput.files = dataTransfer.files);
     },
 
     handleChangeNumber(e, max = 10) {
@@ -913,7 +917,47 @@ const mixins = {
       }
 
       return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-    }
+    },
+    handleErrorResponse(error) {
+      const formattedErrors = {};
+      // Iterate over each error field in the response
+      for (const field in error) {
+        if (error.hasOwnProperty(field)) {
+          const errorValue = error[field];
+
+          // Check if the error value is just a simple code (e.g., "E-CM-004")
+          if (!errorValue.includes(",")) {
+            formattedErrors[field] = {
+              code: errorValue,
+              options: {}, // Store the error code directly
+            };
+          } else {
+            // Split the string by comma and trim spaces for more complex errors
+            const parts = errorValue.split(",").map((part) => part.trim());
+
+            // Extract the code (first part) and options (remaining parts)
+            const code = parts[0];
+            const options = {};
+
+            // Process the remaining parts to extract key-value pairs (like min: 8)
+            parts.slice(1).forEach((option) => {
+              const [key, value] = option.split(":").map((part) => part.trim());
+              if (key && value) {
+                options[key] = isNaN(value) ? value : Number(value); // Convert numeric strings to numbers
+              }
+            });
+
+            // Construct the final structure
+            formattedErrors[field] = {
+              code: code.split(":")[1], // Extract the error code part
+              ...(Object.keys(options).length > 0 && { options }), // Add options only if they exist
+            };
+          }
+        }
+      }
+
+      return formattedErrors;
+    },
   },
 };
 

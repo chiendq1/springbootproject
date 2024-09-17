@@ -1,5 +1,6 @@
 {
   "common": {
+    "forgot_password": "Forgot password",
     "change_password": "Change Password",
     "invoice_attachment": "Invoice Attachment",
     "contract": "Contract",
@@ -13,10 +14,6 @@
     "end_date": "End Date",
     "old": "Old",
     "new": "New",
-    "quarter_1": "Quarter 1",
-    "quarter_2": "Quarter 2",
-    "quarter_3": "Quarter 3",
-    "quarter_4": "Quarter 4",
     "first_half_year": "First Half Year",
     "second_half_year": "Second Half Year",
     "full_month_of_year": "Full month of year",
@@ -137,7 +134,8 @@
     "confirm_placeholder": "Please enter confirm text here",
     "export": "Export",
     "load": "Load",
-    "reload": "Reload"
+    "reload": "Reload",
+    "get_otp": "Get OTP"
   },
   "permission": {
     "menu": "Menus",
@@ -188,7 +186,11 @@
     "message": {
       "login_fail": "Login failed",
       "update_success": "Update Successfully",
-      "update_failed": "Update Failed"
+      "update_failed": "Update Failed",
+      "get_otp_success": "OTP code has been sent to your email",
+      "get_otp_failed": "Sending OTP code failed",
+      "reset_password_success": "Reset password successfully",
+      "reset_password_failed": "Reset password failed"
     }
   },
   "contract": {
@@ -352,16 +354,6 @@
     "all_department": "All Department",
     "filter_role": "Filter Role",
     "all_role": "All Role",
-    "create": {
-      "title": "Create User",
-      "edit": "Edit User",
-      "input_full_name": "Enter Full Name",
-      "input_email": "Enter User Email",
-      "select_sale_department": "Sale Department",
-      "select_prd_department": "Production Department",
-      "select_role": "Select Role",
-      "save": "Save"
-    },
     "sale_department_type": "Sale Department",
     "prd_department_type": "Production Department",
     "text_create": "Create",
@@ -391,7 +383,15 @@
     "label_fullname": "Full Name",
     "label_email": "Email",
     "label_phone": "Phone Number",
-    "location": "Location",
+    "label_location": "Location",
+    "label_old_password": "Old Password",
+    "label_new_password": "New Password",
+    "label_confirmed_password": "Confirm Password",
+    "label_otp": "OTP Code",
+    "placeholder_otp": "Please enter OTP Code",
+    "placeholder_old_password": "Enter old password",
+    "placeholder_new_password": "Enter new password",
+    "placeholder_confirmed_password": "Enter confirm password",
     "placeholder_username": "Please enter username",
     "placeholder_fullname": "Please enter full name",
     "placeholder_email": "Please enter email",
@@ -399,6 +399,15 @@
     "placeholder_location": "Please enter location"
   },
   "E-CM-001": "Login Failed",
+  "E-CM-002": "Required",
+  "E-CM-003": "Field must be less than {max} characters",
+  "E-CM-004": "Invalid email",
+  "E-CM-005": "The confirm password and new password must match",
+  "E-CM-006": "Invalid Phone Number",
+  "E-CM-007": "Email already existed",
+  "E-CM-008": "Email does not exist",
+  "E-CM-009": "Phone number already existed",
+  "E-PW-001": "Password must be between {min} and {max} characters",
   "E-LO-700": "Limit must be a number",
   "E-LO-701": "Limit must be greater than or equal to 1",
   "E-LO-702": "Offset must be a number",
@@ -410,9 +419,6 @@
   "E-CM-400": "Opps! Something went wrong",
   "E-CM-500": "Opps! Something went wrong",
   "E-CM-401": "Username or password is incorrect",
-  "E-CM-004": "Please input data.",
-  "E-CM-006": "Please input title.",
-  "E-CM-005": "Business Error. Please contact Admin for more detail.",
   "E-CU-008": "{to} must be after {from}",
   "E-CM-100": "Please enter {item}.",
   "E-CU-011": "Video file is not valid",
@@ -434,7 +440,7 @@
   "E-CU-065": "I sent an email to reset my password",
   "E-CU-115": "The new password is required.",
   "E-CU-116": "The confirm password is required.",
-  "E-CU-117": "The confirm password and new password must match. ",
+  "E-CU-117": "The confirm password and new password must match",
   "Q-CU-001": "Are you sure you want to approve the selected application?",
   "I-CM-102": "Delete was successful.",
   "E-CU-057": "Must have at least one country in the list",

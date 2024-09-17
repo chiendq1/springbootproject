@@ -39,6 +39,14 @@
                 v-model="userDetails.value.fullName"
                 :placeholder="$t('user.placeholder_fullname')"
               ></el-input>
+              <p v-if="validation.value.fullName" class="error-feedback">
+                {{
+                  $t(
+                    validation.value.fullName.code,
+                    validation.value.fullName.options
+                  )
+                }}
+              </p>
             </el-form-item>
 
             <el-form-item :label="$t('user.label_email')">
@@ -46,6 +54,17 @@
                 v-model="userDetails.value.email"
                 :placeholder="$t('user.placeholder_email')"
               ></el-input>
+              <p
+                v-if="validation.value.profileUpdateRequest"
+                class="error-feedback"
+              >
+                {{
+                  $t(
+                    validation.value.profileUpdateRequest.code,
+                    validation.value.profileUpdateRequest.options
+                  )
+                }}
+              </p>
             </el-form-item>
 
             <el-form-item :label="$t('user.label_phone')">
@@ -53,6 +72,17 @@
                 v-model="userDetails.value.phoneNumber"
                 :placeholder="$t('user.placeholder_phone')"
               ></el-input>
+              <p
+                v-if="validation.value.profileUpdateRequest"
+                class="error-feedback"
+              >
+                {{
+                  $t(
+                    validation.value.profileUpdateRequest.code,
+                    validation.value.profileUpdateRequest.options
+                  )
+                }}
+              </p>
             </el-form-item>
 
             <el-form-item :label="$t('user.label_location')">
@@ -60,6 +90,14 @@
                 v-model="userDetails.value.location"
                 :placeholder="$t('user.placeholder_location')"
               ></el-input>
+              <p v-if="validation.value.location" class="error-feedback">
+                {{
+                  $t(
+                    validation.value.location.code,
+                    validation.value.location.options
+                  )
+                }}
+              </p>
             </el-form-item>
 
             <el-form-item>
@@ -77,42 +115,61 @@
 
     <!-- Modal for Change Password -->
     <Modal
-      :show="isPasswordModalVisible"
+      :show="isPasswordModalVisible.value"
       :width="'50%'"
-      :isShowFooter=false
-      @close="isPasswordModalVisible = false"
+      :isShowFooter="false"
+      @close="handleCloseModal"
       modal-title="Change Password"
     >
       <template #body>
-        <el-form :model="passwordForm" label-width="25%">
+        <el-form :model="passwordForm.value" label-width="25%">
           <el-form-item :label="$t('user.label_old_password')">
             <el-input
               type="password"
-              v-model="passwordForm.oldPassword"
+              v-model="passwordForm.value.oldPassword"
               :placeholder="$t('user.placeholder_old_password')"
             ></el-input>
+            <p v-if="validation.value.oldPassword" class="error-feedback">
+              {{
+                $t(
+                  validation.value.oldPassword.code,
+                  validation.value.oldPassword.options
+                )
+              }}
+            </p>
           </el-form-item>
 
           <el-form-item :label="$t('user.label_new_password')">
             <el-input
               type="password"
-              v-model="passwordForm.newPassword"
+              v-model="passwordForm.value.newPassword"
               :placeholder="$t('user.placeholder_new_password')"
             ></el-input>
+            <p v-if="validation.value.newPassword" class="error-feedback">
+              {{
+                $t(
+                  validation.value.newPassword.code,
+                  validation.value.newPassword.options
+                )
+              }}
+            </p>
           </el-form-item>
 
           <el-form-item :label="$t('user.label_confirmed_password')">
             <el-input
               type="password"
-              v-model="passwordForm.confirmPassword"
+              v-model="passwordForm.value.confirmPassword"
               :placeholder="$t('user.placeholder_confirmed_password')"
             ></el-input>
+            <p v-if="validation.value.confirmPassword" class="error-feedback">
+              {{ $t(validation.value.confirmPassword.code) }}
+            </p>
           </el-form-item>
 
           <el-form-item class="confirm-button">
             <el-button class="btn btn-save" @click="changePassword">{{
-                $t("common.save")
-              }}</el-button>
+              $t("common.save")
+            }}</el-button>
           </el-form-item>
         </el-form>
       </template>
@@ -124,7 +181,6 @@
 import { useAuthStore } from "@/store/auth.js";
 import { useUserStore } from "@/store/users.js";
 import Modal from "@/components/common/Modal.vue";
-import { ref } from "vue";
 
 export default {
   name: "UserProfile",
@@ -135,19 +191,15 @@ export default {
     const authStore = useAuthStore();
     const userStore = useUserStore();
     const { userDetails } = authStore;
-    const { updateUserProfile, getUserProfile } = userStore;
+    const {
+      updateUserProfile,
+      getUserProfile,
+      validation,
+      changeUserPassword,
+      isPasswordModalVisible,
+      passwordForm,
+    } = userStore;
 
-    // State to control the password modal visibility
-    const isPasswordModalVisible = ref(false);
-
-    // Password form model
-    const passwordForm = ref({
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-
-    // Function to handle opening the modal
     const openChangePasswordModal = () => {
       isPasswordModalVisible.value = true;
     };
@@ -157,13 +209,13 @@ export default {
       if (
         passwordForm.value.newPassword !== passwordForm.value.confirmPassword
       ) {
-        // Show an error notification about password mismatch
-        console.error("Passwords do not match");
+        validation.value.confirmPassword = {
+          code: "",
+        };
+        validation.value.confirmPassword.code = "E-CM-005";
         return;
       }
-      // Call an API or perform action to change the password
-      console.log("Changing password", passwordForm.value);
-      isPasswordModalVisible.value = false; // Close modal after submission
+      changeUserPassword(passwordForm.value);
     };
 
     // Function to handle form submission
@@ -171,16 +223,25 @@ export default {
       if (isUpdate) {
         updateUserProfile();
       } else {
+        validation.value = {};
         getUserProfile();
       }
     };
 
+    const handleCloseModal = () => {
+      passwordForm.value = {};
+      validation.value = {};
+      isPasswordModalVisible.value = false;
+    }
+
     return {
       userDetails,
-      onSubmit,
-      isPasswordModalVisible,
-      openChangePasswordModal,
       passwordForm,
+      isPasswordModalVisible,
+      validation,
+      onSubmit,
+      handleCloseModal,
+      openChangePasswordModal,
       changePassword,
     };
   },
