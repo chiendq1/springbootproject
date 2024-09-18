@@ -1,15 +1,28 @@
 import { defineStore } from "pinia";
 import { mixinMethods, $services } from "@/utils/variables";
-import { useAuthStore } from "@/store/auth.js";
 import { useI18n } from "vue-i18n";
 import { reactive } from "vue";
 
 export const useUserStore = defineStore("user", () => {
-  const authStore = useAuthStore();
   const { t } = useI18n();
-  const { userDetails } = authStore;
   const validation = reactive({ value: {} });
+  const listUsers = reactive({ value: [] });
+  const totalItems = reactive({value: 0});
+  const currentPage = reactive({value: 0});
+  const showModalConfirm = reactive({ value: false });
+  const isShowUserModal = reactive({ value: false });
   const isPasswordModalVisible = reactive({ value: false });
+  const userDetails = reactive({
+    value: {
+      id: "",
+      username: "",
+      email: "",
+      fullName: "",
+      phoneNumber: "",
+      location: "",
+      highestRole: "",
+    },
+  });
   const passwordForm = reactive({
     value: {
       oldPassword: "",
@@ -18,10 +31,32 @@ export const useUserStore = defineStore("user", () => {
     },
   });
 
-  const getUserProfile = async () => {
+  const getListUsers = async (data) => {
+    mixinMethods.startLoading();
+    await $services.UserAPI.index(
+      data,
+      (response) => {
+        if (currentPage.value === 0) {
+          listUsers.value = response.data.users;
+        } else {
+          listUsers.value = [...listUsers.value, ...response.data.users];
+        }
+        
+        totalItems.value = response.data.totalItems;
+        currentPage.value = response.data.currentPage;
+  
+        mixinMethods.endLoading();
+      },
+      () => {
+        mixinMethods.endLoading();
+      }
+    );
+  };
+
+  const getUserProfile = async (userId) => {
     mixinMethods.startLoading();
     await $services.UserAPI.show(
-      userDetails.value.id,
+      userId,
       {},
       (response) => {
         userDetails.value = response.data;
@@ -33,21 +68,25 @@ export const useUserStore = defineStore("user", () => {
     );
   };
 
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-  const updateUserProfile = async () => {
+  const updateUserProfile = async (userId) => {
     mixinMethods.startLoading();
-    // await delay(500); // Add a delay of 500 milliseconds
 
     await $services.UserAPI.update(
-      userDetails.value.id,
+      userId,
       userDetails.value,
-      async (response) => {
+      (response) => {
         userDetails.value = response.data;
         validation.value = {};
-        // await delay(300); // Optional: Delay before ending loading and showing notification
-        await mixinMethods.notifySuccess(t("response.message.update_success"));
-        await mixinMethods.endLoading();
+        isShowUserModal.value = false;
+        if (listUsers.value && listUsers.value.length > 0) {
+          listUsers.value.forEach((user, index) => {
+            if (user.id == userId) {
+              listUsers.value[index] = userDetails.value;
+            }
+          });
+        }
+        mixinMethods.notifySuccess(t("response.message.update_success"));
+        mixinMethods.endLoading();
       },
       (error) => {
         validation.value = mixinMethods.handleErrorResponse(error.responseCode);
@@ -79,11 +118,72 @@ export const useUserStore = defineStore("user", () => {
     );
   };
 
+  const clearUserDetailsAttr = () => {
+    userDetails.value.id = "";
+    userDetails.value.username = "";
+    userDetails.value.email = "";
+    userDetails.value.fullName = "";
+    userDetails.value.phoneNumber = "";
+    userDetails.value.location = "";
+    userDetails.value.highestRole = "";
+  };
+
+  const createNewUser = async () => {
+    mixinMethods.startLoading();
+
+    await $services.UserAPI.store(
+      userDetails.value,
+      (response) => {
+        listUsers.value.push(response.data);
+        clearUserDetailsAttr();
+        isShowUserModal.value = false;
+        mixinMethods.notifySuccess(t("response.message.create_user_success"));
+        mixinMethods.endLoading();
+      },
+      (error) => {
+        validation.value = mixinMethods.handleErrorResponse(error.responseCode);
+        mixinMethods.notifyError(t("response.message.create_user_failed"));
+        mixinMethods.endLoading();
+      }
+    );
+  };
+
+  const deleteUser = async (userId) => {
+    mixinMethods.startLoading();
+    await $services.UserAPI.remove(
+      userId,
+      {},
+      (response) => {
+        validation.value = {};
+        showModalConfirm.value = false;
+        listUsers.value = listUsers.value.filter(user => user.id !== userId);
+        mixinMethods.notifySuccess(
+          t("response.message.delete_user_success")
+        );
+        mixinMethods.endLoading();
+      },
+      (error) => {
+        showModalConfirm.value = false;
+        mixinMethods.notifyError(t("response.message.delete_user_failed"));
+        mixinMethods.endLoading();
+      }
+    );
+  };
+
   return {
     userDetails,
     validation,
-    isPasswordModalVisible,
+    showModalConfirm,
     passwordForm,
+    listUsers,
+    isPasswordModalVisible,
+    isShowUserModal,
+    totalItems,
+    currentPage,
+    deleteUser,
+    createNewUser,
+    clearUserDetailsAttr,
+    getListUsers,
     getUserProfile,
     updateUserProfile,
     changeUserPassword,

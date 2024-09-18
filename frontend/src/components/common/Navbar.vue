@@ -15,7 +15,7 @@
                 alt="logo"
                 class="avatar__img"
               />
-              {{ userDetails.value.username }}
+              {{ username }}
             </template>
             <el-menu-item @click="logout()" index="1-1">
               {{ $t("common.logout") }}
@@ -57,8 +57,10 @@ export default {
   setup() {
     const selectedLanguage = ref(Cookies.get("CurrentLanguage") || EN_LOCALE);
     const authStore = useAuthStore();
-    const { handleLogout, userDetails } = authStore;
+    const { handleLogout } = authStore;
     const router = useRouter();
+    const username = ref(Cookies.get("username"));
+    const role = ref(Cookies.get("highest_role"));
 
     const changeLocale = (val) => {
       selectedLanguage.value = val;
@@ -77,11 +79,12 @@ export default {
 
     return {
       selectedLanguage,
-      changeLocale,
-      logout,
-      userDetails,
       JA_LOCALE,
       EN_LOCALE,
+      username,
+      role,
+      changeLocale,
+      logout,
     };
   },
 };

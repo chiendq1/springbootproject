@@ -6,7 +6,7 @@ const API_CODE = {
   API_004: '/auth/refreshtoken',
 
   //Users
-  API_USER_001: '/users/',
+  API_USER_001: '/users',
   API_USER_002: '/users/password/'
 };
 

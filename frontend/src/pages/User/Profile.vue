@@ -13,7 +13,7 @@
           <div class="user-info">
             <h3>{{ userDetails.value.username }}</h3>
             <p>
-              {{ $t("user.role") }}: {{ userDetails.value.roles[0].roleName }}
+              {{ $t("user.role") }}: {{ userDetails.value.highestRole }}
             </p>
           </div>
           <div class="user-actions">
@@ -178,9 +178,10 @@
 </template>
 
 <script>
-import { useAuthStore } from "@/store/auth.js";
 import { useUserStore } from "@/store/users.js";
 import Modal from "@/components/common/Modal.vue";
+import Cookies from "js-cookie";
+import { onMounted, ref } from "vue";
 
 export default {
   name: "UserProfile",
@@ -188,9 +189,7 @@ export default {
     Modal,
   },
   setup() {
-    const authStore = useAuthStore();
     const userStore = useUserStore();
-    const { userDetails } = authStore;
     const {
       updateUserProfile,
       getUserProfile,
@@ -198,7 +197,13 @@ export default {
       changeUserPassword,
       isPasswordModalVisible,
       passwordForm,
+      userDetails,
     } = userStore;
+    const userId = ref(Cookies.get("user_id"));
+
+    onMounted(() => {
+      getUserProfile(userId.value);
+    })
 
     const openChangePasswordModal = () => {
       isPasswordModalVisible.value = true;
@@ -221,10 +226,10 @@ export default {
     // Function to handle form submission
     const onSubmit = (isUpdate = true) => {
       if (isUpdate) {
-        updateUserProfile();
+        updateUserProfile(userId.value);
       } else {
         validation.value = {};
-        getUserProfile();
+        getUserProfile(userId.value);
       }
     };
 

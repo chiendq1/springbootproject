@@ -1,11 +1,16 @@
 import { createWebHistory, createRouter } from "vue-router";
-import PAGES from '@/utils/pages';
+import { USER_ROUTE } from "@/constants/route-name.js";
+import PAGES from "@/utils/pages";
+import { ADMIN } from "@/constants/roles.js";
 import Cookies from "js-cookie";
 
 // import pages
-import Login from '@/pages/Login.vue';
-import Home from '@/pages/Home.vue';
-import UserProfile from '@/pages/User/Profile.vue';
+import Login from "@/pages/Login.vue";
+import Home from "@/pages/Home.vue";
+import UserProfile from "@/pages/User/Profile.vue";
+import User from "@/pages/User/Index.vue";
+import UserList from "@/pages/User/UserList.vue";
+import Forbidden from '@/pages/Forbidden.vue'
 
 const routes = [
   {
@@ -16,19 +21,36 @@ const routes = [
     path: PAGES.HOME,
     component: Home,
     meta: {
-      middleware: [
-        'authentication'
-      ],
-    }
+      middleware: ["authentication"],
+    },
   },
   {
     path: PAGES.PROFILE,
     component: UserProfile,
     meta: {
-      middleware: [
-        'authentication'
-      ],
-    }
+      middleware: ["authentication"],
+    },
+  },
+  {
+    path: PAGES.FORBIDDEN,
+    component: Forbidden,
+    meta: {
+      middleware: ["authentication"],
+    },
+  },
+  {
+    path: PAGES.USERMANAGEMENT,
+    component: User,
+    meta: {
+      middleware: ["authentication", "admin-role"],
+    },
+    children: [
+      {
+        path: "",
+        name: USER_ROUTE.LIST,
+        component: UserList,
+      },
+    ],
   },
 ];
 
@@ -40,12 +62,17 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   window.scrollTo(0, 0);
 
-  const { middleware } = to.meta || {};  // Safely access meta.middleware
+  const { middleware } = to.meta || {}; // Safely access meta.middleware
   const token = Cookies.get("access_token");
+  const highest_role = Cookies.get("highest_role");
 
   // Check if middleware exists and includes 'authentication'
   if (middleware && middleware.includes("authentication") && !token) {
     return next(PAGES.LOGIN);
+  }
+
+  if (middleware && middleware.includes("admin-role") && highest_role !== ADMIN) {
+    return next(PAGES.FORBIDDEN);
   }
 
   next();

@@ -1,4 +1,4 @@
-.contract {
+.user {
   padding: 0 32px 0;
   height: 100%;
 
@@ -143,8 +143,8 @@
       opacity: 0;
 
       &.active {
-        top: 110%;
-        transition: .3s all;
+        // top: 110%;
+        // transition: .3s all;
         visibility: visible;
         opacity: 1;
       }
@@ -193,7 +193,7 @@
       }
 
       .item {
-        width: calc(100% / 2 - 16px);
+        width: calc(50% - 16px);
       }
 
       .el-form-item {
@@ -268,7 +268,7 @@
       }
     }
 
-    .contract {
+    .user {
       &-search {
         padding: 14px 11px;
         display: flex;
@@ -416,6 +416,10 @@
 }
 
 .loadmore {
+  cursor: pointer;
+  &:hover{
+    color: #657698;
+  }
   &_contract {
     .loadmore__txt {
       padding: 0;

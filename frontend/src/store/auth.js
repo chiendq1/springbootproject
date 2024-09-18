@@ -11,17 +11,6 @@ export const useAuthStore = defineStore(
     const { t } = useI18n();
     const loggedIn = reactive({ value: false });
     const isShowModal = reactive({ value: false });
-    const userDetails = reactive({
-      value: {
-        id: "",
-        username: "",
-        email: "",
-        fullName: "", 
-        phoneNumber: "",
-        location: "",
-        roles: [],
-      },
-    });
     const resetPasswordForm = reactive({
       value: {
         email: "",
@@ -42,7 +31,18 @@ export const useAuthStore = defineStore(
           if (response.data) {
             const access_token = response.data.token;
             const refresh_token = response.data.refreshToken;
-            userDetails.value = response.data.user;
+            const highestRole = response.data.user.highestRole;
+            const userId = response.data.user.id;
+            const userName = response.data.user.username;
+            Cookies.set("user_id", userId, {
+              expires: parseInt(COOKIE_EXPIRE_TIME),
+            });
+            Cookies.set("username", userName, {
+              expires: parseInt(COOKIE_EXPIRE_TIME),
+            });
+            Cookies.set("highest_role", highestRole, {
+              expires: parseInt(COOKIE_EXPIRE_TIME),
+            });
             Cookies.set("access_token", access_token, {
               expires: parseInt(COOKIE_EXPIRE_TIME),
             });
@@ -67,6 +67,7 @@ export const useAuthStore = defineStore(
 
     const handleLogout = () => {
       Cookies.remove("access_token");
+      Cookies.remove("highest_role");
       loggedIn.value = false;
     };
 
@@ -127,7 +128,6 @@ export const useAuthStore = defineStore(
     return {
       loggedIn,
       validation,
-      userDetails,
       loadingButton,
       resetPasswordForm,
       loadingSaveButton,
@@ -138,5 +138,5 @@ export const useAuthStore = defineStore(
       resetNewPassword,
     };
   },
-  { persist: true }
+  {persist: true}
 );

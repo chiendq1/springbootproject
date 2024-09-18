@@ -115,6 +115,7 @@ Sidebar
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
     a {
       display: inline-block;
     }
@@ -130,9 +131,12 @@ Sidebar
     .logo_zoom_out {
       display: none;
       height: 33px;
+      width: 33px;
     }
 
     .logo_zoom_in {
+      width: 60px;
+      height: 30px;
       display: block;
     }
   }

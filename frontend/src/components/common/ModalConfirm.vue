@@ -104,13 +104,13 @@ export default {
     const confirmAction = () => {
       if (props.isConfirmByText) {
         let inputConfirmText = inputConfirm.value.trim().toLowerCase();
-        if (inputConfirmText !== props.confirmText) {
-          validation.value = t("E-CT-8090");
+        if (inputConfirmText !== props.confirmText.trim().toLowerCase()) {
+          validation.value = t("E-CM-014");
 
           return;
         }
 
-        emit("confirmAction", inputConfirmText);
+        emit("confirmAction");
         inputConfirm.value = "";
         validation.value = "";
 

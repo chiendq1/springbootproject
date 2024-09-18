@@ -921,39 +921,45 @@ const mixins = {
     handleErrorResponse(error) {
       const formattedErrors = {};
       // Iterate over each error field in the response
-      for (const field in error) {
-        if (error.hasOwnProperty(field)) {
-          const errorValue = error[field];
+      try {
+        for (const field in error) {
+          if (error.hasOwnProperty(field) && field != "success") {
+            const errorValue = error[field];
 
-          // Check if the error value is just a simple code (e.g., "E-CM-004")
-          if (!errorValue.includes(",")) {
-            formattedErrors[field] = {
-              code: errorValue,
-              options: {}, // Store the error code directly
-            };
-          } else {
-            // Split the string by comma and trim spaces for more complex errors
-            const parts = errorValue.split(",").map((part) => part.trim());
+            // Check if the error value is just a simple code (e.g., "E-CM-004")
+            if (!errorValue.includes(",")) {
+              formattedErrors[field] = {
+                code: errorValue,
+                options: {}, // Store the error code directly
+              };
+            } else {
+              // Split the string by comma and trim spaces for more complex errors
+              const parts = errorValue.split(",").map((part) => part.trim());
 
-            // Extract the code (first part) and options (remaining parts)
-            const code = parts[0];
-            const options = {};
+              // Extract the code (first part) and options (remaining parts)
+              const code = parts[0];
+              const options = {};
 
-            // Process the remaining parts to extract key-value pairs (like min: 8)
-            parts.slice(1).forEach((option) => {
-              const [key, value] = option.split(":").map((part) => part.trim());
-              if (key && value) {
-                options[key] = isNaN(value) ? value : Number(value); // Convert numeric strings to numbers
-              }
-            });
+              // Process the remaining parts to extract key-value pairs (like min: 8)
+              parts.slice(1).forEach((option) => {
+                const [key, value] = option
+                  .split(":")
+                  .map((part) => part.trim());
+                if (key && value) {
+                  options[key] = isNaN(value) ? value : Number(value); // Convert numeric strings to numbers
+                }
+              });
 
-            // Construct the final structure
-            formattedErrors[field] = {
-              code: code.split(":")[1], // Extract the error code part
-              ...(Object.keys(options).length > 0 && { options }), // Add options only if they exist
-            };
+              // Construct the final structure
+              formattedErrors[field] = {
+                code: code.split(":")[1], // Extract the error code part
+                ...(Object.keys(options).length > 0 && { options }), // Add options only if they exist
+              };
+            }
           }
         }
+      } catch (error) {
+        return formattedErrors;
       }
 
       return formattedErrors;

@@ -1,5 +1,6 @@
 {
   "common": {
+    "other": "Others",
     "forgot_password": "Forgot password",
     "change_password": "Change Password",
     "invoice_attachment": "Invoice Attachment",
@@ -111,7 +112,7 @@
     "comment": "Comment by",
     "outgroup": "Out group",
     "placeholder_chat": "Write a message...",
-    "text_vietis": "Copyright 2023 by VietIS",
+    "text_vmo": "Copyright 2024 by VMO",
     "contract_status": {
       "new": "New",
       "in_progress": "Inprogress",
@@ -163,7 +164,10 @@
     "management": "Role Management",
     "edit": "Edit Role",
     "alert_delete": "If this role is deleted, all related important information will be deleted, continue?",
-    "status": "Status"
+    "status": "Status",
+    "admin": "Admin",
+    "landlord": "Landlord",
+    "tenant": "Tenant"
   },
   "response": {
     "code": {
@@ -192,7 +196,11 @@
       "reset_password_success": "Reset password successfully",
       "reset_password_failed": "Reset password failed",
       "change_password_success": "Change password successfully",
-      "change_password_failed": "Change password failed"
+      "change_password_failed": "Change password failed",
+      "create_user_success": "Create user successfully",
+      "create_user_failed": "Create user failed",
+      "delete_user_failed": "Delete user failed",
+      "delete_user_success": "Create user success"
     }
   },
   "contract": {
@@ -338,6 +346,7 @@
   "user": {
     "infor": "Personal Information",
     "title": "Users",
+    "add_new": "Add New User",
     "no": "No.",
     "user_name": "Username",
     "user_full_name": "Full Name",
@@ -345,8 +354,10 @@
     "department_type": "Type Of Department",
     "department_name": "Department",
     "role": "Role",
+    "phone": "Phone Number",
     "actions": "Actions",
     "no_data": "No Data",
+    "location": "Location",
     "load_more": "Load more",
     "search": "Search",
     "clear": "Clear",
@@ -381,6 +392,21 @@
       "error_delete_user": "Unable to delete user due to system error. Please try again later",
       "error_server_create_update_user": "Unable to create or update user due to system error. Please try again later"
     },
+    "table": {
+      "header": {
+        "username": "User Name",
+        "fullname": "Full Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "location": "Location",
+        "role": "Role",
+        "action": "Action"
+      }
+    },
+    "modal_confirm": {
+      "message_delete": "WARNING: You will delete user. Please type 'Delete' to continue.",
+      "title_delete": "Delete User"
+    },
     "label_username": "Username",
     "label_fullname": "Full Name",
     "label_email": "Email",
@@ -400,6 +426,15 @@
     "placeholder_phone": "Please enter phone number",
     "placeholder_location": "Please enter location"
   },
+  "side_bar": {
+    "label": {
+      "user": "Users",
+      "room": "Rooms",
+      "profile": "Profile",
+      "contract": "Contracts",
+      "bill": "Bills"
+    }
+  },
   "E-CM-001": "Login Failed",
   "E-CM-002": "Required",
   "E-CM-003": "Field must be less than {max} characters",
@@ -410,6 +445,10 @@
   "E-CM-008": "Email does not exist",
   "E-CM-009": "Phone number already existed",
   "E-CM-010": "Password is invalid",
+  "E-CM-011": "Username is invalid",
+  "E-CM-012": "Role is invalid",
+  "E-CM-013": "Username is existed",
+  "E-CM-014": "Please enter correctly confirm text",
   "E-PW-001": "Password must be between {min} and {max} characters",
   "E-LO-700": "Limit must be a number",
   "E-LO-701": "Limit must be greater than or equal to 1",

@@ -35,9 +35,7 @@
                 @mouseover="addHoverClass"
                 @mouseleave="removeHoverClass"
               >
-                <!-- <Sidebar /> -->
-                 <div>
-                 </div>
+                <Sidebar />
               </nav>
               <div @click="handleOpenClose" class="bg-menu"></div>
             </div>
@@ -63,13 +61,13 @@
 <script>
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import Navbar from "@/components/common/Navbar.vue";
-// import Sidebar from "@/components/common/Sidebar";
+import Sidebar from "@/components/common/Sidebar.vue";
 import { useAuthStore } from "@/store/auth.js";
 import { useRouter } from "vue-router";
 import { $PAGES } from "@/utils/variables";
 
 export default {
-  components: { Navbar },
+  components: { Navbar, Sidebar },
   setup() {
     const isMenu = ref(false);
     const isHovered = ref(false);
@@ -113,9 +111,6 @@ export default {
     };
 
     onMounted(() => {
-      if(!loggedIn.value) {
-        router.push($PAGES.LOGIN);
-      }
       handleResize();
       window.addEventListener("resize", handleResize);
     });

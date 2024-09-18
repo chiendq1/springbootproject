@@ -24,6 +24,7 @@ export const MAX_CHARACTER = 255;
 export const MAX_SHORT_NUMBER = 20;
 export const MAX_LONG_TEXT = 32000;
 export const MAX_DESCRIPTION = 2000;
+export const TEXT_CONFIRM_DELETE="Delete"
 
 export const IMPORT_VALID_EXTENSIONS = [".xlsx"];
 export const PDF_CONTENT_TYPE = /^application\/pdf/;

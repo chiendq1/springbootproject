@@ -6,11 +6,5 @@ export const authMiddleware = (to, from, next) => {
     loggedIn
   } = authStore;
 
-  if (!loggedIn) {
-    next('/login');
-
-    return false;
-  }
-
   next();
 };
