@@ -3,11 +3,15 @@ package org.example.springbootproject.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.HashSet;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 @Setter
 @Getter
 public class User {
@@ -33,6 +37,9 @@ public class User {
 
     @Column(name = "phone_number", unique = true, nullable = false)
     private String phoneNumber;
+
+    @Column(name = "deleted")
+    private boolean deleted = Boolean.FALSE;
 
     // One User can own multiple Rooms
     @OneToMany(mappedBy = "landlord", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -17,4 +17,6 @@ public @interface FieldExist {
     Class<? extends Payload>[] payload() default {};
 
     String fieldName() default "";
+
+    boolean duplicate() default false;
 }

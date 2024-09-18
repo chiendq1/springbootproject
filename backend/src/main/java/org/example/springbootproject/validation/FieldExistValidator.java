@@ -11,15 +11,20 @@ public class FieldExistValidator implements ConstraintValidator<FieldExist, Stri
     private UserService userService;
 
     private String fieldName;
+    private boolean duplicated;
 
     @Override
     public void initialize(FieldExist constraintAnnotation) {
         this.fieldName = constraintAnnotation.fieldName();
+        this.duplicated = constraintAnnotation.duplicate();
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return userService.checkFieldExisted(fieldName, s);
+        boolean result = userService.checkFieldExisted(fieldName, s);
+        if(duplicated) return !result;
+
+        return result;
     }
 }

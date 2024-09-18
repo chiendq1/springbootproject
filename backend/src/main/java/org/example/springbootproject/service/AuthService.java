@@ -188,10 +188,10 @@ public class AuthService extends BaseService implements UserDetailsService {
         return false;
     }
 
-    public String getCurrentUserName() {
+    public UserDetails getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
 
-        return ((UserDetails) authentication.getPrincipal()).getUsername();
+        return ((UserDetails) authentication.getPrincipal());
     }
 }
