@@ -1,6 +1,7 @@
 {
   "common": {
     "other": "Others",
+    "metter_square": "metter square",
     "forgot_password": "Forgot password",
     "change_password": "Change Password",
     "invoice_attachment": "Invoice Attachment",
@@ -434,6 +435,31 @@
       "contract": "Contracts",
       "bill": "Bills"
     }
+  },
+  "room": {
+    "title": "Rooms",
+    "add_new": "Add New Room",
+    "keyword": "Keyword",
+    "status": {
+      "vacant": "Vacant",
+      "rented": "Rented",
+      "under_repair": "Under Repair"
+    },
+    "table":{
+      "header": {
+        "room_code": "Room Code",
+        "area": "Area(square meter)",
+        "capacity": "Capacity",
+        "price": "Price",
+        "status": "Status",
+        "utilities": "Utilities",
+        "action": "Action"
+      }
+    },
+    "price_range": "Price Range", 
+    "capacity": "Capacity", 
+    "area": "Area", 
+    "status_placeholder": "Room Status"
   },
   "E-CM-001": "Login Failed",
   "E-CM-002": "Required",

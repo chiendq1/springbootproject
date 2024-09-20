@@ -17,7 +17,7 @@ export default {
     const message = ref("Home page");
 
     const handleClick = () => {
-      $services.AuthenticationAPI.getData(
+      $services.UserAPI.index(
         {},
         (res) => {
           console.log(res.data);

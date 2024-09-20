@@ -76,6 +76,7 @@ import { ref } from "vue";
 import IconCart from "@/svg/IconCart.vue";
 import IconUser from "@/svg/IconUser.vue";
 import IconUserGroup from "@/svg/IconUserGroup.vue";
+import IconRoom from "@/svg/IconRoom.vue";
 import { $PAGES } from "@/utils/variables";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -84,6 +85,7 @@ export default {
   name: "Sidebar",
   components: {
     IconCart,
+    IconRoom,
     IconUser,
     IconUserGroup,
   },
@@ -97,6 +99,11 @@ export default {
         function_name: t("side_bar.label.user"),
         function_url: $PAGES.USERMANAGEMENT,
         function_icon: "IconUserGroup",
+      },
+      {
+        function_name: t("side_bar.label.room"),
+        function_url: $PAGES.ROOM,
+        function_icon: "IconRoom",
       },
     ]);
     const listRouterOthers = ref([

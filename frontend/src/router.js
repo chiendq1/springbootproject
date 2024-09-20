@@ -1,7 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
-import { USER_ROUTE } from "@/constants/route-name.js";
+import { USER_ROUTE, ROOM_ROUTE } from "@/constants/route-name.js";
 import PAGES from "@/utils/pages";
-import { ADMIN } from "@/constants/roles.js";
+import { ADMIN, LANDLORD } from "@/constants/roles.js";
 import Cookies from "js-cookie";
 
 // import pages
@@ -9,6 +9,8 @@ import Login from "@/pages/Login.vue";
 import Home from "@/pages/Home.vue";
 import UserProfile from "@/pages/User/Profile.vue";
 import User from "@/pages/User/Index.vue";
+import Room from "@/pages/Room/Index.vue";
+import RoomList from "@/pages/Room/RoomList.vue";
 import UserList from "@/pages/User/UserList.vue";
 import Forbidden from '@/pages/Forbidden.vue'
 
@@ -52,6 +54,20 @@ const routes = [
       },
     ],
   },
+  {
+    path: PAGES.ROOM,
+    component: Room,
+    meta: {
+      middleware: ["authentication", "manager-role"],
+    },
+    children: [
+      {
+        path: "",
+        name: ROOM_ROUTE.LIST,
+        component: RoomList,
+      },
+    ],
+  },
 ];
 
 const router = createRouter({
@@ -73,6 +89,10 @@ router.beforeEach((to, from, next) => {
 
   if (middleware && middleware.includes("admin-role") && highest_role !== ADMIN) {
     return next(PAGES.FORBIDDEN);
+  }
+  
+  if (middleware && middleware.includes("manager-role")) {
+    if(highest_role !== ADMIN && highest_role !== LANDLORD) return next(PAGES.FORBIDDEN);
   }
 
   next();

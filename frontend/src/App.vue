@@ -64,7 +64,6 @@ import Navbar from "@/components/common/Navbar.vue";
 import Sidebar from "@/components/common/Sidebar.vue";
 import { useAuthStore } from "@/store/auth.js";
 import { useRouter } from "vue-router";
-import { $PAGES } from "@/utils/variables";
 
 export default {
   components: { Navbar, Sidebar },

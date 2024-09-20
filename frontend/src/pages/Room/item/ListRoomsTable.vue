@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="user_table">
+    <div class="room_table">
       <el-table
-        :data="listUsers"
+        :data="listRooms.value"
         style="width: 100%"
-        class="el-tbl-custom user-tbl"
+        class="el-tbl-custom room-tbl"
       >
         <el-table-column
           type="index"
@@ -15,80 +15,79 @@
 
         <el-table-column min-width="150">
           <template #header>
-            <p v-html="$t('user.table.header.username')"></p>
+            <p v-html="$t('room.table.header.room_code')"></p>
           </template>
 
           <template #default="scope">
-            <span class="data-table">{{ scope.row.username }} </span>
+            <span class="data-table">{{ scope.row.roomCode }} </span>
           </template>
         </el-table-column>
 
         <el-table-column min-width="155">
           <template #header>
-            <p v-html="$t('user.table.header.fullname')"></p>
+            <p v-html="$t('room.table.header.area')"></p>
           </template>
           <template #default="scope">
             <span class="data-table data-table--highlight"
-              >{{ scope.row.fullName }}
+              >{{ scope.row.area }}
             </span>
           </template>
         </el-table-column>
 
-        <el-table-column min-width="200">
+        <el-table-column min-width="80">
           <template #header>
-            <p v-html="$t('user.table.header.email')"></p>
+            <p v-html="$t('room.table.header.capacity')"></p>
           </template>
 
           <template #default="scope">
-            <span class="data-table">{{ scope.row.email }} </span>
+            <span class="data-table">{{ scope.row.capacity }} </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column min-width="100">
+          <template #header>
+            <p v-html="$t('room.table.header.price')"></p>
+          </template>
+
+          <template #default="scope">
+            <span class="data-table">{{ scope.row.rentPrice }} </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column min-width="180">
+          <template #header>
+            <p v-html="$t('room.table.header.utilities')"></p>
+          </template>
+          <template #default="scope">
+            <span class="data-table">{{
+              handleListUtilities(scope.row.utilities)
+            }}</span>
           </template>
         </el-table-column>
 
         <el-table-column min-width="140">
           <template #header>
-            <p v-html="$t('user.table.header.phone')"></p>
+            <p v-html="$t('room.table.header.status')"></p>
           </template>
-          <template #default="scope">
-            <span class="data-table">{{ scope.row.phoneNumber }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column min-width="120">
-          <template #header>
-            <p v-html="$t('user.table.header.location')"></p>
-          </template>
-          <template #default="scope">
-            <span class="data-table">{{ scope.row.location ?? "-" }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column min-width="140">
-          <template #header>
-            <p v-html="$t('user.table.header.role')"></p>
-          </template>
-
           <template #default="scope">
             <span
-              class="data-table user-type-cate text-color"
-              :class="`user-${scope.row.highestRole.toLowerCase()}`"
-              >{{ scope.row.highestRole }}</span
+              class="data-table room-type-cate text-color"
+              :class="`room-${handleStatus(scope.row.status)}`"
+              >{{ $t(`room.status.${handleStatus(scope.row.status)}`) }}</span
             >
           </template>
         </el-table-column>
 
         <el-table-column min-width="110">
           <template #header>
-            <p v-html="$t('user.table.header.action')"></p>
+            <p v-html="$t('room.table.header.action')"></p>
           </template>
           <template #default="scope">
             <div>
               <button @click="$emit('details', scope.row.id)" class="btn-edit">
                 <IconEdit />
               </button>
-              <button
-                @click="$emit('delete', scope.row.id)"
-                class="btn-edit"
-              >
+              <button @click="$emit('delete', scope.row.id)" class="btn-edit">
                 <IconTrash />
               </button>
             </div>
@@ -102,25 +101,36 @@
 <script>
 import IconEdit from "@/svg/IconEdit.vue";
 import IconTrash from "@/svg/IconTrash.vue";
+import { ROOM_STATUS } from "@/constants/application.js";
 
 export default {
-  name: "UsersTable",
+  name: "RoomsTable",
   components: {
     IconEdit,
     IconTrash,
   },
   props: {
-    listUsers: {
+    listRooms: {
       type: Array,
       default: () => [],
     },
-    deleteUser: {
+    deleteRoom: {
       type: Boolean,
       default: () => false,
     },
   },
   setup() {
+    const handleListUtilities = (listUtils) => {
+      if (!listUtils.length) return "-";
+      return listUtils.map((util) => util.enName).join(', ');
+    };
+
+    const handleStatus = (statusId) => {
+      return ROOM_STATUS[statusId];
+    };
     return {
+      handleListUtilities,
+      handleStatus,
     };
   },
 };
@@ -156,7 +166,7 @@ export default {
     width: 76px;
   }
 }
-.user {
+.room {
   &-status {
     background: #ccc;
     color: #fff !important;
@@ -169,16 +179,16 @@ export default {
     text-align: center;
   }
 
-  &-admin {
-    background: #36812a;
+  &-rented {
+    background: #aa1191;
   }
 
-  &-landlord {
-    background: #8e3c9b;
+  &-vacant {
+    background: #15a726;
   }
 
-  &-tenant {
-    background: #2d47a3;
+  &-under_repair {
+    background: #e7d31d;
   }
 
   &-type-cate {

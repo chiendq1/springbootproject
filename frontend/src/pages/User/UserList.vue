@@ -66,7 +66,7 @@
     <div class="bidding-body-table" style="margin-top: 16px">
       <UsersTable
         :listUsers="listUsers.value"
-        :deleteContract="false"
+        :deleteUser="false"
         @details="getUserDetails"
         @delete="handleOpenModalConfirm"
       />
@@ -164,6 +164,7 @@ export default {
     ]);
 
     onMounted(() => {
+      listUsers.value = [];
       getListUsers(searchForms.value);
       clearUserDetailsAttr();
     });

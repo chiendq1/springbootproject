@@ -7,7 +7,10 @@ const API_CODE = {
 
   //Users
   API_USER_001: '/users',
-  API_USER_002: '/users/password/'
+  API_USER_002: '/users/password/',
+
+  //Rooms
+  API_ROOM_001: '/rooms'
 };
 
 export default API_CODE;

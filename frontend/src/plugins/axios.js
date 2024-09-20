@@ -47,27 +47,29 @@ axiosInstance.interceptors.response.use(
       const refresh_token = Cookies.get("refresh_token");
       if (refresh_token) {
         try {
-          const res = await post(API_CODE.API_004, {
+          await post(API_CODE.API_004, {
             refreshToken: refresh_token,
-          });
-
-          if (res.data && res.data.token) {
-            isAlreadyFetchingAccessToken = false;
-            const newAccessToken = res.data.token;
-            Cookies.set("access_token", newAccessToken);
-
-            // Update the axios instance defaults
-            axiosInstance.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
-
-            // Update the original request's headers with the new token
-            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-
-            // Retry the original request
-            return axiosInstance(originalRequest);
-          } else {
-            // Redirect to login page if token refresh fails
+          }, (res) => {
+            if (res.data && res.data.token) {
+              isAlreadyFetchingAccessToken = false;
+              const newAccessToken = res.data.token;
+              Cookies.set("access_token", newAccessToken);
+  
+              // Update the axios instance defaults
+              axiosInstance.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
+  
+              // Update the original request's headers with the new token
+              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+  
+              // Retry the original request
+              return axiosInstance(originalRequest);
+            } else {
+              // Redirect to login page if token refresh fails
+              handleRedirect(loggedIn);
+            }
+          }, () => {
             handleRedirect(loggedIn);
-          }
+          });
         } catch (err) {
           // Redirect to login page on error
           handleRedirect(loggedIn);
