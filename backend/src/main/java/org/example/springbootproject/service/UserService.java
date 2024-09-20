@@ -1,6 +1,5 @@
 package org.example.springbootproject.service;
 
-import jakarta.validation.Valid;
 import org.example.springbootproject.dto.UserDto;
 import org.example.springbootproject.entity.Role;
 import org.example.springbootproject.entity.User;
@@ -10,12 +9,10 @@ import org.example.springbootproject.payload.request.ProfileUpdateRequest;
 import org.example.springbootproject.repository.RoleRepository;
 import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.example.springbootproject.repository.UserRepository;

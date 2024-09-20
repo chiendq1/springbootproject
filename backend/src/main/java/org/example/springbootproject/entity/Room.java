@@ -9,8 +9,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "rooms")
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class Room {
@@ -22,35 +22,37 @@ public class Room {
     @Column(nullable = false, unique = true, name = "room_code")
     private String roomCode;
 
-    @Column(nullable = false, unique = true, name = "area")
-    private String area;
+    @Column(nullable = false, name = "area")
+    private float area;
 
-    @Column(nullable = false, unique = true, name = "capacity")
+    @Column(nullable = false, name = "capacity")
     private int capacity;
 
-    @Column(nullable = false, unique = true, name = "rent_price")
+    @Column(nullable = false, name = "rent_price")
     private float rentPrice;
 
-    @Column(nullable = false, unique = true, name = "status")
+    @Column(nullable = false, name = "status")
     private int status;
 
     @ManyToOne
     @JoinColumn(name = "landlord_id", nullable = false)
     private User landlord;
 
+    // Many-to-Many relationship with Utility
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "room_utilities",
+            name = "room_utilities", // Join table
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "utility_id")
     )
     private Set<Utility> utilities;
 
+    // Many-to-Many relationship with User (Tenants)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tenants",
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<Room> roomsTenants;
+    private Set<User> roomsTenants;
 }
