@@ -30,6 +30,12 @@ public class Constants {
     public static int OTP_COOKIE_EXPIRE_TIME = 600;
     public static int OTP_LENGTH = 6;
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
+    public static final int MAX_SIZE_NUMBER = 100000000;
+    public static final int MIN_SIZE_NUMBER = 1;
+    public static final int MAX_PRICE = 100000000;
+    public static final int ROOM_STATUS_VACANT = 0;
+    public static final int ROOM_STATUS_RENT = 1;
+    public static final int ROOM_STATUS_REPAIR = 2;
 
     @Value("${app.secret_key}")
     private String secretKey;

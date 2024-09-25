@@ -49,8 +49,24 @@ public class UserController extends BaseController {
         return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
     }
 
+    @GetMapping("/free")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('lANDLORD')")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getListFreeRoomUsers() {
+        Map<String, Object> response = userService.getListFreeUsers();
+
+        return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
+    }
+
+    @GetMapping("/landlord")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getListLandLords() {
+        UserDetails user = authService.getCurrentUser();
+        Map<String, Object> response = userService.getListLandLords(user);
+
+        return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
+    }
+
     @PostMapping()
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LANDLORD')")
     public ResponseEntity<ApiResponse<UserDto>> create(@RequestBody @Valid CreateUserRequest request) {
         try {
             String password = emailService.generatePassword();

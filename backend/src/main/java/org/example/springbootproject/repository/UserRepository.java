@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Set;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findUserById(int id);
@@ -51,4 +54,15 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Page<User> getUsersBySearchAndFilter(@Param("searchValue") String searchValue,
                                          @Param("filterValue") String filterValue,
                                          Pageable pageable);
+
+    @Query("SELECT u FROM User u LEFT JOIN u.roomsTenants r " +
+            "WHERE r IS NULL AND 'TENANT' IN (SELECT role.roleName FROM u.roles role)")
+    List<User> getListFreeUsers();
+
+    @Query("SELECT u.id, u.fullName FROM User u JOIN u.roles r WHERE " +
+            "(:role = 'ADMIN' AND r.roleName = 'LANDLORD') OR " +
+            "(:role != 'LANDLORD' AND 1 = 0)")
+    List<?> getListLandLordByRole(@Param("role") String role);
+
+    Set<User> getUsersByIdIn(Set<Integer> ids);
 }

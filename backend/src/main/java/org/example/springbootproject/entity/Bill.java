@@ -1,5 +1,8 @@
 package org.example.springbootproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,11 +22,8 @@ public class Bill {
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
+    @JsonBackReference
     private Room room;
-
-    @ManyToOne
-    @JoinColumn(name = "tenant_id", nullable = false)
-    private User tenant;
 
     @Column(name = "month", nullable = false)
     private Date month;
@@ -31,6 +31,7 @@ public class Bill {
     @Column(name = "payment_status", nullable = false)
     private int paymentStatus;
 
-    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<BillDetails> billDetails;
 }

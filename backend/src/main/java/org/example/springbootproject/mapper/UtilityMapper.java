@@ -4,6 +4,9 @@ import org.example.springbootproject.dto.UtilityDto;
 import org.example.springbootproject.entity.Utility;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 public class UtilityMapper {
 
@@ -15,5 +18,14 @@ public class UtilityMapper {
         utilityDto.setUnitPrice(utility.getUnitPrice());
 
         return utilityDto;
+    }
+
+    public Set<UtilityDto> toDtoSet(Set<Utility> utilities) {
+        Set<UtilityDto> utilityDtos = new HashSet<>();
+        for (Utility utility : utilities) {
+            utilityDtos.add(toDto(utility));
+        }
+
+        return utilityDtos;
     }
 }

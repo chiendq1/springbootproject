@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.example.springbootproject.repository.UserRepository;
@@ -63,6 +64,27 @@ public class UserService extends BaseService {
         User user = userRepository.findUserById(id);
 
         return userMapper.toDTO(user);
+    }
+
+    public Map<String, Object> getListFreeUsers() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", userRepository.getListFreeUsers());
+
+        return response;
+    }
+
+    public Map<String, Object> getListLandLords(UserDetails currentUser) {
+        try {
+            User user = userRepository.findUserByUsername(currentUser.getUsername());
+            Map<String, Object> response = new HashMap<>();
+            response.put("users", userRepository.getListLandLordByRole(user.getHighestRole()));
+
+            return response;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return null;
     }
 
     @Transactional

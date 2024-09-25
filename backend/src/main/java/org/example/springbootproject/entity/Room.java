@@ -1,5 +1,8 @@
 package org.example.springbootproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,6 +39,7 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "landlord_id", nullable = false)
+    @JsonBackReference
     private User landlord;
 
     // Many-to-Many relationship with Utility
@@ -45,14 +49,20 @@ public class Room {
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "utility_id")
     )
+    @JsonIgnoreProperties("rooms")
     private Set<Utility> utilities;
 
     // Many-to-Many relationship with User (Tenants)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "tenants",
             joinColumns = @JoinColumn(name = "room_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @JsonIgnoreProperties("rooms")
     private Set<User> roomsTenants;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<Bill> bills;
 }

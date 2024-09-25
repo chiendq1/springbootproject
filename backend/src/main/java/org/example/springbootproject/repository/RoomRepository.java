@@ -39,4 +39,10 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             Pageable pageable
     );
 
+    Room getRoomByRoomId(int id);
+
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END FROM Room r WHERE r.roomCode = :fieldValue " +
+            "AND (:id IS NOT NULL AND r.roomId != :id)")
+    boolean duplicateRoomCode(@Param("fieldValue") String fieldValue, @Param("id") Integer id);
+    boolean existsRoomByRoomCode(String roomCode);
 }

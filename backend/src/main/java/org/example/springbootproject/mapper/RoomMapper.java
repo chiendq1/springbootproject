@@ -16,6 +16,9 @@ public class RoomMapper {
     @Autowired
     private UtilityMapper utilityMapper;
 
+    @Autowired
+    private BillMapper billMapper;
+
     public RoomDto toRoomDto(Room room) {
         RoomDto roomDto = new RoomDto();
         roomDto.setRoomCode(room.getRoomCode());
@@ -28,9 +31,8 @@ public class RoomMapper {
         ).collect(Collectors.toSet()));
         roomDto.setLandlord(userMapper.toDTO(room.getLandlord()));
         roomDto.setStatus(room.getStatus());
-        roomDto.setUtilities(room.getUtilities().stream().map(
-                utility -> utilityMapper.toDto(utility)
-        ).collect(Collectors.toSet()));
+        roomDto.setUtilities(utilityMapper.toDtoSet(room.getUtilities()));
+        roomDto.setBills(billMapper.toBillDtoSetForRoomDetails(room.getBills()));
 
         return roomDto;
     }

@@ -9,7 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RoleDto {
+public class BillDetailsDto {
     private int id;
-    private String roleName;
+    private UtilityDto utility;
+    private int amount;
 }

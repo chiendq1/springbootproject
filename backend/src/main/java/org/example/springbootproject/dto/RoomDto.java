@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.Set;
 
 @Getter
@@ -20,5 +21,5 @@ public class RoomDto {
     private UserDto landlord;
     private Set<UtilityDto> utilities;
     private Set<UserDto> roomsTenants;
-
+    private Set<BillDto> bills;
 }

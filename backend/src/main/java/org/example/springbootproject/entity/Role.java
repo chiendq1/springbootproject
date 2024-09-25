@@ -1,5 +1,6 @@
 package org.example.springbootproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,11 +19,12 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "role")
     private String roleName;
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
+    @JsonIgnoreProperties("roles")
     private Set<User> users = new HashSet<>();
 }
