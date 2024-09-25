@@ -4,6 +4,7 @@ import { AuthenticationAPI } from "@/services/AuthenticationAPI";
 import { UserAPI } from "@/services/UserAPI";
 import { RoomAPI } from "@/services/RoomAPI";
 import { UtilityAPI } from "@/services/UtilityAPI";
+import { ContractAPI } from "@/services/ContractAPI";
 
 // Initialize the BaseService with the axios instance and API prefix
 (function() {
@@ -15,6 +16,7 @@ const services = {
   UserAPI,
   RoomAPI,
   UtilityAPI,
+  ContractAPI,
 };
 
 export default services;

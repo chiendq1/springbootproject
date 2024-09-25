@@ -213,18 +213,29 @@
     }
   },
   "contract": {
-    "title": "Contract List",
+    "title": "Contract",
     "add_new": "Add New",
     "keyword": "Keyword",
     "search": "Search",
     "clear": "Clear",
-    "sales_department": "Sales Department",
-    "production_department": "Production Department",
-    "sale_name": "Sale name",
+    "date": "Contract Date",
     "status": "Status",
-    "payment": "Payment",
-    "cr": "CR",
+    "type": "Type",
+    "room": "Room",
+    "tenant": "Tenant",
+    "landlord": "Landlord",
     "upload_request_documents_rule": "Format file: {mimes}; Maxsize: {size} MB",
+    "statuses": {
+      "active": "Active",
+      "terminated": "Terminated",
+      "renewed": "Renewed"
+    },
+    "types": {
+      "monthly": "Monthly",
+      "quater": "Quater",
+      "half-year": "Half Year",
+      "year": "Yearly"
+    },
     "create": {
       "title": "Add New Contract",
       "contract_code": "Contract Code",
@@ -287,19 +298,17 @@
       "attachment": "Contract Attachment"
     },
     "table": {
-      "sales_department": "Sales Dept<br />- Production Dept",
-      "customer": "Customer<br />- Account Manager",
-      "contract_code": " Contract Code<br />- Project Code",
-      "start_date": " Start Date<br />- Finish Date",
-      "type_category": "Type<br />- Category",
-      "signed_effort": " Signed Effort<br />-Signed Cost",
-      "estimated": " Estimated Effort<br />- Estimated Cost",
-      "actual-effort": "Actual Effort<br />- Actual Cost",
-      "paid-effort": " Acc. Paid Effort<br />- Acc. Paid Cost",
-      "remain-effort": " Remain Effort<br />- Remain Cost",
-      "attachment": "Contract Attachment",
-      "action": "Action",
-      "status": "Status",
+      "header": {
+        "name": "Contract Name",
+        "start_date": " Start Date",
+        "finish_date": " Finish Date",
+        "room": "Room Code",
+        "tenant": "Tenant",
+        "attachment": "Contract Attachment",
+        "action": "Action",
+        "status": "Status",
+        "type": "Type"
+      },
       "item": {
         "sales_department": "Sales Dept:",
         "production_department": "Production Dept:",
@@ -323,18 +332,15 @@
         "remain-cost": "Remain Cost:"
       }
     },
-    "type": {
-      "fixed": "Fixed Cost",
-      "time_material": "Time Material"
-    },
-    "category": {
-      "develop": "Development",
-      "maintain": "Maintainance"
-    },
     "modal_confirm": {
       "title_delete": "Confirm delete contract!",
       "message_delete": "WARNING: You will delete contract with all relative payments and CRs. Please type 'YES' to continue."
-    }
+    },
+    "status_placeholder": "Contract status",
+    "room_placeholder": "Contract room",
+    "tenant_placeholder": "Contract tenant",
+    "type_placeholder": "Contract type",
+    "landlord_placeholder": "Contract landlord"
   },
   "dashboard": {
     "year_to_date": "Year to Date",

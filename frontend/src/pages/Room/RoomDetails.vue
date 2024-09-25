@@ -74,6 +74,7 @@ import { useUtilityStore } from "@/store/utility.js";
 import { TEXT_CONFIRM_DELETE } from "@/constants/application.js";
 import IconBackMain from "@/svg/IconBackMain.vue";
 import PAGE_NAME from "@/constants/route-name.js";
+import { LANDLORD } from "@/constants/roles.js";
 
 export default {
   name: "UserProfile",
@@ -95,7 +96,8 @@ export default {
     const utilityStore = useUtilityStore();
     const activeCollapseItems = ref(["1", "2"]);
     const deleteId = ref(0);
-    const { listUsers, listLandlords, getListFreeUsers, getListLandLords } = userStore;
+    const { listUsers, listLandlords, getListFreeUsers, getListUsersByRole } =
+      userStore;
     const {
       getRoomDetails,
       roomUsers,
@@ -131,11 +133,11 @@ export default {
     onMounted(() => {
       getListAllUtilities();
       getListFreeUsers();
-      if(!route.params.id) {
+      if (!route.params.id) {
         isCreate.value = true;
-        getListLandLords();
+        getListUsersByRole();
       }
-      if(!isCreate.value) getRoomDetails(route.params.id);
+      if (!isCreate.value) getRoomDetails(route.params.id);
     });
 
     onUnmounted(() => {
@@ -145,22 +147,22 @@ export default {
 
     const handleBack = () => {
       router.push({ name: PAGE_NAME.ROOM.LIST });
-    }
+    };
 
     const onSubmit = (isUpdate) => {
-      if(isCreate.value){
+      if (isCreate.value) {
         createNewRoom();
         return;
-      } 
+      }
       if (isUpdate) udpateRoomDetails(route.params.id);
       else getRoomDetails(route.params.id);
     };
 
     const handleOpenModalConfirm = (id) => {
-      if(isCreate.value) {
-        let user = roomUsers.value.find(user => user.id == id);
+      if (isCreate.value) {
+        let user = roomUsers.value.find((user) => user.id == id);
         listUsers.value.push(user);
-        roomUsers.value = roomUsers.value.filter(user => user.id != id);
+        roomUsers.value = roomUsers.value.filter((user) => user.id != id);
         return;
       }
       deleteId.value = id;
@@ -171,15 +173,20 @@ export default {
       validation.value = {};
       isShowModalConfirm.value = false;
       isOpenDataUsersModal.value = false;
-    }
+    };
     const handleGetListNewTenants = () => {
       isOpenDataUsersModal.value = true;
     };
 
     const handleAddTenants = (listTenants) => {
-      if(isCreate.value) {
-        roomUsers.value.push.apply(roomUsers.value, listUsers.value.filter(user => listTenants.includes(user.id)));
-        listUsers.value = listUsers.value.filter(user => !listTenants.includes(user.id));   
+      if (isCreate.value) {
+        roomUsers.value.push.apply(
+          roomUsers.value,
+          listUsers.value.filter((user) => listTenants.includes(user.id))
+        );
+        listUsers.value = listUsers.value.filter(
+          (user) => !listTenants.includes(user.id)
+        );
         isOpenDataUsersModal.value = false;
         return;
       }
@@ -187,8 +194,8 @@ export default {
     };
 
     const handleConfirm = () => {
-      deleteRoomTenant(route.params.id, [deleteId.value])
-    }
+      deleteRoomTenant(route.params.id, [deleteId.value]);
+    };
 
     return {
       listStatus,

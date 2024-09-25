@@ -12,6 +12,8 @@ import User from "@/pages/User/Index.vue";
 import Room from "@/pages/Room/Index.vue";
 import RoomList from "@/pages/Room/RoomList.vue";
 import RoomDetails from "@/pages/Room/RoomDetails.vue";
+import Contract from "@/pages/Contract/Index.vue";
+import ContractList from "@/pages/Contract/ContractList.vue";
 import UserList from "@/pages/User/UserList.vue";
 import Forbidden from "@/pages/Forbidden.vue";
 
@@ -81,6 +83,20 @@ const routes = [
         path: PAGES.ROOM_CREATE,
         name: PAGE_NAME.ROOM.CREATE,
         component: RoomDetails,
+      },
+    ],
+  },
+  {
+    path: PAGES.CONTRACT,
+    component: Contract,
+    meta: {
+      middleware: ["authentication", "manager-role"],
+    },
+    children: [
+      {
+        path: "",
+        name: PAGE_NAME.CONTRACT.LIST,
+        component: ContractList,
       },
     ],
   },

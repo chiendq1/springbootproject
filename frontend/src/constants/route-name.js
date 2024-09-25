@@ -7,6 +7,9 @@ const PAGE_NAME = {
         DETAILS: 'room-details',
         CREATE: 'create'
     },
+    CONTRACT: {
+        LIST: 'contract-list'
+    },
     LOGIN: 'login',
     HOME: 'home',
     PROFILE: 'profile',

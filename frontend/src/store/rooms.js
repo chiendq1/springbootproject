@@ -16,6 +16,7 @@ export const useRoomStore = defineStore("room", () => {
   const { t } = useI18n();
   const validation = reactive({ value: {} });
   const listRooms = reactive({ value: [] });
+  const listRoomsByRole = reactive({ value: [] });
   const totalItems = reactive({ value: 0 });
   const currentPage = reactive({ value: 0 });
   const isOpenDataUsersModal = reactive({ value: false });
@@ -59,6 +60,59 @@ export const useRoomStore = defineStore("room", () => {
     );
   };
 
+  
+  const getRoomDetails = async (id) => {
+    mixinMethods.startLoading();
+    await $services.RoomAPI.show(
+      id,
+      {},
+      (response) => {
+        const currentDate = new Date();
+        setRoomDetails(response.data.roomDetails);
+        setRoomUsers(response.data);
+        response.data.roomDetails.bills.map((bill) => {
+          const billDate = new Date(bill.date).getMonth();
+          if (currentDate.getMonth() === billDate) {
+            bill.billDetails.map((details) => {
+              utilitiesConsumer.value.push({
+                name:
+                currentLanguage == EN_LOCALE
+                ? details.utility.enName
+                : details.utility.jaName,
+                amount: details.amount,
+                price: mixinMethods.formatInputCurrency(
+                  details.utility.unitPrice * details.amount
+                ),
+              });
+            });
+          }
+        });
+        allowUpdate.value = ROOM_STATUS[roomDetails.value.status] == "rented";
+        
+        mixinMethods.endLoading();
+      },
+      (error) => {
+        mixinMethods.endLoading();
+      }
+    );
+  };
+
+  const getListRoomsByRole = async () => {
+    await $services.RoomAPI.getListRoomsByRole(
+      {},
+      (response) => {
+        listRoomsByRole.value = response.data.rooms.map((room) => {
+          return {
+            id: room.roomId,
+            value: room.roomCode,
+          }
+        })
+      },() => {
+
+      }
+    );
+  }
+  
   const createNewRoom = async () => {
     mixinMethods.startLoading();
     await $services.RoomAPI.create(
@@ -75,46 +129,6 @@ export const useRoomStore = defineStore("room", () => {
         mixinMethods.endLoading();
         validation.value = mixinMethods.handleErrorResponse(error.responseCode);
         mixinMethods.notifyError(t(validation.value.errors.code ?? "response.message.create_room_failed"));
-      }
-    );
-  };
-
-  const getRoomDetails = async (id) => {
-    mixinMethods.startLoading();
-    await $services.RoomAPI.show(
-      id,
-      {},
-      (response) => {
-        const currentDate = new Date();
-        setRoomDetails(response.data.roomDetails);
-        setRoomUsers(response.data);
-        listLandlords.value.push({
-          id: response.data.roomDetails.landlord.id,
-          value: response.data.roomDetails.landlord.fullName,
-        });
-        response.data.roomDetails.bills.map((bill) => {
-          const billDate = new Date(bill.date).getMonth();
-          if (currentDate.getMonth() === billDate) {
-            bill.billDetails.map((details) => {
-              utilitiesConsumer.value.push({
-                name:
-                  currentLanguage == EN_LOCALE
-                    ? details.utility.enName
-                    : details.utility.jaName,
-                amount: details.amount,
-                price: mixinMethods.formatInputCurrency(
-                  details.utility.unitPrice * details.amount
-                ),
-              });
-            });
-          }
-        });
-        allowUpdate.value = ROOM_STATUS[roomDetails.value.status] == "rented";
-
-        mixinMethods.endLoading();
-      },
-      (error) => {
-        mixinMethods.endLoading();
       }
     );
   };
@@ -242,6 +256,7 @@ export const useRoomStore = defineStore("room", () => {
     isShowModalConfirm,
     isCreate,
     listLandlords,
+    listRoomsByRole,
     deleteRoom,
     deleteRoomTenant,
     addRoomTenants,
@@ -250,5 +265,6 @@ export const useRoomStore = defineStore("room", () => {
     resetData,
     getListRooms,
     getRoomDetails,
+    getListRoomsByRole,
   };
 });
