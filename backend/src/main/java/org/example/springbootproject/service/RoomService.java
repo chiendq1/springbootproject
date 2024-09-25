@@ -1,6 +1,7 @@
 package org.example.springbootproject.service;
 
 import org.example.springbootproject.dto.RoomDto;
+import org.example.springbootproject.dto.UserDto;
 import org.example.springbootproject.entity.Room;
 import org.example.springbootproject.entity.User;
 import org.example.springbootproject.mapper.RoomMapper;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +83,24 @@ public class RoomService extends BaseService {
         response.put("roomDetails", roomMapper.toRoomDto(roomDetails));
 
         return response;
+    }
+
+    public Map<String, Object> getListRoomsByRole(UserDetails currentUser) {
+        try {
+            User currentUserEntity = userRepository.findUserByUsername(currentUser.getUsername());
+            Map<String, Object> response = new HashMap<>();
+            List<Room> listUsers = roomRepository.getListRoomsByRole(currentUserEntity.getHighestRole(), currentUserEntity.getId());
+            List<RoomDto> rooms = listUsers.stream()
+                    .map(room -> roomMapper.toRoomDto(room))
+                    .toList();
+            response.put("rooms", rooms);
+
+            return response;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return null;
     }
 
     @Transactional

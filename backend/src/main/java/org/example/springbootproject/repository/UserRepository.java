@@ -59,10 +59,39 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "WHERE r IS NULL AND 'TENANT' IN (SELECT role.roleName FROM u.roles role)")
     List<User> getListFreeUsers();
 
-    @Query("SELECT u.id, u.fullName FROM User u JOIN u.roles r WHERE " +
-            "(:role = 'ADMIN' AND r.roleName = 'LANDLORD') OR " +
-            "(:role != 'LANDLORD' AND 1 = 0)")
-    List<?> getListLandLordByRole(@Param("role") String role);
+    @Query("""
+    SELECT u
+    FROM User u
+    LEFT JOIN u.roles r
+    LEFT JOIN u.roomsTenants rt
+    LEFT JOIN rt.landlord rl
+    WHERE 
+        (:highestRole = 'ADMIN' AND u.id <> :userId)
+        
+        OR (:highestRole = 'LANDLORD' 
+            AND (
+                (u.id = :userId) 
+                OR (rl.id = :userId)
+            )
+        )
+        
+        OR (:highestRole = 'TENANT' 
+            AND (
+                (u.id = :userId)
+                OR (u.id = rl.id)
+            )
+        )
+        
+        AND NOT EXISTS (
+            SELECT 1 
+            FROM u.roles r2 
+            WHERE r2.roleName = 'ADMIN'
+        )
+    """)
+    List<User> getListUsersByRole(
+            @Param("highestRole") String highestRole,
+            @Param("userId") Integer userId
+    );
 
     Set<User> getUsersByIdIn(Set<Integer> ids);
 }

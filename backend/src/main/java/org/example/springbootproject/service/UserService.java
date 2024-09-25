@@ -73,11 +73,15 @@ public class UserService extends BaseService {
         return response;
     }
 
-    public Map<String, Object> getListLandLords(UserDetails currentUser) {
+    public Map<String, Object> getListUsersByRole(UserDetails currentUser) {
         try {
-            User user = userRepository.findUserByUsername(currentUser.getUsername());
+            User currentUserEntity = userRepository.findUserByUsername(currentUser.getUsername());
             Map<String, Object> response = new HashMap<>();
-            response.put("users", userRepository.getListLandLordByRole(user.getHighestRole()));
+            List<User> listUsers = userRepository.getListUsersByRole(currentUserEntity.getHighestRole(), currentUserEntity.getId());
+            List<UserDto> users = listUsers.stream()
+                    .map(user -> userMapper.toDTO(user))
+                    .toList();
+            response.put("users", users);
 
             return response;
         } catch (Exception e) {

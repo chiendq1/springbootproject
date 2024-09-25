@@ -14,25 +14,26 @@ public class Contract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer contractId;
-
-    @ManyToOne
-    @JoinColumn(name = "tenant_id", nullable = false)
-    private User tenant;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
-    @JsonBackReference
     private Room room;
 
     @Column(name = "contract_name", nullable = false)
-    private Date contractName;
+    private String contractName;
 
     @Column(name = "start_date", nullable = false)
     private Date startDate;
 
     @Column(name = "end_date", nullable = false)
     private Date endDate;
+
+    @Column(name = "deposit", nullable = false)
+    private float deposit;
+
+    @Column(name = "type", nullable = false)
+    private int type;
 
     @Column(name = "status", nullable = false)
     private int status;

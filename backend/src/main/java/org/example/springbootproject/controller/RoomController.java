@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -64,6 +65,14 @@ public class RoomController extends BaseController {
             logger.error(ex.getMessage());
             return new ResponseEntity<>(new ApiResponse<>(false, "get room details failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/list-by-role")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getListRoomByUserRole() {
+        UserDetails user = authService.getCurrentUser();
+        Map<String, Object> response = roomService.getListRoomsByRole(user);
+
+        return new ResponseEntity<>(new ApiResponse<>(true, "get rooms success", response, HttpStatus.OK), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

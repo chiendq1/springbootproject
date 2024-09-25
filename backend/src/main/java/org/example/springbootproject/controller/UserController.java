@@ -2,6 +2,7 @@ package org.example.springbootproject.controller;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.example.springbootproject.dto.UserDto;
 import org.example.springbootproject.entity.User;
 import org.example.springbootproject.payload.request.ChangePasswordRequest;
@@ -57,10 +58,10 @@ public class UserController extends BaseController {
         return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
     }
 
-    @GetMapping("/landlord")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getListLandLords() {
+    @GetMapping("/list-by-role")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getListUsersByRole() {
         UserDetails user = authService.getCurrentUser();
-        Map<String, Object> response = userService.getListLandLords(user);
+        Map<String, Object> response = userService.getListUsersByRole(user);
 
         return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
     }
