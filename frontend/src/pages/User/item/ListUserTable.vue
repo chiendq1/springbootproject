@@ -76,7 +76,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column min-width="110">
+        <el-table-column v-if="userRole == ADMIN" min-width="110">
           <template #header>
             <p v-html="$t('user.table.header.action')"></p>
           </template>
@@ -102,6 +102,7 @@
 <script>
 import IconEdit from "@/svg/IconEdit.vue";
 import IconTrash from "@/svg/IconTrash.vue";
+import { ADMIN } from "@/constants/roles.js";
 
 export default {
   name: "UsersTable",
@@ -114,13 +115,14 @@ export default {
       type: Array,
       default: () => [],
     },
-    deleteUser: {
-      type: Boolean,
-      default: () => false,
-    },
+    userRole: {
+      type: String,
+      default: ""
+    }
   },
   setup() {
     return {
+      ADMIN
     };
   },
 };

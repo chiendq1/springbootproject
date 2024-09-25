@@ -28,12 +28,6 @@ export const MAX_PRICE = 10000;
 export const MAX_CAPACITY = 50;
 export const MAX_AREA = 100;
 export const TEXT_CONFIRM_DELETE="Delete"
-export const ROOM_STATUS=[
-    'vacant',
-    'rented',
-    'under_repair'
-]
-
 export const IMPORT_VALID_EXTENSIONS = [".xlsx"];
 export const PDF_CONTENT_TYPE = /^application\/pdf/;
 export const NUMBER_FORMAT = 2;

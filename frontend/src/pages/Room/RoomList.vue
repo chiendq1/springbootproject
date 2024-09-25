@@ -7,7 +7,7 @@
           v-if="highest_role == ADMIN || highest_role == LANDLORD"
           class="mb-4"
         >
-          <el-button class="btn btn-save" @click=""
+          <el-button class="btn btn-save" @click="handleAddNewRoom"
             >{{ $t("room.add_new") }}
           </el-button>
         </el-row>
@@ -91,20 +91,35 @@
       </div>
     </div>
 
-    <div class="bidding-body-table" style="margin-top: 16px; min-height: 250px;">
-      <RoomTable :listRooms="listRooms" :deleteRoom="false" />
+    <div class="bidding-body-table" style="margin-top: 16px; min-height: 250px">
+      <RoomTable :listRooms="listRooms" @details="handleGetRoomDetails" @delete="handleOpenModalConfirm"/>
+      <LoadMore
+        :listData="listRooms.value"
+        :totalItems="totalItems.value"
+        @loadMore="handleLoadMore"
+      />
     </div>
+    <ModalConfirm
+      :isShowModal="isShowModalConfirm.value"
+      @close-modal="handleCloseModal"
+      :isConfirmByText="true"
+      :confirmText="TEXT_CONFIRM_DELETE"
+      @confirmAction="handleConfirm"
+      :message="$t('room.modal_confirm.message_delete_room')"
+      :title="$t('room.modal_confirm.title_delete_room')"
+    />
   </div>
 </template>
 
 <script>
 import IconSetting from "@/svg/IconSettingMain.vue";
+import ModalConfirm from "@/components/common/ModalConfirm.vue";
 import IconCircleClose from "@/svg/IconCircleClose.vue";
 import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
 import MultipleOptionSelect from "@/components/common/MultipleOptionSelect.vue";
 import CommonSlider from "@/components/common/SliderRange.vue";
 import RoomTable from "./item/ListRoomsTable.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { ADMIN, LANDLORD } from "@/constants/roles.js";
 import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
@@ -115,6 +130,9 @@ import {
   MAX_AREA,
 } from "@/constants/application.js";
 import { useRoomStore } from "@/store/rooms.js";
+import { useRouter } from "vue-router";
+import PAGE_NAME from "@/constants/route-name.js";
+import LoadMore from "@/components/common/LoadMore.vue";
 
 export default {
   name: "RoomList",
@@ -125,14 +143,20 @@ export default {
     RoomTable,
     MultipleOptionSelect,
     SingleOptionSelect,
+    LoadMore,
+    ModalConfirm,
   },
   setup() {
     const roomStore = useRoomStore();
+    const router = useRouter();
+    const { t } = useI18n();
     const {
       listRooms,
       totalItems,
       currentPage,
-      showModalConfirm,
+      isShowModalConfirm,
+      isCreate,
+      deleteRoom,
       getListRooms,
     } = roomStore;
     const searchForms = ref({
@@ -143,7 +167,7 @@ export default {
       searchValue: "",
       pageNo: 0,
     });
-    const { t } = useI18n();
+    const deleteId = ref(0);
     const listStatus = ref([
       {
         id: 0,
@@ -159,11 +183,14 @@ export default {
       },
     ]);
     const isShowBoxSearch = ref(false);
-    const updateId = ref(0);
     const highest_role = Cookies.get("highest_role");
 
-    onMounted(() => {
-      getListRooms(searchForms.value);
+    onMounted(async () => {
+      await getListRooms(searchForms.value);
+    });
+
+    onUnmounted(() => {
+      listRooms.value = [];
     })
 
     const handleSearchForm = () => {
@@ -180,11 +207,47 @@ export default {
 
     const submitForm = () => {
       isShowBoxSearch.value = false;
+      listRooms.value = [];
+      searchForms.value.pageNo = 0;
       getListRooms(searchForms.value);
     };
 
     const handleChangeRange = (newRange, field) => {
       searchForms.value[field] = newRange;
+    };
+
+    const handleGetRoomDetails = (roomId) => {
+      router.push({
+        name: PAGE_NAME.ROOM.DETAILS,
+        params: { id: roomId },
+      });
+    };
+
+    const handleAddNewRoom = () => {
+      isCreate.value = true;
+      router.push({
+        name: PAGE_NAME.ROOM.CREATE,
+      });
+    }
+
+    const handleCloseModal = () => {
+      isShowModalConfirm.value = false;
+    }
+
+    const handleOpenModalConfirm = (id) => {
+      deleteId.value = id;
+      isShowModalConfirm.value = true;
+    }
+
+    const handleConfirm = () => {
+      deleteRoom(deleteId.value);
+      handleCloseModal();
+    }
+
+    const handleLoadMore = () => {
+      currentPage.value++;
+      searchForms.value.pageNo++;
+      getListRooms(searchForms.value);
     };
 
     return {
@@ -199,10 +262,18 @@ export default {
       MAX_AREA,
       listStatus,
       listRooms,
+      totalItems,
+      isShowModalConfirm,
       handleSearchForm,
+      handleCloseModal,
+      handleConfirm,
       handleChangeRange,
       handleClear,
       submitForm,
+      handleOpenModalConfirm,
+      handleGetRoomDetails,
+      handleLoadMore,
+      handleAddNewRoom,
     };
   },
 };

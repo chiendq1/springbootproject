@@ -3,7 +3,10 @@
     <div class="user-header">
       <h3 class="page__ttl">{{ $t("user.title") }}</h3>
       <div class="user-btn-box user-import-box">
-        <el-row v-if="highest_role == ADMIN" class="mb-4">
+        <el-row
+          v-if="highest_role == ADMIN || highest_role == LANDLORD"
+          class="mb-4"
+        >
           <el-button class="btn btn-save" @click="showModalUser"
             >{{ $t("user.add_new") }}
           </el-button>
@@ -66,19 +69,11 @@
     <div class="bidding-body-table" style="margin-top: 16px">
       <UsersTable
         :listUsers="listUsers.value"
-        :deleteUser="false"
+        :userRole="highest_role"
         @details="getUserDetails"
         @delete="handleOpenModalConfirm"
       />
-      <div class="text-center">
-        <span
-          @click="handleLoadMore"
-          v-if="listUsers.value.length < totalItems.value"
-          class="loadmore"
-        >
-          {{ $t("common.load_more") }}
-        </span>
-      </div>
+      <LoadMore :listData="listUsers.value" :totalItems="totalItems.value" @loadMore="handleLoadMore" />
     </div>
     <UserModal
       v-if="isShowUserModal.value"
@@ -113,6 +108,7 @@ import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/store/users.js";
 import UserModal from "./item/UserModal.vue";
 import ModalConfirm from "@/components/common/ModalConfirm.vue";
+import LoadMore from "@/components/common/LoadMore.vue";
 import { TEXT_CONFIRM_DELETE } from "@/constants/application.js";
 
 export default {
@@ -124,6 +120,7 @@ export default {
     UsersTable,
     UserModal,
     ModalConfirm,
+    LoadMore,
   },
   setup() {
     const userStore = useUserStore();
@@ -226,7 +223,7 @@ export default {
       currentPage.value++;
       searchForms.value.pageNo++;
       getListUsers(searchForms.value);
-    }
+    };
 
     return {
       searchForms,

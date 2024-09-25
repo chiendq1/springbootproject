@@ -77,9 +77,9 @@ import IconCart from "@/svg/IconCart.vue";
 import IconUser from "@/svg/IconUser.vue";
 import IconUserGroup from "@/svg/IconUserGroup.vue";
 import IconRoom from "@/svg/IconRoom.vue";
-import { $PAGES } from "@/utils/variables";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import PAGE_NAME from "@/constants/route-name.js";
 
 export default {
   name: "Sidebar",
@@ -97,31 +97,31 @@ export default {
     const listRouter = ref([
       {
         function_name: t("side_bar.label.user"),
-        function_url: $PAGES.USERMANAGEMENT,
+        function_page_name: PAGE_NAME.USER.LIST,
         function_icon: "IconUserGroup",
       },
       {
         function_name: t("side_bar.label.room"),
-        function_url: $PAGES.ROOM,
+        function_page_name: PAGE_NAME.ROOM.LIST,
         function_icon: "IconRoom",
       },
     ]);
     const listRouterOthers = ref([
       {
         function_name: t("side_bar.label.profile"),
-        function_url: $PAGES.PROFILE,
+        function_page_name: PAGE_NAME.PROFILE,
         function_icon: "IconUser",
       },
     ]);
     const currentPath = ref("");
 
-    const navigateChangeRoute = (route) => {
-      currentPath.value = route.function_url;
-      router.push(route.function_url);
+    const navigateChangeRoute = async (route) => {
+      currentPath.value = route.function_page_name;
+      await router.push({name: route.function_page_name});
     };
 
     const classActive = (route) => {
-      return currentPath.value.includes(route.function_url) ? "active" : "";
+      return currentPath.value.includes(route.function_page_name) ? "active" : "";
     };
 
     return {

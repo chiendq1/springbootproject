@@ -201,7 +201,15 @@
       "create_user_success": "Create user successfully",
       "create_user_failed": "Create user failed",
       "delete_user_failed": "Delete user failed",
-      "delete_user_success": "Create user success"
+      "delete_user_success": "Create user success",
+      "add_tenant_success": "Add tenants success",
+      "add_tenant_failed": "Add tenants failed",
+      "delete_tenant_success": "Delete tenants success",
+      "delete_tenant_failed": "Delete tenants failed",
+      "delete_room_success": "Delete room success",
+      "delete_room_failed": "Delete room failed",
+      "create_room_success": "Create room success",
+      "create_room_failed": "Create room failed"
     }
   },
   "contract": {
@@ -454,12 +462,46 @@
         "status": "Status",
         "utilities": "Utilities",
         "action": "Action"
+      },
+      "utilities": {
+        "header": {
+          "name": "Name",
+          "amount": "Service Index",
+          "price": "Price"
+        }
       }
     },
+    "form": {
+      "label_room_code": "Room Code",
+      "label_room_area": "Area",
+      "label_room_capacity": "Capacity",
+      "label_room_rent_price": "Rent Price(VND)",
+      "label_room_status": "Status",
+      "label_room_utilities": "Utilities",
+      "label_room_landlord": "LandLord",
+      "placeholder_room_rent_price": "Enter Rent Price",
+      "placeholder_room_capacity": "Enter Room Capacity",
+      "placeholder_room_area": "Enter Room Area",
+      "placeholder_room_code": "Enter Room Code",
+      "room_utilities_placeholder": "Room Utilities",
+      "room_landlord_placeholder": "Room Landlord"
+    },
     "price_range": "Price Range", 
-    "capacity": "Capacity", 
+    "capacity": "Capacity",
     "area": "Area", 
-    "status_placeholder": "Room Status"
+    "status_placeholder": "Room Status",
+    "list_tenants": "List Tenants",
+    "list_consumption": "List Consumption",
+    "room_details_title": "Room Details",
+    "room_utilities_title": "Room Utilities Consumption",
+    "room_tenants_title": "Room Tenants",
+    "room_add_tenant": "Add New Tenant",
+    "modal_confirm": {
+      "message_delete": "WARNING: You will delete user. Please type 'Delete' to continue.",
+      "title_delete": "Delete Room Tenant",
+      "message_delete_room": "WARNING: You will delete room. Please type 'Delete' to continue.",
+      "title_delete_room": "Delete Room"
+    }
   },
   "E-CM-001": "Login Failed",
   "E-CM-002": "Required",
@@ -475,6 +517,11 @@
   "E-CM-012": "Role is invalid",
   "E-CM-013": "Username is existed",
   "E-CM-014": "Please enter correctly confirm text",
+  "E-CM-015": "Number must be greater than {min}",
+  "E-CM-016": "Status is invalid",
+  "E-CM-017": "Duplicated room code.",
+  "E-CM-018": "Number must be less than {max}.",
+  "E-CM-019": "Number of tenants exceed the room's capacity",
   "E-PW-001": "Password must be between {min} and {max} characters",
   "E-LO-700": "Limit must be a number",
   "E-LO-701": "Limit must be greater than or equal to 1",

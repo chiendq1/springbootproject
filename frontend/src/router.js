@@ -1,5 +1,5 @@
 import { createWebHistory, createRouter } from "vue-router";
-import { USER_ROUTE, ROOM_ROUTE } from "@/constants/route-name.js";
+import PAGE_NAME from "@/constants/route-name.js";
 import PAGES from "@/utils/pages";
 import { ADMIN, LANDLORD } from "@/constants/roles.js";
 import Cookies from "js-cookie";
@@ -11,15 +11,18 @@ import UserProfile from "@/pages/User/Profile.vue";
 import User from "@/pages/User/Index.vue";
 import Room from "@/pages/Room/Index.vue";
 import RoomList from "@/pages/Room/RoomList.vue";
+import RoomDetails from "@/pages/Room/RoomDetails.vue";
 import UserList from "@/pages/User/UserList.vue";
-import Forbidden from '@/pages/Forbidden.vue'
+import Forbidden from "@/pages/Forbidden.vue";
 
 const routes = [
   {
+    name: PAGE_NAME.LOGIN,
     path: PAGES.LOGIN,
     component: Login,
   },
   {
+    name: PAGE_NAME.HOME,
     path: PAGES.HOME,
     component: Home,
     meta: {
@@ -27,6 +30,7 @@ const routes = [
     },
   },
   {
+    name: PAGE_NAME.PROFILE,
     path: PAGES.PROFILE,
     component: UserProfile,
     meta: {
@@ -34,6 +38,7 @@ const routes = [
     },
   },
   {
+    name: PAGE_NAME.FORBIDDEN,
     path: PAGES.FORBIDDEN,
     component: Forbidden,
     meta: {
@@ -41,6 +46,7 @@ const routes = [
     },
   },
   {
+    name: PAGE_NAME.USERMANAGEMENT,
     path: PAGES.USERMANAGEMENT,
     component: User,
     meta: {
@@ -49,7 +55,7 @@ const routes = [
     children: [
       {
         path: "",
-        name: USER_ROUTE.LIST,
+        name: PAGE_NAME.USER.LIST,
         component: UserList,
       },
     ],
@@ -63,8 +69,18 @@ const routes = [
     children: [
       {
         path: "",
-        name: ROOM_ROUTE.LIST,
+        name: PAGE_NAME.ROOM.LIST,
         component: RoomList,
+      },
+      {
+        path: PAGES.ROOM_DETAILS,
+        name: PAGE_NAME.ROOM.DETAILS,
+        component: RoomDetails,
+      },
+      {
+        path: PAGES.ROOM_CREATE,
+        name: PAGE_NAME.ROOM.CREATE,
+        component: RoomDetails,
       },
     ],
   },
@@ -87,12 +103,17 @@ router.beforeEach((to, from, next) => {
     return next(PAGES.LOGIN);
   }
 
-  if (middleware && middleware.includes("admin-role") && highest_role !== ADMIN) {
+  if (
+    middleware &&
+    middleware.includes("admin-role") &&
+    highest_role !== ADMIN
+  ) {
     return next(PAGES.FORBIDDEN);
   }
-  
+
   if (middleware && middleware.includes("manager-role")) {
-    if(highest_role !== ADMIN && highest_role !== LANDLORD) return next(PAGES.FORBIDDEN);
+    if (highest_role !== ADMIN && highest_role !== LANDLORD)
+      return next(PAGES.FORBIDDEN);
   }
 
   next();

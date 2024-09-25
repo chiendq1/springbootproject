@@ -48,6 +48,7 @@ import { useAuthStore } from "@/store/auth.js";
 import { useRouter } from "vue-router";
 import { $PAGES } from "@/utils/variables";
 import { i18n } from "@/utils/i18n";
+import PAGE_NAME from "@/constants/route-name.js";
 
 export default {
   name: "Navbar",
@@ -74,7 +75,7 @@ export default {
     const logout = async () => {
       await handleLogout();
 
-      router.push($PAGES.LOGIN);
+      router.push({name: PAGE_NAME.LOGIN});
     }
 
     return {

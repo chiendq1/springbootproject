@@ -7,6 +7,7 @@ export const useUserStore = defineStore("user", () => {
   const { t } = useI18n();
   const validation = reactive({ value: {} });
   const listUsers = reactive({ value: [] });
+  const listLandlords = reactive({ value: [] });
   const totalItems = reactive({value: 0});
   const currentPage = reactive({value: 0});
   const showModalConfirm = reactive({ value: false });
@@ -52,6 +53,36 @@ export const useUserStore = defineStore("user", () => {
       }
     );
   };
+
+  const getListFreeUsers = async () => {
+    await $services.UserAPI.getListFreeUsers(
+      {},
+      (response) => {
+        listUsers.value = response.data.users;
+      }, (error) => {
+        console.log(error);
+      }
+    );
+  }
+  
+  const getListLandLords = async () => {
+    await $services.UserAPI.getListLandlords(
+      {},
+      (response) => {
+        if(response.data.users) {
+          listLandlords.value = []
+          listLandlords.value = response.data.users.map(user => {
+            return {
+              id: user[0],
+              value: user[1]
+            }
+          });
+        }
+      }, (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   const getUserProfile = async (userId) => {
     mixinMethods.startLoading();
@@ -180,12 +211,15 @@ export const useUserStore = defineStore("user", () => {
     isShowUserModal,
     totalItems,
     currentPage,
+    listLandlords,
+    getListFreeUsers,
     deleteUser,
     createNewUser,
     clearUserDetailsAttr,
     getListUsers,
     getUserProfile,
     updateUserProfile,
+    getListLandLords,
     changeUserPassword,
   };
 });

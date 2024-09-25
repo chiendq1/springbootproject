@@ -11,7 +11,7 @@
           class="home-link"
           href="#"
           style="color: #8d8d8d"
-          @click="$router.push(PAGES.HOME)"
+          @click="$router.push({name: PAGE_NAME.HOME})"
         >
           Hitch a ride back home.
         </a>
@@ -21,7 +21,15 @@
   <!-- Error Page -->
 </template>
 <script>
-export default {};
+import PAGE_NAME from "@/constants/route-name.js";
+
+export default {
+  setup() {
+    return {
+      PAGE_NAME
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

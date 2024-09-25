@@ -193,6 +193,7 @@ import { $PAGES, $globalLocale } from "@/utils/variables";
 import { i18n } from "@/utils/i18n";
 import { COOKIE_EXPIRE_TIME } from "@/constants/application";
 import Modal from "@/components/common/Modal.vue";
+import PAGE_NAME from "@/constants/route-name.js";
 
 export default {
   name: "Login",
@@ -202,8 +203,8 @@ export default {
     const router = useRouter();
     const authStore = useAuthStore();
     const {
-      loggedIn,
       loadingButton,
+      loggedIn,
       loadingSaveButton,
       handleLogin,
       validation,
@@ -239,7 +240,7 @@ export default {
 
     watch(() => {
       if (loggedIn.value) {
-        router.push($PAGES.HOME); // Redirect to home if logged in
+        router.push({name: PAGE_NAME.HOME}); // Redirect to home if logged in
       }
     });
 

@@ -1,10 +1,5 @@
-import { useAuthStore } from "@/store/auth.js";
+// import { useAuthStore } from "@/store/auth.js";
 
-export const authMiddleware = (to, from, next) => {
-  const authStore = useAuthStore();
-  const {
-    loggedIn
-  } = authStore;
-
-  next();
-};
+// export const authMiddleware = (to, from, next) => {
+//   next();
+// };

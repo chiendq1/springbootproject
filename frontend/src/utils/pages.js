@@ -1,10 +1,11 @@
 const PAGES = {
-  HOME: '/home',
+  HOME: '/',
   LOGIN: '/login',
   PROFILE: '/user-profile',
   USERMANAGEMENT: '/admin/users',
-  ROLECLAIMMANAGEMENT: '/admin/role-claim-management',
   ROOM: '/rooms',
+  ROOM_DETAILS: '/rooms/:id',
+  ROOM_CREATE: '/rooms/create',
   FORBIDDEN: '/forbidden',
 };
 

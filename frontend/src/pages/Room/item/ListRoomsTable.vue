@@ -54,17 +54,6 @@
           </template>
         </el-table-column>
 
-        <el-table-column min-width="180">
-          <template #header>
-            <p v-html="$t('room.table.header.utilities')"></p>
-          </template>
-          <template #default="scope">
-            <span class="data-table">{{
-              handleListUtilities(scope.row.utilities)
-            }}</span>
-          </template>
-        </el-table-column>
-
         <el-table-column min-width="140">
           <template #header>
             <p v-html="$t('room.table.header.status')"></p>
@@ -84,10 +73,10 @@
           </template>
           <template #default="scope">
             <div>
-              <button @click="$emit('details', scope.row.id)" class="btn-edit">
+              <button @click="$emit('details', scope.row.roomId)" class="btn-edit">
                 <IconEdit />
               </button>
-              <button @click="$emit('delete', scope.row.id)" class="btn-edit">
+              <button @click="$emit('delete', scope.row.roomId)" class="btn-edit">
                 <IconTrash />
               </button>
             </div>
@@ -101,7 +90,7 @@
 <script>
 import IconEdit from "@/svg/IconEdit.vue";
 import IconTrash from "@/svg/IconTrash.vue";
-import { ROOM_STATUS } from "@/constants/application.js";
+import { ROOM_STATUS } from "@/constants/room.js";
 
 export default {
   name: "RoomsTable",
@@ -113,23 +102,13 @@ export default {
     listRooms: {
       type: Array,
       default: () => [],
-    },
-    deleteRoom: {
-      type: Boolean,
-      default: () => false,
-    },
+    }
   },
   setup() {
-    const handleListUtilities = (listUtils) => {
-      if (!listUtils.length) return "-";
-      return listUtils.map((util) => util.enName).join(', ');
-    };
-
     const handleStatus = (statusId) => {
       return ROOM_STATUS[statusId];
     };
     return {
-      handleListUtilities,
       handleStatus,
     };
   },
