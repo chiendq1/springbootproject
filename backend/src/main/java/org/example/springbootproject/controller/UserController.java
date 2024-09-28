@@ -50,14 +50,6 @@ public class UserController extends BaseController {
         return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
     }
 
-    @GetMapping("/free")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('lANDLORD')")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getListFreeRoomUsers() {
-        Map<String, Object> response = userService.getListFreeUsers();
-
-        return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
-    }
-
     @GetMapping("/list-by-role")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getListUsersByRole() {
         UserDetails user = authService.getCurrentUser();

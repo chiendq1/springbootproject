@@ -14,4 +14,5 @@ public class UtilityDto {
     public String enName;
     public String jaName;
     public float unitPrice;
+    public String unit;
 }

@@ -1,13 +1,14 @@
 package org.example.springbootproject.service;
 
 import org.example.springbootproject.dto.ContractDto;
-import org.example.springbootproject.dto.RoomDto;
 import org.example.springbootproject.entity.Contract;
 import org.example.springbootproject.entity.Room;
 import org.example.springbootproject.entity.User;
 import org.example.springbootproject.mapper.ContractMapper;
+import org.example.springbootproject.payload.request.CreateContractRequest;
 import org.example.springbootproject.payload.request.GetContractListRequest;
 import org.example.springbootproject.repository.ContractRepository;
+import org.example.springbootproject.repository.RoomRepository;
 import org.example.springbootproject.repository.UserRepository;
 import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +17,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class ContractService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
 
     @Autowired
     private ContractMapper contractMapper;
@@ -62,11 +69,66 @@ public class ContractService {
                 .toList();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("contracts", contracts);
+        response.put("contracts", listContracts.getContent());
         response.put("currentPage", listContracts.getNumber());
         response.put("totalItems", listContracts.getTotalElements());
         response.put("totalPages", listContracts.getTotalPages());
 
         return response;
+    }
+
+    public Map<String, Object> getContractData(int contractId) {
+        Map<String, Object> response = new HashMap<>();
+        Contract contract = contractRepository.getContractById(contractId);
+        response.put("landlordName", contract.getRoom().getLandlord().getFullName());
+        response.put("landlordPhone", contract.getRoom().getLandlord().getPhoneNumber());
+        response.put("monthlyRent", contract.getTypeText());
+        response.put("roomCode", contract.getRoom().getRoomCode());
+        response.put("tenants", contract.getRoom().getRoomsTenants().stream().toList());
+        response.put("securityDeposit", contract.getDeposit());
+        response.put("contractDuration", contract.getStartDate() + " ~ " + contract.getEndDate());
+        response.put("services", contract.getRoom().getUtilities().stream().toList());
+
+        return response;
+    }
+
+    @Transactional
+    public Map<String, Object> createContract(CreateContractRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        Contract contract = new Contract();
+        Room room = roomRepository.getRoomByRoomId(request.getRoomId());
+        if(!request.getTenants().isEmpty()) {
+            if(request.getTenants().size() + room.getRoomsTenants().size() > room.getCapacity()) {
+                response.put("tenants", "E-CM-019");
+
+                return response;
+            }
+            Set<User> users = userRepository.getUsersByIdIn(request.getTenants());
+            room.setRoomsTenants(users);
+        }
+        room.setStatus(Constants.ROOM_STATUS_RENT);
+        contract.setContractName(request.getContractName());
+        contract.setType(request.getType());
+        contract.setStartDate(Date.valueOf(request.getStartDate()));
+        contract.setEndDate(Date.valueOf(request.getEndDate()));
+        contract.setDeposit(request.getDeposit());
+        contract.setRoom(room);
+        contractRepository.save(contract);
+        response.put("contract", contractMapper.toContractDto(contract));
+
+        return response;
+    }
+
+    public boolean checkContractExistByField(String field, String value) {
+        switch (field) {
+            case "contractName":
+                return contractRepository.existsContractByContractName(value);
+        }
+
+        return false;
+    }
+
+    public boolean checkContractDateValid(Date date, int roomId) {
+        return contractRepository.existsContractByDateWithinRange(date, roomId);
     }
 }

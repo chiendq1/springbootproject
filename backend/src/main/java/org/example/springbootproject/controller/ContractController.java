@@ -1,20 +1,26 @@
 package org.example.springbootproject.controller;
 
+import jakarta.validation.Valid;
+import org.example.springbootproject.payload.request.CreateContractRequest;
+import org.example.springbootproject.payload.request.GenerateContractPDFRequest;
 import org.example.springbootproject.payload.request.GetContractListRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
 import org.example.springbootproject.service.AuthService;
 import org.example.springbootproject.service.ContractService;
+import org.example.springbootproject.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.sql.Date;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/contracts")
@@ -25,6 +31,9 @@ public class ContractController extends BaseController {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private FileService fileService;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<Map<String, Object>>> index(
@@ -61,5 +70,42 @@ public class ContractController extends BaseController {
             logger.error(e.getMessage(), e);
             return new ResponseEntity<>(new ApiResponse<>(false, "get contracts failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping()
+    @PreAuthorize("hasRole('LANDLORD') or hasRole('ADMIN')")
+    public ResponseEntity<?> create(@RequestBody @Valid CreateContractRequest request) {
+        try {
+            Map<String, Object> contractData = contractService.createContract(request);
+            if(contractData == null) {
+                return new ResponseEntity<>(new ApiResponse<>(false, "create contract failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+            }
+
+            if(contractData.get("tenants") != null) {
+                return new ResponseEntity<>(contractData, HttpStatus.BAD_REQUEST);
+            }
+
+            return new ResponseEntity<>(new ApiResponse<>(true, "create contract success", contractData, HttpStatus.OK), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "create contract failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/pdf")
+    public ResponseEntity<?> exportPdf(@RequestBody GenerateContractPDFRequest request) {
+        String templateName = "contract_template_" + request.getLanguage();
+        Map<String, Object> contractData = contractService.getContractData(request.getContractId());
+        String htmlContent = fileService.parseThymeleafTemplate(templateName, contractData);
+        ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=contract_" + request.getContractId() + ".pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(new ByteArrayInputStream(outputStream.toByteArray())));
     }
 }

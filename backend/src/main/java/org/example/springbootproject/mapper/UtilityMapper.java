@@ -16,6 +16,7 @@ public class UtilityMapper {
         utilityDto.setJaName(utility.getJaName());
         utilityDto.setEnName(utility.getEnName());
         utilityDto.setUnitPrice(utility.getUnitPrice());
+        utilityDto.setUnit(utility.getUnit());
 
         return utilityDto;
     }

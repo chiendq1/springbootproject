@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
 import org.example.springbootproject.utils.Constants;
-import org.example.springbootproject.validation.FieldExist;
 
 import java.util.Set;
 

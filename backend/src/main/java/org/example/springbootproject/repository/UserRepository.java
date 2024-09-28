@@ -55,10 +55,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                                          @Param("filterValue") String filterValue,
                                          Pageable pageable);
 
-    @Query("SELECT u FROM User u LEFT JOIN u.roomsTenants r " +
-            "WHERE r IS NULL AND 'TENANT' IN (SELECT role.roleName FROM u.roles role)")
-    List<User> getListFreeUsers();
-
     @Query("""
     SELECT u
     FROM User u

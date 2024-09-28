@@ -91,4 +91,9 @@ public class User {
                 return 0; // Unknown roles get the lowest priority
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("Name: %s, Phone: %s, Email: %s", fullName, phoneNumber, email);
+    }
 }

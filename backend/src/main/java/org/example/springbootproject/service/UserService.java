@@ -66,13 +66,6 @@ public class UserService extends BaseService {
         return userMapper.toDTO(user);
     }
 
-    public Map<String, Object> getListFreeUsers() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("users", userRepository.getListFreeUsers());
-
-        return response;
-    }
-
     public Map<String, Object> getListUsersByRole(UserDetails currentUser) {
         try {
             User currentUserEntity = userRepository.findUserByUsername(currentUser.getUsername());

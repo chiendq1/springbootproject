@@ -27,4 +27,12 @@ public class Utility {
 
     @Column(name = "unit_price")
     private float unitPrice;
+
+    @Column(name = "unit")
+    private String unit;
+
+    @Override
+    public String toString() {
+        return String.format("Service: %s, Price: %.2f, Unit: %s", enName, unitPrice, unit);
+    }
 }
