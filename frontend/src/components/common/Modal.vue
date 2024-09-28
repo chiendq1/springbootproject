@@ -133,7 +133,6 @@ export default {
   top: 0;
   left: 0;
   display: flex;
-  position: relative;
 
   svg {
     cursor: pointer;
@@ -145,6 +144,7 @@ export default {
 }
 
 .modal-header h5 {
+  margin: 0;
   font-weight: 600;
   font-size: 24px;
   line-height: 32px;

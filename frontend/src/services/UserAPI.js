@@ -25,10 +25,6 @@ const changePassword = async (id, params, success, error) => {
   await put(API_CODE.API_USER_002 + id, params, success, error);
 };
 
-const getListFreeUsers = async (params, success, error) => {
-  await get(API_CODE.API_USER_003, success, error, params);
-};
-
 const getListUsersByRole = async (params, success, error) => {
   await get(API_CODE.API_USER_004, success, error, params);
 };
@@ -40,6 +36,5 @@ export const UserAPI = {
   update,
   store,
   changePassword,
-  getListFreeUsers,
   getListUsersByRole,
 };

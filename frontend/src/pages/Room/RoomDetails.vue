@@ -42,7 +42,7 @@
     </div>
     <AddUserModal
       @close="handleCloseModal"
-      :dataUsers="listUsers.value"
+      :dataUsers="listTenants.value"
       :show="isOpenDataUsersModal.value"
       @submit="handleAddTenants"
     />
@@ -74,7 +74,6 @@ import { useUtilityStore } from "@/store/utility.js";
 import { TEXT_CONFIRM_DELETE } from "@/constants/application.js";
 import IconBackMain from "@/svg/IconBackMain.vue";
 import PAGE_NAME from "@/constants/route-name.js";
-import { LANDLORD } from "@/constants/roles.js";
 
 export default {
   name: "UserProfile",
@@ -96,8 +95,7 @@ export default {
     const utilityStore = useUtilityStore();
     const activeCollapseItems = ref(["1", "2"]);
     const deleteId = ref(0);
-    const { listUsers, listLandlords, getListFreeUsers, getListUsersByRole } =
-      userStore;
+    const { listLandlords, listTenants, getListUsersByRole } = userStore;
     const {
       getRoomDetails,
       roomUsers,
@@ -132,16 +130,16 @@ export default {
 
     onMounted(() => {
       getListAllUtilities();
-      getListFreeUsers();
+      getListUsersByRole();
       if (!route.params.id) {
         isCreate.value = true;
-        getListUsersByRole();
       }
       if (!isCreate.value) getRoomDetails(route.params.id);
     });
 
     onUnmounted(() => {
       isCreate.value = false;
+      listLandlords.value = [];
       resetData();
     });
 
@@ -161,7 +159,13 @@ export default {
     const handleOpenModalConfirm = (id) => {
       if (isCreate.value) {
         let user = roomUsers.value.find((user) => user.id == id);
-        listUsers.value.push(user);
+        listTenants.value.push({
+          id: user.id,
+          fullName: user.fullName,
+          phoneNumber: user.phoneNumber,
+          email: user.email,
+          value: user.username,
+        });
         roomUsers.value = roomUsers.value.filter((user) => user.id != id);
         return;
       }
@@ -178,19 +182,19 @@ export default {
       isOpenDataUsersModal.value = true;
     };
 
-    const handleAddTenants = (listTenants) => {
+    const handleAddTenants = (listAddTenants) => {
       if (isCreate.value) {
         roomUsers.value.push.apply(
           roomUsers.value,
-          listUsers.value.filter((user) => listTenants.includes(user.id))
+          listTenants.value.filter((user) => listAddTenants.includes(user.id))
         );
-        listUsers.value = listUsers.value.filter(
-          (user) => !listTenants.includes(user.id)
+        listTenants.value = listTenants.value.filter(
+          (user) => !listAddTenants.includes(user.id)
         );
         isOpenDataUsersModal.value = false;
         return;
       }
-      addRoomTenants(route.params.id, listTenants);
+      addRoomTenants(route.params.id, listAddTenants);
     };
 
     const handleConfirm = () => {
@@ -203,7 +207,7 @@ export default {
       roomDetails,
       validation,
       roomUsers,
-      listUsers,
+      listTenants,
       listLandlords,
       allowUpdate,
       isOpenDataUsersModal,

@@ -77,7 +77,7 @@
         >
       </template>
     </el-table-column>
-    <el-table-column min-width="60">
+    <el-table-column min-width="90">
       <template #header>
         <p v-html="$t('contract.table.header.action')"></p>
       </template>
@@ -86,6 +86,9 @@
           <button @click="$emit('details', scope.row.id)" class="btn-edit">
             <IconEdit />
           </button>
+          <button @click="$emit('download', scope.row.id)" class="btn-edit">
+            <IconDownload />
+          </button>
         </div>
       </template>
     </el-table-column>
@@ -93,11 +96,13 @@
 </template>
 <script>
 import IconEdit from "@/svg/IconEdit.vue";
+import IconDownload from "@/svg/IconDownload.vue";
 import { CONTRACT_STATUSES, CONTRACT_TYPES } from "@/constants/contract.js";
 
 export default {
   components: {
     IconEdit,
+    IconDownload,
   },
   props: {
     data: {

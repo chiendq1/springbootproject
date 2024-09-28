@@ -90,7 +90,7 @@
 <script>
 import IconEdit from "@/svg/IconEdit.vue";
 import IconTrash from "@/svg/IconTrash.vue";
-import { ROOM_STATUS } from "@/constants/room.js";
+import { ROOM_STATUSES } from "@/constants/room.js";
 
 export default {
   name: "RoomsTable",
@@ -106,7 +106,7 @@ export default {
   },
   setup() {
     const handleStatus = (statusId) => {
-      return ROOM_STATUS[statusId];
+      return ROOM_STATUSES[statusId];
     };
     return {
       handleStatus,

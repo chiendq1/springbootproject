@@ -43,9 +43,9 @@ const get = async (endpoint, success, error, params = {}) => {
 };
 
 // Performs a POST request
-const post = async (endpoint, params = {}, success, error) => {
+const post = async (endpoint, params = {}, success, error, config = {}) => {
   await api
-    .post(prefix + endpoint, params)
+    .post(prefix + endpoint, params, config)
     .then(processResponse)
     .then(success)
     .catch((e) => logError(e, error));

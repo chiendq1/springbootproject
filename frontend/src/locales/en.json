@@ -209,7 +209,9 @@
       "delete_room_success": "Delete room success",
       "delete_room_failed": "Delete room failed",
       "create_room_success": "Create room success",
-      "create_room_failed": "Create room failed"
+      "create_room_failed": "Create room failed",
+      "create_contract_success": "Create contract success",
+      "create_contract_failed": "Create contract failed"
     }
   },
   "contract": {
@@ -224,7 +226,6 @@
     "room": "Room",
     "tenant": "Tenant",
     "landlord": "Landlord",
-    "upload_request_documents_rule": "Format file: {mimes}; Maxsize: {size} MB",
     "statuses": {
       "active": "Active",
       "terminated": "Terminated",
@@ -237,31 +238,13 @@
       "year": "Yearly"
     },
     "create": {
-      "title": "Add New Contract",
-      "contract_code": "Contract Code",
-      "project_code": "Project Code",
-      "type_category": "Type<br />- Category",
-      "relative_bid": "Relative Bid",
-      "sale_departments": "Sale Departments",
-      "customer_name": "Customer Name",
-      "account_manager": "Account Manager",
-      "production_department": "Production Department",
-      "senior_manager": "Senior Manager",
-      "project_manager": "Project Manager",
+      "title": "Create Contract",
+      "contract_name": "Contract Name",
+      "duration": "Duration",
+      "deposit": "Deposit",
+      "room": "Room",
       "type": "Type",
-      "category": "Category",
-      "description": "Description",
-      "start_date": "Start Date",
-      "finish_date": "Finish Date",
-      "signed_effort": "Signed Effort",
-      "signed_cost": "Signed Cost",
-      "estimation_effort": "Estimation Effort (Include CR)",
-      "initial_estimation_effort": "Estimation Effort (Initial)",
-      "estimation_cost": "Estimation Cost (Include CR)",
-      "initial_estimation_cost": "Estimation Cost (Initial)",
-      "payee_id": "Payee",
-      "status": "Status",
-      "memo": "Memo"
+      "tenants": "Tenants"
     },
     "detail": {
       "title": "Contract Detail",
@@ -308,28 +291,6 @@
         "action": "Action",
         "status": "Status",
         "type": "Type"
-      },
-      "item": {
-        "sales_department": "Sales Dept:",
-        "production_department": "Production Dept:",
-        "customer": "Customer:",
-        "account_manager": "Account Manager:",
-        "contract": "Contract Code:",
-        "project": "Project Code:",
-        "type": "Type:",
-        "category": "Category:",
-        "start_date": "Start Date:",
-        "finish_date": "Finish Date:",
-        "signed_effort": "Signed Effort:",
-        "signed_cost": "Signed Cost:",
-        "estimated-effort": "Estimated Effort:",
-        "estimated-cost": "Estimated Cost:",
-        "actual-effort": "Actual Effort:",
-        "actual-cost": "Actual Cost:",
-        "paid-effort": "Acc. Paid Effort:",
-        "paid-cost": "Acc. Paid Cost:",
-        "remain-effort": "Remain Effort:",
-        "remain-cost": "Remain Cost:"
       }
     },
     "modal_confirm": {
@@ -528,6 +489,10 @@
   "E-CM-017": "Duplicated room code.",
   "E-CM-018": "Number must be less than {max}.",
   "E-CM-019": "Number of tenants exceed the room's capacity",
+  "E-CM-020": "Start date must be before end date",
+  "E-CM-021": "Contract name existed",
+  "E-CM-022": "Start date must greater or equal current date",
+  "E-CM-023": "Contract date is duplicated with another contract",
   "E-PW-001": "Password must be between {min} and {max} characters",
   "E-LO-700": "Limit must be a number",
   "E-LO-701": "Limit must be greater than or equal to 1",

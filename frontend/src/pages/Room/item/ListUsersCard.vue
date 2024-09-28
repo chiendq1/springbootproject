@@ -3,7 +3,7 @@
     <div class="list-users">
       <div class="d-flex list-users-header">
         <h3>{{ $t("room.list_tenants") }}</h3>
-        <div @click="$emit('addNew')" class="d-flex">
+        <div v-if="highest_role == LANDLORD || highest_role == ADMIN" @click="$emit('addNew')" class="d-flex">
           <IconPlus />
         </div>
       </div>
@@ -15,6 +15,8 @@
 import IconTrash from "@/svg/IconTrash.vue";
 import IconPlus from "@/svg/IconPlus.vue";
 import UsersTable from "./UsersTable.vue";
+import { LANDLORD, ADMIN } from "@/constants/roles.js";
+import Cookies from "js-cookie";
 
 export default {
   components: {
@@ -33,11 +35,15 @@ export default {
     }
   },
   setup(props, {emit}){
+    const highest_role = Cookies.get("highest_role");
     const handleOpenModalConfirm = (id) => {
       emit('delete', id);
     }
 
     return {
+      LANDLORD,
+      ADMIN,
+      highest_role,
       handleOpenModalConfirm
     }
   }

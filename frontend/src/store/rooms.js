@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { mixinMethods, $services } from "@/utils/variables";
 import { reactive } from "vue";
 import { EN_LOCALE } from "@/constants/application.js";
-import { ROOM_STATUS } from "@/constants/room.js";
+import { ROOM_STATUSES } from "@/constants/room.js";
 import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/store/users.js";
 import PAGE_NAME from "@/constants/route-name.js";
@@ -87,7 +87,7 @@ export const useRoomStore = defineStore("room", () => {
             });
           }
         });
-        allowUpdate.value = ROOM_STATUS[roomDetails.value.status] == "rented";
+        allowUpdate.value = ROOM_STATUSES[roomDetails.value.status] == "rented";
         
         mixinMethods.endLoading();
       },
@@ -105,6 +105,7 @@ export const useRoomStore = defineStore("room", () => {
           return {
             id: room.roomId,
             value: room.roomCode,
+            status: room.status
           }
         })
       },() => {
@@ -140,7 +141,7 @@ export const useRoomStore = defineStore("room", () => {
       roomDetails.value,
       (response) => {
         setRoomDetails(response.data.roomDetails);
-        allowUpdate.value = ROOM_STATUS[roomDetails.value.status] == "rented";
+        allowUpdate.value = ROOM_STATUSES[roomDetails.value.status] == "rented";
         validation.value = {};
         mixinMethods.notifySuccess(t("response.message.update_success"));
         mixinMethods.endLoading();
@@ -235,6 +236,7 @@ export const useRoomStore = defineStore("room", () => {
     roomUsers.value = data.roomDetails.roomsTenants.map((tenant) => {
       return {
         id: tenant.id,
+        username: tenant.username,
         fullName: tenant.fullName,
         email: tenant.email,
         phoneNumber: tenant.phoneNumber,

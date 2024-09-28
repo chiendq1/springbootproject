@@ -177,7 +177,7 @@ export default {
 
     const submitForm = () => {
       isShowBoxSearch.value = false;
-      searchForms.pageNo = 0;
+      searchForms.value.pageNo = 0;
       getListUsers(searchForms.value);
     };
 

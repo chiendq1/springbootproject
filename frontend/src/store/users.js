@@ -56,18 +56,6 @@ export const useUserStore = defineStore("user", () => {
     );
   };
 
-  const getListFreeUsers = async () => {
-    await $services.UserAPI.getListFreeUsers(
-      {},
-      (response) => {
-        listUsers.value = response.data.users;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  };
-
   const getListUsersByRole = async () => {
     await $services.UserAPI.getListUsersByRole(
       {},
@@ -77,14 +65,17 @@ export const useUserStore = defineStore("user", () => {
             if (user.highestRole === LANDLORD) {
               listLandlords.value.push({
                 id: user.id,
-                value: user.fullName,
+                value: user.username,
               });
             }
 
             if(user.highestRole === TENANT) {
               listTenants.value.push({
                 id: user.id,
-                value: user.fullName,
+                fullName: user.fullName,
+                phoneNumber: user.phoneNumber,
+                email: user.email,
+                value: user.username,
               });
             }
           });
@@ -223,7 +214,6 @@ export const useUserStore = defineStore("user", () => {
     currentPage,
     listLandlords,
     listTenants,
-    getListFreeUsers,
     deleteUser,
     createNewUser,
     clearUserDetailsAttr,

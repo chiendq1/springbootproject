@@ -17,8 +17,7 @@
 </template>
 
 <script>
-import { COLOR_WHITE_2 } from "@/constants/color";
-import { COLOR_BLACK_1 } from "@/constants/color";
+import { COLOR_GRAY_1 } from "../constants/color";
 
 export default {
   props: {
@@ -28,19 +27,19 @@ export default {
     },
     width: {
       type: [Number, String],
-      default: 40,
+      default: 18,
     },
     height: {
       type: [Number, String],
-      default: 40,
+      default: 18,
     },
     fill: {
       type: String,
-      default: COLOR_BLACK_1,
+      default: COLOR_GRAY_1,
     },
     stroke: {
       type: String,
-      default: COLOR_WHITE_2,
+      default: COLOR_GRAY_1,
     },
   },
 };

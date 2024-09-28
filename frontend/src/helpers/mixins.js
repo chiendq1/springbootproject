@@ -199,7 +199,7 @@ const mixins = {
     showDateTime(dateTime, formatString = undefined) {
       if (this.checkEmpty(dateTime)) return;
       if (!formatString) {
-        formatString = process.env.VUE_APP_FORMATDATE;
+        formatString = import.meta.env.VITE_APP_FORMATDATE;
       }
       return moment(dateTime, [
         "YYYY/MM",

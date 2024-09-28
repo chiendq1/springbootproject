@@ -7,7 +7,7 @@
           v-if="highest_role == ADMIN || highest_role == LANDLORD"
           class="mb-4"
         >
-          <el-button class="btn btn-save" @click=""
+          <el-button class="btn btn-save" @click="handleOpenModal(true)"
             >{{ $t("contract.add_new") }}
           </el-button>
         </el-row>
@@ -51,12 +51,13 @@
           <div class="item">
             <el-form-item :label="$t('contract.date')">
               <el-date-picker
-                v-model="searchForms.dateRange"
+                v-model="dateRange"
                 type="daterange"
                 range-separator="To"
                 :start-placeholder="$t('common.start_date')"
                 :end-placeholder="$t('common.end_date')"
                 :size="default"
+                @change="handleChangeDate"
               />
             </el-form-item>
             <el-form-item :label="$t('contract.status')">
@@ -71,7 +72,7 @@
             <el-form-item :label="$t('contract.type')">
               <SingleOptionSelect
                 v-model="searchForms.type"
-                :listData="listTypes"
+                :listData="listTypes.value"
                 :placeholder="$t('contract.type_placeholder')"
                 :isRemote="true"
                 :disabled="isDisabled"
@@ -90,7 +91,7 @@
             </el-form-item>
             <el-form-item :label="$t('contract.tenant')">
               <SingleOptionSelect
-                v-model="searchForms.tenant"
+                v-model="searchForms.tenantId"
                 :listData="listTenants.value"
                 :placeholder="$t('contract.tenant_placeholder')"
                 :isRemote="true"
@@ -112,30 +113,47 @@
     </div>
 
     <div class="bidding-body-table" style="margin-top: 16px; min-height: 400px">
-      <ContractTable :data="listContracts.value" />
+      <ContractTable
+        :data="listContracts.value"
+        @download="handleDownloadPDF"
+      />
       <LoadMore
         :listData="listContracts.value"
         :totalItems="totalItems.value"
         @loadMore="handleLoadMore"
       />
     </div>
+    <ContractSaveModal
+      :title="modalTitle"
+      :show="isShowModalSave.value"
+      :contractDetails="contractDetails.value"
+      :validation="validation"
+      :listTypes="listTypes.value"
+      :rangeDate="dateRangeModal"
+      :listRoomsByRole="listRoomsByRole.value"
+      :listTenants="listTenants.value"
+      @close="handleCloseModal"
+      @submit="handleSaveContract"
+    />
   </div>
 </template>
 
 <script>
 import IconSetting from "@/svg/IconSettingMain.vue";
 import IconCircleClose from "@/svg/IconCircleClose.vue";
-import { NUMBER_FORMAT } from "@/constants/application.js";
 import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
-import { onMounted, ref } from "vue";
-import { ADMIN, LANDLORD } from "@/constants/roles.js";
-import { useI18n } from "vue-i18n";
 import LoadMore from "@/components/common/LoadMore.vue";
 import Cookies from "js-cookie";
 import ContractTable from "./item/ContractTable.vue";
+import ContractSaveModal from "./item/SaveModal.vue";
+import { onMounted, onUnmounted, reactive, ref } from "vue";
+import { NUMBER_FORMAT } from "@/constants/application.js";
+import { ADMIN, LANDLORD } from "@/constants/roles.js";
+import { useI18n } from "vue-i18n";
 import { useContractStore } from "@/store/contracts.js";
 import { useUserStore } from "@/store/users.js";
 import { useRoomStore } from "@/store/rooms.js";
+import { mixinMethods } from "@/utils/variables";
 
 export default {
   name: "UserList",
@@ -145,6 +163,7 @@ export default {
     SingleOptionSelect,
     LoadMore,
     ContractTable,
+    ContractSaveModal,
   },
   setup() {
     const searchForms = ref({
@@ -153,20 +172,40 @@ export default {
       roomId: null,
       startDate: "",
       endDate: "",
-      tenant: null,
+      tenantId: null,
       type: null,
       landlordId: null,
       pageNo: 0,
     });
+    const dateRange = ref([]);
+    const dateRangeModal = reactive({value: []});
     const contractStore = useContractStore();
     const userStore = useUserStore();
     const roomStore = useRoomStore();
-    const { listContracts, getListContracts, totalItems, currentPage } = contractStore;
-    const { getListUsersByRole, listLandlords, listTenants } = userStore;
-    const { getListRoomsByRole,listRoomsByRole } = roomStore;
+    const {
+      listContracts,
+      getListContracts,
+      isShowModalSave,
+      listTypes,
+      validation,
+      totalItems,
+      contractDetails,
+      currentPage,
+      resetContractDetails,
+      getContractPdf,
+      createNewContract,
+    } = contractStore;
+    const {
+      getListUsersByRole,
+      listLandlords,
+      listTenants,
+    } = userStore;
+    const { getListRoomsByRole, listRoomsByRole } = roomStore;
+    const modalTitle = ref("");
     const highest_role = Cookies.get("highest_role");
     const { t } = useI18n();
     const isDisabled = ref(false);
+    const isCreateContract = ref(true);
     const isShowBoxSearch = ref(false);
     const listStatuses = ref([
       {
@@ -182,24 +221,6 @@ export default {
         value: t("contract.statuses.renewed"),
       },
     ]);
-    const listTypes = ref([
-      {
-        id: 0,
-        value: t("contract.types.monthly"),
-      },
-      {
-        id: 1,
-        value: t("contract.types.quater"),
-      },
-      {
-        id: 2,
-        value: t("contract.types.half-year"),
-      },
-      {
-        id: 3,
-        value: t("contract.types.year"),
-      },
-    ]);
 
     onMounted(() => {
       getListContracts(searchForms.value);
@@ -207,17 +228,32 @@ export default {
       getListRoomsByRole();
     });
 
+    onUnmounted(() => {
+      listContracts.value = [];
+      listLandlords.value = [];
+      listTenants.value = [];
+    });
+
     const handleSearchForm = () => {
       isShowBoxSearch.value = !isShowBoxSearch.value;
     };
 
     const handleClear = () => {
-      searchForms.value.filterValue = "";
       searchForms.value.searchValue = "";
+      searchForms.value.status = null;
+      searchForms.value.roomId = null;
+      searchForms.value.startDate = "";
+      searchForms.value.endDate = "";
+      searchForms.value.tenantId = null;
+      searchForms.value.type = null;
+      searchForms.value.landlordId = null;
+      dateRange.value = [];
     };
 
     const submitForm = () => {
       searchForms.value.pageNo = 0;
+      currentPage.value = 0;
+      getListContracts(searchForms.value);
       isShowBoxSearch.value = false;
     };
 
@@ -225,6 +261,37 @@ export default {
       currentPage.value++;
       searchForms.value.pageNo++;
       getListContracts(searchForms.value);
+    };
+
+    const handleChangeDate = (date) => {
+      searchForms.value.startDate = mixinMethods.showDateTime(date[0]);
+      searchForms.value.endDate = mixinMethods.showDateTime(date[1]);
+    };
+
+    const handleDownloadPDF = (id) => {
+      getContractPdf(id);
+    };
+
+    const handleOpenModal = (isCreate = false) => {
+      if (isCreate) {
+        modalTitle.value = t("contract.create.title");
+        isCreateContract.value = true;
+      }
+      isShowModalSave.value = true;
+    };
+
+    const handleCloseModal = () => {
+      dateRangeModal.value = [];
+      validation.value = [];
+      resetContractDetails();
+      isShowModalSave.value = false;
+    };
+
+    const handleSaveContract = () => {
+      if (isCreateContract.value) {
+        dateRangeModal.value = [];
+        createNewContract();
+      }
     };
 
     return {
@@ -235,17 +302,30 @@ export default {
       ADMIN,
       LANDLORD,
       isDisabled,
+      validation,
       totalItems,
+      isShowModalSave,
+      contractDetails,
+      modalTitle,
       listLandlords,
       listContracts,
       listStatuses,
       listTenants,
+      listTenants,
       listTypes,
+      dateRangeModal,
+      dateRange,
       listRoomsByRole,
       handleSearchForm,
       handleClear,
       submitForm,
       handleLoadMore,
+      handleChangeDate,
+      handleCloseModal,
+      handleOpenModal,
+      getContractPdf,
+      handleDownloadPDF,
+      handleSaveContract,
     };
   },
 };

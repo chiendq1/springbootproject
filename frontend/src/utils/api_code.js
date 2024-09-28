@@ -20,7 +20,8 @@ const API_CODE = {
   API_UTILITY_001: '/utility',
 
   //Contracts
-  API_CONTRACT_001: '/contracts'
+  API_CONTRACT_001: '/contracts',
+  API_CONTRACT_002: '/contracts/pdf'
 };
 
 export default API_CODE;
