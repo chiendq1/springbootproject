@@ -1,6 +1,5 @@
 package org.example.springbootproject.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +36,9 @@ public class Contract {
 
     @Column(name = "status", nullable = false)
     private int status;
+
+    @Column(name = "created_at", nullable = false)
+    private Date createAt;
 
     public String getTypeText() {
         switch (type) {

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class GetRoomListRequest {
     private Integer pageNo = 0;
-    private String sortBy = "id";
+    private String sortBy = "createAt";
     private String searchValue = "";
     private float[] priceRange = {0, 0};
     private int[] capacity = {0, 0};

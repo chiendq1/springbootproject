@@ -38,7 +38,7 @@ public class Constants {
     public static final int ROOM_STATUS_REPAIR = 2;
     public static final String EN_LANGUAGE = "en";
     public static final String JA_LANGUAGE = "ja";
-
+    public static final int CONTRACT_STATUS_TERMINATED = 1;
     @Value("${app.secret_key}")
     private String secretKey;
 

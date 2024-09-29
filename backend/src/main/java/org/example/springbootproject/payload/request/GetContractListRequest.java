@@ -12,7 +12,7 @@ import java.sql.Date;
 public class GetContractListRequest {
     private Date startDate;
     private Date endDate;
-    private String sortBy = "id";
+    private String sortBy = "createAt";
     private Integer roomId;
     private String searchValue;
     private Integer tenantId;

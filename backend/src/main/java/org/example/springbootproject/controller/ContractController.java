@@ -93,6 +93,34 @@ public class ContractController extends BaseController {
         }
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("@contractService.checkContractRelatedTo(#id, authentication.name, true) or hasRole('ADMIN')")
+    public ResponseEntity<?> show(@PathVariable int id) {
+        try {
+            Map<String, Object> response = contractService.getContractDetails(id);
+
+            return new ResponseEntity<>(new ApiResponse<>(true, "get contract details success", response, HttpStatus.OK), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "get contract details failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("@contractService.checkContractRelatedTo(#id, authentication.name, false) or hasRole('ADMIN')")
+    public ResponseEntity<?> terminateContract(@PathVariable int id) {
+        try {
+            Map<String, Object> response = contractService.terminateContract(id);
+
+            return new ResponseEntity<>(new ApiResponse<>(true, "terminate contract success", response, HttpStatus.OK), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+
+            return new ResponseEntity<>(new ApiResponse<>(false, "terminate contract failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/pdf")
     public ResponseEntity<?> exportPdf(@RequestBody GenerateContractPDFRequest request) {
         String templateName = "contract_template_" + request.getLanguage();

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -40,13 +41,13 @@ public class ContractService {
     @Autowired
     private ContractRepository contractRepository;
 
-    public Map<String, Object>  getListContracts(GetContractListRequest request, String currentUserName) {
+    public Map<String, Object> getListContracts(GetContractListRequest request, String currentUserName) {
         User currentUser = userRepository.findUserByUsername(currentUserName);
         boolean isAdmin = currentUser.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
         boolean isLandLord = currentUser.getRoles().stream().anyMatch(role -> role.getRoleName().equals("LANDLORD"));
         boolean isTenant = currentUser.getRoles().stream().anyMatch(role -> role.getRoleName().equals("TENANT"));
 
-        Pageable paging = PageRequest.of(request.getPageNo(), Constants.PAGE_SIZE, Sort.by(request.getSortBy()));
+        Pageable paging = PageRequest.of(request.getPageNo(), Constants.PAGE_SIZE, Sort.by(request.getSortBy()).descending());
 
         Page<Contract> listContracts = contractRepository.getListContracts(
                 currentUser.getId(),
@@ -97,8 +98,8 @@ public class ContractService {
         Map<String, Object> response = new HashMap<>();
         Contract contract = new Contract();
         Room room = roomRepository.getRoomByRoomId(request.getRoomId());
-        if(!request.getTenants().isEmpty()) {
-            if(request.getTenants().size() + room.getRoomsTenants().size() > room.getCapacity()) {
+        if (!request.getTenants().isEmpty()) {
+            if (request.getTenants().size() + room.getRoomsTenants().size() > room.getCapacity()) {
                 response.put("tenants", "E-CM-019");
 
                 return response;
@@ -119,6 +120,24 @@ public class ContractService {
         return response;
     }
 
+    public Map<String, Object> getContractDetails(int contractId) {
+        Map<String, Object> response = new HashMap<>();
+        Contract contract = contractRepository.getContractById(contractId);
+        response.put("contract", contractMapper.toContractDto(contract));
+
+        return response;
+    }
+
+    public Map<String, Object> terminateContract(int contractId) {
+        Map<String, Object> response = new HashMap<>();
+        Contract contract = contractRepository.getContractById(contractId);
+        contract.setStatus(Constants.CONTRACT_STATUS_TERMINATED);
+        contractRepository.save(contract);
+        response.put("contract", contract);
+
+        return response;
+    }
+
     public boolean checkContractExistByField(String field, String value) {
         switch (field) {
             case "contractName":
@@ -130,5 +149,18 @@ public class ContractService {
 
     public boolean checkContractDateValid(Date date, int roomId) {
         return contractRepository.existsContractByDateWithinRange(date, roomId);
+    }
+
+    public boolean checkContractRelatedTo(int contractId, String userName, boolean isCheckTenant) {
+        Contract contract = contractRepository.getContractById(contractId);
+        boolean result = false;
+        if (contract != null) {
+            if (isCheckTenant) {
+                result = contract.getRoom().getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName));
+            }
+            result = contract.getRoom().getLandlord().getUsername().equals(userName);
+        }
+
+        return result;
     }
 }

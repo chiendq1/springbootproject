@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Date;
 import java.util.Set;
 
 @Entity
@@ -65,4 +67,7 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private Set<Bill> bills;
+
+    @Column(name = "created_at", nullable = false)
+    private Date createAt;
 }

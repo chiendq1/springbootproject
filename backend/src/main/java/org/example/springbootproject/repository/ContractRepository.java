@@ -65,14 +65,4 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
             @Param("roomId") int roomId
     );
 
-    @Query("""
-    SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END
-    FROM Contract c
-    WHERE c..roomId = :roomId
-    AND :date BETWEEN c.startDate AND c.endDate
-""")
-    boolean existsContractByDateWithinRange(
-            @Param("date") Date date,
-            @Param("roomId") int roomId
-    );
 }
