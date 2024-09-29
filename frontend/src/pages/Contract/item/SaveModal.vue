@@ -15,7 +15,10 @@
       <div class="modal-body">
         <el-form :model="contractDetails" label-width="18%">
           <el-form-item :label="$t('contract.create.contract_name')">
-            <el-input v-model="contractDetails.contractName" />
+            <el-input
+              v-model="contractDetails.contractName"
+              :disabled="isViewDetails"
+            />
             <p v-if="validation.value.contractName" class="error-feedback">
               {{
                 $t(
@@ -29,9 +32,10 @@
           <el-form-item :label="$t('contract.create.duration')">
             <div class="date-picker">
               <el-date-picker
-                style="width: 100%;"
+                style="width: 100%"
                 v-model="rangeDate.value"
                 type="daterange"
+                :disabled="isViewDetails"
                 range-separator="To"
                 :start-placeholder="$t('common.start_date')"
                 :end-placeholder="$t('common.end_date')"
@@ -53,10 +57,16 @@
           </el-form-item>
 
           <el-form-item :label="$t('contract.create.deposit')">
-            <el-input v-model="contractDetails.deposit" />
+            <el-input
+              v-model="contractDetails.deposit"
+              :disabled="isViewDetails"
+            />
             <p v-if="validation.value.deposit" class="error-feedback">
               {{
-                $t(validation.value.deposit.code, validation.value.deposit.options)
+                $t(
+                  validation.value.deposit.code,
+                  validation.value.deposit.options
+                )
               }}
             </p>
           </el-form-item>
@@ -65,24 +75,31 @@
             <SingleOptionSelect
               v-model="contractDetails.type"
               :listData="listTypes"
+              :isDisabled="isViewDetails"
               :placeholder="$t('contract.type_placeholder')"
               :isRemote="true"
             />
             <p v-if="validation.value.type" class="error-feedback">
-              {{ $t(validation.value.type.code, validation.value.type.options) }}
+              {{
+                $t(validation.value.type.code, validation.value.type.options)
+              }}
             </p>
           </el-form-item>
 
           <el-form-item :label="$t('contract.create.room')">
             <SingleOptionSelect
               v-model="contractDetails.roomId"
+              :isDisabled="isViewDetails"
               :listData="listRoomsByRole"
               :placeholder="$t('contract.room_placeholder')"
               :isRemote="true"
             />
             <p v-if="validation.value.roomId" class="error-feedback">
               {{
-                $t(validation.value.roomId.code, validation.value.roomId.options)
+                $t(
+                  validation.value.roomId.code,
+                  validation.value.roomId.options
+                )
               }}
             </p>
           </el-form-item>
@@ -91,13 +108,17 @@
             <MultipleOptionSelect
               v-model="contractDetails.tenants"
               :list-data="listTenants"
+              :isDisabled="isViewDetails"
               :showClearable="true"
               :placeholder="$t('contract.tenant_placeholder')"
               :isRemote="true"
             />
             <p v-if="validation.value.tenants" class="error-feedback">
               {{
-                $t(validation.value.tenants.code, validation.value.tenants.options)
+                $t(
+                  validation.value.tenants.code,
+                  validation.value.tenants.options
+                )
               }}
             </p>
           </el-form-item>
@@ -105,23 +126,43 @@
       </div>
 
       <div class="modal-footer">
-        <el-button class="btn btn-save" @click="handleSubmit">{{
-          $t("common.save")
-        }}</el-button>
-        <el-button class="btn btn-refuse" @click="$emit('close')">{{
-          $t("common.cancel")
-        }}</el-button>
+        <div v-if="!isViewDetails">
+          <el-button
+            class="btn btn-save"
+            v-if="highestRole == ADMIN || highestRole == LANDLORD"
+            @click="handleSubmit"
+            >{{ $t("common.save") }}</el-button
+          >
+          <el-button class="btn btn-refuse" @click="$emit('close')">{{
+            $t("common.cancel")
+          }}</el-button>
+        </div>
+        <div v-if="isViewDetails && contractDetails.status != CONTRACT_STATUS_TERMINATED">
+          <el-button
+            class="btn btn-save"
+            v-if="highestRole == ADMIN || highestRole == LANDLORD"
+            @click="$emit('extend')"
+            >{{ $t("common.extend") }}</el-button
+          >
+          <el-button
+            class="btn btn-refuse"
+            v-if="highestRole == ADMIN || highestRole == LANDLORD"
+            @click="$emit('terminate')"
+            >{{ $t("common.terminate") }}</el-button
+          >
+        </div>
       </div>
     </template>
   </Modal>
 </template>
 
 <script>
-import { ref } from "vue";
 import { mixinMethods } from "@/utils/variables";
 import Modal from "@/components/common/Modal.vue";
 import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
 import MultipleOptionSelect from "@/components/common/MultipleOptionSelect.vue";
+import { ADMIN, LANDLORD } from "@/constants/roles.js";
+import { CONTRACT_STATUS_TERMINATED } from "@/constants/contract.js";
 
 export default {
   name: "ContractSaveModal",
@@ -142,6 +183,7 @@ export default {
         type: 0,
         roomId: 0,
         tenants: [],
+        status: 0,
       },
     },
     validation: {
@@ -164,10 +206,18 @@ export default {
       type: String,
       default: "",
     },
+    highestRole: {
+      type: String,
+      default: "",
+    },
+    isViewDetails: {
+      type: Boolean,
+      default: false,
+    },
     rangeDate: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   setup(props, { emit }) {
     const handleSubmit = () => {
@@ -180,6 +230,9 @@ export default {
     };
 
     return {
+      ADMIN,
+      LANDLORD,
+      CONTRACT_STATUS_TERMINATED,
       handleChangeDate,
       handleSubmit,
     };

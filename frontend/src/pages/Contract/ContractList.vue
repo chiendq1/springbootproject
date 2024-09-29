@@ -116,6 +116,7 @@
       <ContractTable
         :data="listContracts.value"
         @download="handleDownloadPDF"
+        @details="handleGetContractDetails"
       />
       <LoadMore
         :listData="listContracts.value"
@@ -128,12 +129,25 @@
       :show="isShowModalSave.value"
       :contractDetails="contractDetails.value"
       :validation="validation"
+      :highestRole="highest_role"
       :listTypes="listTypes.value"
+      :isViewDetails="isViewDetails.value"
       :rangeDate="dateRangeModal"
       :listRoomsByRole="listRoomsByRole.value"
       :listTenants="listTenants.value"
       @close="handleCloseModal"
       @submit="handleSaveContract"
+      @extend="handleSaveContract"
+      @terminate="handleTerminateContract"
+    />
+    <ModalConfirm
+      :isShowModal="isShowModalConfirm.value"
+      @close-modal="handleCloseModalConfirm"
+      :isConfirmByText="true"
+      :confirmText="TEXT_CONFIRM_TERMINATE"
+      @confirmAction="handleConfirm"
+      :message="$t('contract.modal_confirm.message')"
+      :title="$t('contract.modal_confirm.title')"
     />
   </div>
 </template>
@@ -143,11 +157,13 @@ import IconSetting from "@/svg/IconSettingMain.vue";
 import IconCircleClose from "@/svg/IconCircleClose.vue";
 import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
 import LoadMore from "@/components/common/LoadMore.vue";
+import ModalConfirm from "@/components/common/ModalConfirm.vue";
 import Cookies from "js-cookie";
 import ContractTable from "./item/ContractTable.vue";
 import ContractSaveModal from "./item/SaveModal.vue";
-import { onMounted, onUnmounted, reactive, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { NUMBER_FORMAT } from "@/constants/application.js";
+import { TEXT_CONFIRM_TERMINATE } from "@/constants/application.js";
 import { ADMIN, LANDLORD } from "@/constants/roles.js";
 import { useI18n } from "vue-i18n";
 import { useContractStore } from "@/store/contracts.js";
@@ -163,6 +179,7 @@ export default {
     SingleOptionSelect,
     LoadMore,
     ContractTable,
+    ModalConfirm,
     ContractSaveModal,
   },
   setup() {
@@ -178,7 +195,6 @@ export default {
       pageNo: 0,
     });
     const dateRange = ref([]);
-    const dateRangeModal = reactive({value: []});
     const contractStore = useContractStore();
     const userStore = useUserStore();
     const roomStore = useRoomStore();
@@ -188,9 +204,14 @@ export default {
       isShowModalSave,
       listTypes,
       validation,
+      isShowModalConfirm,
+      isViewDetails,
       totalItems,
       contractDetails,
+      dateRangeModal,
       currentPage,
+      updateContract,
+      getContractDetails,
       resetContractDetails,
       getContractPdf,
       createNewContract,
@@ -205,7 +226,6 @@ export default {
     const highest_role = Cookies.get("highest_role");
     const { t } = useI18n();
     const isDisabled = ref(false);
-    const isCreateContract = ref(true);
     const isShowBoxSearch = ref(false);
     const listStatuses = ref([
       {
@@ -275,24 +295,49 @@ export default {
     const handleOpenModal = (isCreate = false) => {
       if (isCreate) {
         modalTitle.value = t("contract.create.title");
-        isCreateContract.value = true;
+        isViewDetails.value = false;
+      } else {
+        isViewDetails.value = true;
+        modalTitle.value = t("contract.detail.title");
       }
       isShowModalSave.value = true;
     };
+
+    const handleGetContractDetails = (id) => {
+      getContractDetails(id);
+      handleOpenModal();
+    }
 
     const handleCloseModal = () => {
       dateRangeModal.value = [];
       validation.value = [];
       resetContractDetails();
+      isViewDetails.value = false;
+      isShowModalConfirm.value = false;
       isShowModalSave.value = false;
     };
 
     const handleSaveContract = () => {
-      if (isCreateContract.value) {
+      if (!isViewDetails.value) {
         dateRangeModal.value = [];
         createNewContract();
+      } else {
+        isViewDetails.value = false;
       }
     };
+
+    const handleTerminateContract = () => {
+      isShowModalConfirm.value = true; 
+    }
+
+    const handleCloseModalConfirm = () => {
+      isShowModalConfirm.value = false;
+    }
+
+    const handleConfirm = () => {
+      isShowModalConfirm.value = false;
+      updateContract();
+    }
 
     return {
       searchForms,
@@ -302,7 +347,10 @@ export default {
       ADMIN,
       LANDLORD,
       isDisabled,
+      TEXT_CONFIRM_TERMINATE,
+      isShowModalConfirm,
       validation,
+      isViewDetails,
       totalItems,
       isShowModalSave,
       contractDetails,
@@ -318,10 +366,14 @@ export default {
       listRoomsByRole,
       handleSearchForm,
       handleClear,
+      handleCloseModalConfirm,
       submitForm,
       handleLoadMore,
+      handleTerminateContract,
       handleChangeDate,
+      handleGetContractDetails,
       handleCloseModal,
+      handleConfirm,
       handleOpenModal,
       getContractPdf,
       handleDownloadPDF,

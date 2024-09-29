@@ -7,15 +7,13 @@
     "invoice_attachment": "Invoice Attachment",
     "contract": "Contract",
     "sales": "Sales",
-    "payment_note": "Payment Note",
-    "payment_value": "Payment Value",
-    "exchange_rate": "Exchange Rate",
     "status_note": "Status Note",
-    "incentive": "Incentive",
     "start_date": "Start Date",
     "end_date": "End Date",
     "old": "Old",
+    "terminate": "Terminate",
     "new": "New",
+    "extend": "Extend",
     "first_half_year": "First Half Year",
     "second_half_year": "Second Half Year",
     "full_month_of_year": "Full month of year",
@@ -211,7 +209,10 @@
       "create_room_success": "Create room success",
       "create_room_failed": "Create room failed",
       "create_contract_success": "Create contract success",
-      "create_contract_failed": "Create contract failed"
+      "create_contract_failed": "Create contract failed",
+      "get_contract_details_failed": "Get contract details failed",
+      "terminate_contract_success": "Terminate contract success",
+      "terminate_contract_failed": "Terminate contract failed"
     }
   },
   "contract": {
@@ -247,38 +248,7 @@
       "tenants": "Tenants"
     },
     "detail": {
-      "title": "Contract Detail",
-      "payment_list": "Payment List",
-      "cr": "CR List",
-      "contract_code": "Contract Code",
-      "project_code": "Project Code",
-      "relative_bid": "Relative Bid",
-      "sale_departments": "Sale Departments",
-      "customer_name": "Customer Name",
-      "account_manager": "Account Manager",
-      "production_department": "Production Department",
-      "type": "Type",
-      "category": "Category",
-      "start_date": "Start Date",
-      "finish_date": "Finish Date",
-      "senior_manager": "Senior Manager",
-      "project_manager": "Project Manager",
-      "description": "Description",
-      "signed_effort": "Signed Effort",
-      "signed_cost": "Signed Cost",
-      "estimation_effort": "Estimation Effort",
-      "estimation_cost": "Estimation Cost",
-      "actual-effort": "Actual Effort",
-      "actual-cost": "Actual Cost",
-      "accumulated-paid-effort": "Accumulated Paid Effort",
-      "accumulated-paid-cost": "Accumulated Paid Cost",
-      "remain-effort": "Remain Effort",
-      "remain-cost": "Remain Cost",
-      "payee_id": "Payee",
-      "status": "Status",
-      "memo": "Memo",
-      "copy": "Copy Contract",
-      "attachment": "Contract Attachment"
+      "title": "Contract Detail"
     },
     "table": {
       "header": {
@@ -294,8 +264,8 @@
       }
     },
     "modal_confirm": {
-      "title_delete": "Confirm delete contract!",
-      "message_delete": "WARNING: You will delete contract with all relative payments and CRs. Please type 'YES' to continue."
+      "title": "Confirm terminate contract",
+      "message": "Please enter 'Terminate' to confirm terminate this contract"
     },
     "status_placeholder": "Contract status",
     "room_placeholder": "Contract room",
@@ -423,7 +393,7 @@
     "table":{
       "header": {
         "room_code": "Room Code",
-        "area": "Area(square meter)",
+        "area": "Area(&#13217;)",
         "capacity": "Capacity",
         "price": "Price",
         "status": "Status",
