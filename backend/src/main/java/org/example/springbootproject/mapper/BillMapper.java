@@ -21,6 +21,9 @@ public class BillMapper {
     @Autowired
     private BillDetailsMapper billDetailsMapper;
 
+    @Autowired
+    private RoomMapper roomMapper;
+
     public BillDto toBillDtoForRoomDetails(Bill bill) {
         BillDto billDto = new BillDto();
         billDto.setBillDetails(
@@ -42,5 +45,21 @@ public class BillMapper {
         }
 
         return billDtos;
+    }
+
+    public BillDto toBillDto(Bill bill) {
+        BillDto billDto = new BillDto();
+        billDto.setId(bill.getId());
+        billDto.setBillCode(bill.getBillCode());
+        billDto.setRoom(roomMapper.toRoomDto(bill.getRoom(), true));
+        billDto.setPaymentStatus(bill.getPaymentStatus());
+        billDto.setDate(bill.getMonth());
+        billDto.setBillDetails(
+                bill.getBillDetails().stream()
+                        .map(billDetails -> billDetailsMapper.toBillDetailsDto(billDetails))
+                        .collect(Collectors.toSet())
+        );
+
+        return billDto;
     }
 }

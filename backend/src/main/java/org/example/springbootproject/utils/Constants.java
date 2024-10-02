@@ -38,7 +38,18 @@ public class Constants {
     public static final int ROOM_STATUS_REPAIR = 2;
     public static final String EN_LANGUAGE = "en";
     public static final String JA_LANGUAGE = "ja";
+    public static final int CONTRACT_STATUS_ACTIVE = 0;
     public static final int CONTRACT_STATUS_TERMINATED = 1;
+    public static final int CONTRACT_STATUS_RENEWED = 2;
+    public static final int BILL_STATUS_UNPAID = 1;
+    public static final int BILL_STATUS_TERMINATED = 2;
+    public static final int CONTRACT_TYPE_MONTHLY = 0;
+    public static final int CONTRACT_TYPE_QUARTER = 1;
+    public static final int CONTRACT_TYPE_HALF_YEAR = 2;
+    public static final int CONTRACT_TYPE_YEARLY = 3;
+    public static int DATE_PLUS_CONTRACT = 15;
+    public static String SYSTEM_NAME;
+
     @Value("${app.secret_key}")
     private String secretKey;
 
@@ -51,11 +62,17 @@ public class Constants {
     @Value("${jwt.refresh_token_expire:86400000}")
     private long refreshTokenExpireTime;
 
-    @Value("${app.system_email}")
-    private String SystemEmail;
+    @Value("${app.system_email:systemmail@gmail.com}")
+    private String systemEmail;
 
     @Value("${app.page_size}")
     private int pageSize;
+
+    @Value("${app.minus_date:15}")
+    private int dateMinus;
+
+    @Value("${app.system_name:Admin System}")
+    private String systemName;
 
     @PostConstruct
     private void init() {
@@ -63,8 +80,10 @@ public class Constants {
         TOKEN_EXPIRE_TIME = tokenExpireTime;
         FRONT_END_URL = frontEndUrl;
         REFRESH_TOKEN_EXPIRE_TIME = refreshTokenExpireTime;
-        SYSTEM_EMAIL = SystemEmail;
+        SYSTEM_EMAIL = systemEmail;
+        SYSTEM_NAME = systemName;
         PAGE_SIZE = pageSize;
+        DATE_PLUS_CONTRACT = dateMinus;
         ALLOW_ENDPOINTS.put("AUTH_API", "api/auth/**");
         ALLOW_ENDPOINTS.put("SWAGGER", "swagger-ui/**");
         ALLOW_ENDPOINTS.put("API_DOCS", "v3/api-docs/**");

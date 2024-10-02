@@ -1,5 +1,6 @@
 package org.example.springbootproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class Contract {
     private Integer id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 

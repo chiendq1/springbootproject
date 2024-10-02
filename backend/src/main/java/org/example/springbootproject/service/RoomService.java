@@ -65,7 +65,7 @@ public class RoomService extends BaseService {
         );
 
         List<RoomDto> rooms = listRooms.stream()
-                .map(room -> roomMapper.toRoomDto(room))
+                .map(room -> roomMapper.toRoomDto(room, true))
                 .toList();
 
         Map<String, Object> response = new HashMap<>();
@@ -80,18 +80,18 @@ public class RoomService extends BaseService {
     public Map<String, Object> getRoomDetails(int id) {
         Map<String, Object> response = new HashMap<>();
         Room roomDetails = roomRepository.getRoomByRoomId(id);
-        response.put("roomDetails", roomMapper.toRoomDto(roomDetails));
+        response.put("roomDetails", roomMapper.toRoomDto(roomDetails, true));
 
         return response;
     }
 
-    public Map<String, Object> getListRoomsByRole(UserDetails currentUser) {
+    public Map<String, Object> getListRoomsByRole(UserDetails currentUser, boolean getByContract) {
         try {
             User currentUserEntity = userRepository.findUserByUsername(currentUser.getUsername());
             Map<String, Object> response = new HashMap<>();
-            List<Room> listUsers = roomRepository.getListRoomsByRole(currentUserEntity.getHighestRole(), currentUserEntity.getId());
+            List<Room> listUsers = roomRepository.getListRoomsByRole(currentUserEntity.getHighestRole(), currentUserEntity.getId(), getByContract);
             List<RoomDto> rooms = listUsers.stream()
-                    .map(room -> roomMapper.toRoomDto(room))
+                    .map(room -> roomMapper.toRoomDto(room, true))
                     .toList();
             response.put("rooms", rooms);
 
@@ -138,7 +138,7 @@ public class RoomService extends BaseService {
         roomDetails.setCapacity(request.getCapacity());
         roomDetails.setRentPrice(request.getRentPrice());
         roomDetails.setUtilities(utilityRepository.findAllByIdIn(request.getUtilities()));
-        response.put("roomDetails", roomMapper.toRoomDto(roomDetails));
+        response.put("roomDetails", roomMapper.toRoomDto(roomDetails, true));
 
         return response;
     }
@@ -164,7 +164,7 @@ public class RoomService extends BaseService {
 
             room.setRoomsTenants(currentTenants);
             roomRepository.save(room);
-            response.put("roomDetails", roomMapper.toRoomDto(room));
+            response.put("roomDetails", roomMapper.toRoomDto(room, true));
 
             return response;
 
@@ -177,8 +177,9 @@ public class RoomService extends BaseService {
 
     @Transactional
     public void deleteRoom(int id) {
-        Map<String, Object> response = new HashMap<>();
         Room room = roomRepository.getRoomByRoomId(id);
+        room.getContracts().forEach(contract -> contract.setStatus(Constants.CONTRACT_STATUS_TERMINATED));
+        room.getBills().forEach(bill -> bill.setPaymentStatus(Constants.BILL_STATUS_TERMINATED));
         roomRepository.delete(room);
     }
 

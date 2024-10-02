@@ -20,6 +20,9 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "bill_code")
+    private String billCode;
+
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     @JsonBackReference
@@ -30,6 +33,9 @@ public class Bill {
 
     @Column(name = "payment_status", nullable = false)
     private int paymentStatus;
+
+    @Column(name = "created_at", nullable = false)
+    private Date createAt;
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference

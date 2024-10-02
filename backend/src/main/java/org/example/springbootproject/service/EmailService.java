@@ -1,16 +1,24 @@
 package org.example.springbootproject.service;
 
+import jakarta.activation.DataSource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.util.ByteArrayDataSource;
+import org.example.springbootproject.entity.User;
 import org.example.springbootproject.repository.ParameterRepository;
 import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
 import java.security.SecureRandom;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class EmailService {
@@ -27,28 +35,52 @@ public class EmailService {
         String otpCode = generateOTP(Constants.OTP_LENGTH);
         dataCache.put(to, otpCode);
         String htmlContent = String.format(htmlContentTemplate, to, otpCode);
-        mailSender.send(this.createMimeMessage(to, Constants.SYSTEM_EMAIL, subject, htmlContent));
+        String[] emailTo = {to};
+        mailSender.send(this.createMimeMessage(emailTo, Constants.SYSTEM_EMAIL, "", subject, htmlContent, null, null));
     }
 
     @Async
     public void sendCreateAccountEmail(String contentName, String to, String subject, String password) throws MessagingException {
         String htmlContentTemplate = parameterRepository.findByName(contentName).getValue();
         String htmlContent = String.format(htmlContentTemplate, to, password);
-        mailSender.send(this.createMimeMessage(to, Constants.SYSTEM_EMAIL, subject, htmlContent));
+        String[] emailTo = {to};
+        mailSender.send(this.createMimeMessage(emailTo, Constants.SYSTEM_EMAIL, "", subject, htmlContent, null, null));
+    }
+
+    public void sendEmailContract(String contentName, Map<String, String> data, String[] to) throws MessagingException {
+        String htmlContentTemplate = parameterRepository.findByName(contentName).getValue();
+        String htmlContent = String.format(htmlContentTemplate, data.get("tenants"), data.get("roomCode"), data.get("terminateDate"), Constants.SYSTEM_NAME);
+        mailSender.send(this.createMimeMessage(to, Constants.SYSTEM_EMAIL, data.get("cc"), data.get("subject"), htmlContent, null, null));
+    }
+
+    @Async
+    public void sendEmailBill(String contentName, Map<String, Object> data, ByteArrayOutputStream fileContent) throws MessagingException {
+        String htmlContentTemplate = parameterRepository.findByName(contentName).getValue();
+        String fileName = data.get("date").toString() + data.get("roomCode").toString();
+        List<User> tenants = (List<User>) data.get("tenants");
+        String users = tenants.stream().map(User::getFullName).collect(Collectors.joining(", "));
+        String htmlContent = String.format(htmlContentTemplate, users, data.get("roomCode").toString(), data.get("date").toString(), Constants.SYSTEM_NAME);
+        String[] emailTo = tenants.stream().map(User::getEmail).toArray(String[]::new);
+        mailSender.send(this.createMimeMessage(emailTo, Constants.SYSTEM_EMAIL, "", "Room Bill Notice", htmlContent, fileName, fileContent));
+    }
+
+    private MimeMessage createMimeMessage(String[] to, String from, String cc, String subject, String htmlContent, String fileName, ByteArrayOutputStream fileContent) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setFrom(from);
+        helper.setSubject(subject);
+        helper.setTo(to);
+        if (!cc.isEmpty()) helper.setCc(cc);
+        helper.setText("", htmlContent);
+        if (fileContent != null && fileName != null) {
+            DataSource dataSource = new ByteArrayDataSource(fileContent.toByteArray(), "application/pdf");
+            helper.addInline(fileName, dataSource);
+        }
+        return message;
     }
 
     public String getOtpFromCache(String to) {
-       return dataCache.get(to);
-    }
-
-    private MimeMessage createMimeMessage(String to, String from, String subject, String htmlContent) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        message.setFrom(from);
-        message.setSubject(subject);
-        message.setRecipients(MimeMessage.RecipientType.TO, to);
-        message.setContent(htmlContent, "text/html; charset=utf-8");
-
-        return message;
+        return dataCache.get(to);
     }
 
     private String generateOTP(int length) {

@@ -14,6 +14,7 @@ import java.util.Set;
 public class BillDto {
     private int id;
     private Date date;
+    private String billCode;
     private RoomDto room;
     private int paymentStatus;
     private Set<BillDetailsDto> billDetails;

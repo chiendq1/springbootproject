@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -70,7 +69,7 @@ public class ContractService {
                 .toList();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("contracts", listContracts.getContent());
+        response.put("contracts", contracts);
         response.put("currentPage", listContracts.getNumber());
         response.put("totalItems", listContracts.getTotalElements());
         response.put("totalPages", listContracts.getTotalPages());
@@ -108,6 +107,7 @@ public class ContractService {
             room.setRoomsTenants(users);
         }
         room.setStatus(Constants.ROOM_STATUS_RENT);
+        room.getContracts().forEach(contractChange -> contractChange.setStatus(Constants.CONTRACT_STATUS_TERMINATED));
         contract.setContractName(request.getContractName());
         contract.setType(request.getType());
         contract.setStartDate(Date.valueOf(request.getStartDate()));
@@ -128,12 +128,37 @@ public class ContractService {
         return response;
     }
 
+    @Transactional
     public Map<String, Object> terminateContract(int contractId) {
         Map<String, Object> response = new HashMap<>();
         Contract contract = contractRepository.getContractById(contractId);
         contract.setStatus(Constants.CONTRACT_STATUS_TERMINATED);
+        contract.getRoom().setStatus(Constants.ROOM_STATUS_VACANT);
+        contract.getRoom().setRoomsTenants(null);
         contractRepository.save(contract);
         response.put("contract", contract);
+
+        return response;
+    }
+
+    @Transactional
+    public void changeListContractStatus(List<Contract> listContracts, int status) {
+        listContracts.forEach(contract -> {
+            if(status == Constants.CONTRACT_STATUS_TERMINATED) {
+                terminateContract(contract.getId());
+            } else {
+                contract.setStatus(status);
+            }
+            contractRepository.save(contract);
+        });
+    }
+
+    public Map<String, List<Contract>> handleCheckContractDaily() {
+        Map<String, List<Contract>> response = new HashMap<>();
+        Date currentDate = Date.valueOf(LocalDate.now());
+        Date dateAfter = Date.valueOf(LocalDate.now().plusDays(Constants.DATE_PLUS_CONTRACT));
+        response.put("listOverdueContracts", contractRepository.getContractsByEndDateBeforeAndStatusNot(currentDate, Constants.CONTRACT_STATUS_TERMINATED));
+        response.put("listRenewedContracts", contractRepository.getContractsByEndDateBetweenAndStatus(currentDate, dateAfter, Constants.CONTRACT_STATUS_ACTIVE));
 
         return response;
     }

@@ -22,4 +22,5 @@ public class RoomDto {
     private Set<UtilityDto> utilities;
     private Set<UserDto> roomsTenants;
     private Set<BillDto> bills;
+    private Set<ContractDto> contracts;
 }

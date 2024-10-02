@@ -1,11 +1,13 @@
 package org.example.springbootproject.payload.request;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Component
 @Getter
-public class GenerateContractPdfRequest {
-    private int contractId;
-    private String language;
+@Setter
+public class CreateBillDetailsRequest {
+    private Integer utilityId;
+    private int amount;
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Date;
+import java.util.List;
 
 public interface ContractRepository extends JpaRepository<Contract, Integer> {
 
@@ -65,4 +66,9 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
             @Param("roomId") int roomId
     );
 
+    Contract getContractsByStatusAndRoom_RoomId(int status, int roomId);
+
+    List<Contract> getContractsByEndDateBeforeAndStatusNot(Date endDate, int status);
+
+    List<Contract> getContractsByEndDateBetweenAndStatus(Date endDate, Date endDate2, int status);
 }

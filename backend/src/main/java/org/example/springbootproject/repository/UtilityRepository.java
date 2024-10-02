@@ -9,4 +9,6 @@ import java.util.Set;
 @Repository
 public interface UtilityRepository extends JpaRepository<Utility, Integer> {
     Set<Utility> findAllByIdIn(Set<Integer> ids);
+
+    Utility findById(int id);
 }

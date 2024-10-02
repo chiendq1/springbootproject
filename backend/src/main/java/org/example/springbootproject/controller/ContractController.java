@@ -2,12 +2,13 @@ package org.example.springbootproject.controller;
 
 import jakarta.validation.Valid;
 import org.example.springbootproject.payload.request.CreateContractRequest;
-import org.example.springbootproject.payload.request.GenerateContractPDFRequest;
+import org.example.springbootproject.payload.request.GenerateContractPdfRequest;
 import org.example.springbootproject.payload.request.GetContractListRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
 import org.example.springbootproject.service.AuthService;
 import org.example.springbootproject.service.ContractService;
 import org.example.springbootproject.service.FileService;
+import org.example.springbootproject.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +32,9 @@ public class ContractController extends BaseController {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private RoomService roomService;
 
     @Autowired
     private FileService fileService;
@@ -73,7 +77,7 @@ public class ContractController extends BaseController {
     }
 
     @PostMapping()
-    @PreAuthorize("hasRole('LANDLORD') or hasRole('ADMIN')")
+    @PreAuthorize("@roomService.hasRoom(#request.roomId, authentication.name, true) or hasRole('ADMIN')")
     public ResponseEntity<?> create(@RequestBody @Valid CreateContractRequest request) {
         try {
             Map<String, Object> contractData = contractService.createContract(request);
@@ -122,8 +126,9 @@ public class ContractController extends BaseController {
     }
 
     @PostMapping("/pdf")
-    public ResponseEntity<?> exportPdf(@RequestBody GenerateContractPDFRequest request) {
-        String templateName = "contract_template_" + request.getLanguage();
+    public ResponseEntity<?> exportPdf(@RequestBody GenerateContractPdfRequest request) {
+        String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
+        String templateName = "bill_template_" + language;
         Map<String, Object> contractData = contractService.getContractData(request.getContractId());
         String htmlContent = fileService.parseThymeleafTemplate(templateName, contractData);
         ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);

@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.sql.Date;
 import java.util.Set;
@@ -16,6 +18,8 @@ import java.util.Set;
 @Table(name = "rooms")
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE rooms SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 @Setter
 @Getter
 public class Room {
@@ -64,10 +68,17 @@ public class Room {
     @JsonIgnoreProperties("rooms")
     private Set<User> roomsTenants;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "room")
     @JsonManagedReference
     private Set<Bill> bills;
 
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private Set<Contract> contracts;
+
     @Column(name = "created_at", nullable = false)
     private Date createAt;
+
+    @Column(name = "deleted")
+    private boolean deleted = Boolean.FALSE;
 }

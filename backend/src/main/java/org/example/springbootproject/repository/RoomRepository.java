@@ -46,8 +46,16 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     boolean duplicateRoomCode(@Param("fieldValue") String fieldValue, @Param("id") Integer id);
     boolean existsRoomByRoomCode(String roomCode);
 
-    @Query("SELECT r FROM Room r WHERE :highestRole = 'ADMIN' " +
+    @Query("SELECT r FROM Room r " +
+            "LEFT JOIN r.contracts c " +
+            "WHERE (:getByContract = false OR (r.status = 1))" +
+            "AND (:highestRole = 'ADMIN') " +
             "OR (:highestRole = 'LANDLORD' AND r.landlord.id = :userId) " +
-            "OR (:highestRole = 'TENANT' AND :userId IN (SELECT t.id FROM r.roomsTenants t))")
-    List<Room> getListRoomsByRole(@Param("highestRole") String highestRole, @Param("userId") int userId);
+            "OR (:highestRole = 'TENANT' AND :userId IN (SELECT t.id FROM r.roomsTenants t)) "
+            )
+    List<Room> getListRoomsByRole(
+            @Param("highestRole") String highestRole,
+            @Param("userId") int userId,
+            @Param("getByContract") boolean getByContract
+    );
 }

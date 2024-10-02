@@ -68,9 +68,9 @@ public class RoomController extends BaseController {
     }
 
     @GetMapping("/list-by-role")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> getListRoomByUserRole() {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getListRoomByUserRole(@RequestParam(value = "getByContract", defaultValue = "false") boolean getByContract) {
         UserDetails user = authService.getCurrentUser();
-        Map<String, Object> response = roomService.getListRoomsByRole(user);
+        Map<String, Object> response = roomService.getListRoomsByRole(user, getByContract);
 
         return new ResponseEntity<>(new ApiResponse<>(true, "get rooms success", response, HttpStatus.OK), HttpStatus.OK);
     }
