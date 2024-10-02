@@ -14,6 +14,9 @@ import RoomList from "@/pages/Room/RoomList.vue";
 import RoomDetails from "@/pages/Room/RoomDetails.vue";
 import Contract from "@/pages/Contract/Index.vue";
 import ContractList from "@/pages/Contract/ContractList.vue";
+import Bill from "@/pages/Bill/Index.vue";
+import BillList from "@/pages/Bill/BillList.vue";
+import BillDetails from "@/pages/Bill/BillDetails.vue";
 import UserList from "@/pages/User/UserList.vue";
 import Forbidden from "@/pages/Forbidden.vue";
 
@@ -97,6 +100,30 @@ const routes = [
         path: "",
         name: PAGE_NAME.CONTRACT.LIST,
         component: ContractList,
+      },
+    ],
+  },
+  {
+    path: PAGES.BILL,
+    component: Bill,
+    meta: {
+      middleware: ["authentication"],
+    },
+    children: [
+      {
+        path: "",
+        component: BillList,
+        name: PAGE_NAME.BILL.LIST,
+      },
+      {
+        path: PAGES.BILL_CREATE,
+        component: BillDetails,
+        name: PAGE_NAME.BILL.CREATE,
+      },
+      {
+        path: PAGES.BILL_DETAILS,
+        component: BillDetails,
+        name: PAGE_NAME.BILL.DETAILS,
       },
     ],
   },

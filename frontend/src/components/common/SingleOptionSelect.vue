@@ -10,14 +10,14 @@
     :clearable="showClearable"
     ref="singleOptionSelect"
   >
-    <div class="bs-searchbox" onclick="event.stopPropagation()">
+    <div class="bs-searchbox" @click="event.stopPropagation()">
       <input
         v-if="isDisplaySearch && !isRemote"
         type="text"
         class="form-control"
         autocomplete="off"
         v-model="searchName"
-        role="tetxbox"
+        role="textbox"
         aria-label="Search"
       />
       <input
@@ -25,8 +25,8 @@
         type="text"
         class="form-control"
         autocomplete="off"
-        @keyup="remoteSearch($event)"
-        role="tetxbox"
+        @keyup="remoteSearch"
+        role="textbox"
         aria-label="Search"
       />
     </div>
@@ -36,33 +36,29 @@
         :key="item.id"
         :label="item.value"
         :value="item.id"
-        :class="item.id == -1 && 'border-top'"
+        :class="item.id === -1 && 'border-top'"
         :disabled="usingListItems.includes(item.id)"
       >
         <div class="el-custom-select-dropdown">
-          <span class="dropdown-option-name">
-            {{ item.value }}
-          </span>
+          <span class="dropdown-option-name">{{ item.value }}</span>
         </div>
       </el-option>
     </div>
     <div v-else-if="checkEmpty(filteredSearchData) && !checkEmpty(listData) || isSearching">
-      <el-option value="" disabled>{{
-        $t('common.no_results_found')
-      }}</el-option>
+      <el-option value="" disabled>{{ $t('common.no_results_found') }}</el-option>
     </div>
     <div v-else>
       <p class="no-data">{{ $t('common.no_data') }}</p>
     </div>
   </el-select>
 </template>
+
 <script>
-import mixins from "@/helpers/mixins";
+import { ref, computed, watch, onMounted } from 'vue';
+import { debounce } from 'lodash';
 
 export default {
   name: "SingleOptionSelect",
-  emits: ["handleSelectedParams"],
-  mixins: [mixins],
   props: {
     listData: {
       type: Array,
@@ -82,7 +78,7 @@ export default {
     },
     defaultList: {
       type: [String, Number, Array],
-      default: () => [] || 0 || "",
+      default: () => [],
     },
     labelShow: {
       type: String,
@@ -98,12 +94,7 @@ export default {
     },
     optionIndex: {
       type: Object,
-      default: () => {
-        return {
-          haveIndex: false,
-          index: 0,
-        };
-      },
+      default: () => ({ haveIndex: false, index: 0 }),
     },
     placeholder: {
       type: String,
@@ -118,58 +109,56 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      searchName: "",
-      selectedItem: "",
-      isSearching: false,
+  emits: ["handleSelectedParams", "remoteSearch"],
+
+  setup(props, { emit }) {
+    const searchName = ref("");
+    const selectedItem = ref(props.defaultList);
+    const isSearching = ref(false);
+
+    const resetDataSelect = () => {
+      searchName.value = "";
     };
-  },
-  created() {
-    if (!this.checkEmpty(this.defaultList)) {
-      this.selectedItem = this.defaultList;
-    }
-  },
-  computed: {
-    filteredSearchData() {
-      let lowerCaseSearch = this.searchName?.toLowerCase() || "";
-      let searchList = [];
-      searchList = this.listData.filter((item) =>
+
+    const remoteSearch = debounce((event) => {
+      isSearching.value = true;
+      emit("remoteSearch", event.target.value);
+    }, 300);
+
+    const filteredSearchData = computed(() => {
+      const lowerCaseSearch = searchName.value.toLowerCase() || "";
+      let searchList = props.listData.filter((item) =>
         item.value.toLowerCase().includes(lowerCaseSearch)
       );
-      //Add option select all
-      if (this.haveSelectAllOption && !this.checkEmpty(searchList))
+      if (props.haveSelectAllOption && searchList.length) {
         searchList.push({
           id: -1,
           value: "All",
         });
-      return searchList;
-    },
-  },
-  watch: {
-    defaultList(value) {
-      this.selectedItem = value;
-    },
-    selectedItem() {
-      if (this.optionIndex.haveIndex) {
-        this.$emit(
-          "handleSelectedParams",
-          this.selectedItem,
-          this.optionIndex.index
-        );
-      } else {
-        this.$emit("handleSelectedParams", this.selectedItem);
       }
-    },
-  },
-  methods: {
-    resetDataSelect() {
-      this.searchName = "";
-    },
-    remoteSearch($event) {
-      this.isSearching = true;
-      this.$emit("remoteSearch", $event.target.value);
-    },
+      return searchList;
+    });
+
+    watch(selectedItem, (newValue) => {
+      if (props.optionIndex.haveIndex) {
+        emit("handleSelectedParams", newValue, props.optionIndex.index);
+      } else {
+        emit("handleSelectedParams", newValue);
+      }
+    });
+
+    watch(() => props.defaultList, (newValue) => {
+      selectedItem.value = newValue;
+    });
+
+    return {
+      searchName,
+      selectedItem,
+      isSearching,
+      resetDataSelect,
+      remoteSearch,
+      filteredSearchData,
+    };
   },
 };
 </script>

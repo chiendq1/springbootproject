@@ -26,8 +26,10 @@ export const useRoomStore = defineStore("room", () => {
   const isShowModalConfirm = reactive({ value: false });
   const isCreate = reactive({ value: false });
   const router = useRouter();
+  const utilitiesConsumer = reactive({ value: [] });
   const roomDetails = reactive({
     value: {
+      roomId: 0,
       landlordId: "",
       roomCode: "",
       area: 0,
@@ -35,9 +37,13 @@ export const useRoomStore = defineStore("room", () => {
       rentPrice: 0,
       status: "",
       utilities: [],
+      utilityDetails: [],
+      contracts: [],
+      tenants: [],
+      bills: [],
+      landlordName: "",
     },
   });
-  const utilitiesConsumer = reactive({ value: [] });
 
   const getListRooms = async (searchForm) => {
     mixinMethods.startLoading();
@@ -60,7 +66,6 @@ export const useRoomStore = defineStore("room", () => {
     );
   };
 
-  
   const getRoomDetails = async (id) => {
     mixinMethods.startLoading();
     await $services.RoomAPI.show(
@@ -73,22 +78,11 @@ export const useRoomStore = defineStore("room", () => {
         response.data.roomDetails.bills.map((bill) => {
           const billDate = new Date(bill.date).getMonth();
           if (currentDate.getMonth() === billDate) {
-            bill.billDetails.map((details) => {
-              utilitiesConsumer.value.push({
-                name:
-                currentLanguage == EN_LOCALE
-                ? details.utility.enName
-                : details.utility.jaName,
-                amount: details.amount,
-                price: mixinMethods.formatInputCurrency(
-                  details.utility.unitPrice * details.amount
-                ),
-              });
-            });
+            getCurrentMonthBillUtility(bill.billDetails)
           }
         });
         allowUpdate.value = ROOM_STATUSES[roomDetails.value.status] == "rented";
-        
+
         mixinMethods.endLoading();
       },
       (error) => {
@@ -97,23 +91,51 @@ export const useRoomStore = defineStore("room", () => {
     );
   };
 
-  const getListRoomsByRole = async () => {
+  const getCurrentMonthBillUtility = (billDetails) => {
+    billDetails.forEach((details) => {
+      let existingUtility = utilitiesConsumer.value.find((utility) =>
+        currentLanguage == EN_LOCALE
+          ? utility.name === details.utility.enName
+          : utility.name === details.utility.jaName
+      );
+
+      if (existingUtility) {
+        existingUtility.amount += (details.amount - existingUtility.amount);
+        existingUtility.price = mixinMethods.formatCurrency(
+          details.utility.unitPrice * existingUtility.amount
+        );
+      } else {
+        utilitiesConsumer.value.push({
+          name:
+            currentLanguage == EN_LOCALE
+              ? details.utility.enName
+              : details.utility.jaName,
+          amount: details.amount,
+          unit: details.utility.unit,
+          price: mixinMethods.formatCurrency(
+            details.utility.unitPrice * details.amount
+          ),
+        });
+      }
+    });
+  };
+
+  const getListRoomsByRole = async (getByContract = false) => {
     await $services.RoomAPI.getListRoomsByRole(
-      {},
+      { getByContract: getByContract },
       (response) => {
         listRoomsByRole.value = response.data.rooms.map((room) => {
           return {
             id: room.roomId,
             value: room.roomCode,
-            status: room.status
-          }
-        })
-      },() => {
-
-      }
+            status: room.status,
+          };
+        });
+      },
+      () => {}
     );
-  }
-  
+  };
+
   const createNewRoom = async () => {
     mixinMethods.startLoading();
     await $services.RoomAPI.create(
@@ -129,7 +151,12 @@ export const useRoomStore = defineStore("room", () => {
       (error) => {
         mixinMethods.endLoading();
         validation.value = mixinMethods.handleErrorResponse(error.responseCode);
-        mixinMethods.notifyError(t(validation.value.errors.code ?? "response.message.create_room_failed"));
+        mixinMethods.notifyError(
+          t(
+            validation.value.errors.code ??
+              "response.message.create_room_failed"
+          )
+        );
       }
     );
   };
@@ -198,7 +225,7 @@ export const useRoomStore = defineStore("room", () => {
       id,
       {},
       (response) => {
-        listRooms.value = listRooms.value.filter(room => room.roomId != id)
+        listRooms.value = listRooms.value.filter((room) => room.roomId != id);
         mixinMethods.notifySuccess(t("response.message.delete_room_success"));
         mixinMethods.endLoading();
       },
@@ -211,7 +238,9 @@ export const useRoomStore = defineStore("room", () => {
 
   const setRoomDetails = (data) => {
     roomDetails.value.landlordId = data.landlord.id;
+    roomDetails.value.landlordName = data.landlord.fullName;
     roomDetails.value.roomCode = data.roomCode;
+    roomDetails.value.roomId = data.roomId;
     roomDetails.value.area = data.area;
     roomDetails.value.capacity = data.capacity;
     roomDetails.value.rentPrice = data.rentPrice;
@@ -219,6 +248,12 @@ export const useRoomStore = defineStore("room", () => {
     roomDetails.value.utilities = [
       ...data.utilities.map((utility) => utility.id),
     ];
+    roomDetails.value.tenants = [
+      ...data.roomsTenants.map((tenant) => tenant.id),
+    ];
+    roomDetails.value.utilityDetails = data.utilities;
+    roomDetails.value.contracts = data.contracts;
+    roomDetails.value.bills = data.bills;
   };
 
   const resetData = () => {
@@ -260,6 +295,7 @@ export const useRoomStore = defineStore("room", () => {
     listLandlords,
     listRoomsByRole,
     deleteRoom,
+    setRoomDetails,
     deleteRoomTenant,
     addRoomTenants,
     createNewRoom,

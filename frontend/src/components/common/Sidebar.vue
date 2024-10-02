@@ -77,6 +77,7 @@ import IconCart from "@/svg/IconCart.vue";
 import IconUser from "@/svg/IconUser.vue";
 import IconUserGroup from "@/svg/IconUserGroup.vue";
 import IconContract from "@/svg/IconContract.vue";
+import IconBill from "@/svg/IconBill.vue";
 import IconRoom from "@/svg/IconRoom.vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -88,6 +89,7 @@ export default {
     IconCart,
     IconRoom,
     IconUser,
+    IconBill,
     IconUserGroup,
     IconContract,
   },
@@ -111,6 +113,11 @@ export default {
         function_name: t("side_bar.label.contract"),
         function_page_name: PAGE_NAME.CONTRACT.LIST,
         function_icon: "IconContract",
+      },
+      {
+        function_name: t("side_bar.label.bill"),
+        function_page_name: PAGE_NAME.BILL.LIST,
+        function_icon: "IconBill",
       },
     ]);
     const listRouterOthers = ref([

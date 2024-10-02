@@ -46,7 +46,6 @@ import { JA_LOCALE, EN_LOCALE } from "@/constants/application";
 import { COOKIE_EXPIRE_TIME } from "@/constants/application";
 import { useAuthStore } from "@/store/auth.js";
 import { useRouter } from "vue-router";
-import { $PAGES } from "@/utils/variables";
 import { i18n } from "@/utils/i18n";
 import PAGE_NAME from "@/constants/route-name.js";
 

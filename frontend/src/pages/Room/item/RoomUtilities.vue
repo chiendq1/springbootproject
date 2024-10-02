@@ -19,7 +19,16 @@
         </template>
 
         <template #default="scope">
-          <span class="data-table">{{ scope.row.amount }} </span>
+          <el-input
+            class="data-table"
+            type="number"
+            :min="0"
+            style="width: 50%;"
+            :disabled="true"
+            v-model="scope.row.amount"
+            :placeholder="$t('bill.form.bill_utility_amount_placeholder')"
+            ><template #append>{{ scope.row.unit }}</template></el-input
+          >
         </template>
       </el-table-column>
       <el-table-column min-width="60">

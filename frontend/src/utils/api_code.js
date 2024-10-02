@@ -21,7 +21,11 @@ const API_CODE = {
 
   //Contracts
   API_CONTRACT_001: '/contracts',
-  API_CONTRACT_002: '/contracts/pdf'
+  API_CONTRACT_002: '/contracts/pdf',
+
+  //Bills
+  API_BILL_001: '/bills',
+  API_BILL_002: '/bills/create',
 };
 
 export default API_CODE;

@@ -212,7 +212,9 @@
       "create_contract_failed": "Create contract failed",
       "get_contract_details_failed": "Get contract details failed",
       "terminate_contract_success": "Terminate contract success",
-      "terminate_contract_failed": "Terminate contract failed"
+      "terminate_contract_failed": "Terminate contract failed",
+      "create_bill_success": "Create bill success",
+      "create_bill_failed": "Create bill failed, please check contract and room again"
     }
   },
   "contract": {
@@ -272,6 +274,67 @@
     "tenant_placeholder": "Contract tenant",
     "type_placeholder": "Contract type",
     "landlord_placeholder": "Contract landlord"
+  },
+  "bill": {
+    "title": "Bill",
+    "bill_details_title": "Bill Information",
+    "add_new": "Add New",
+    "keyword": "Keyword",
+    "search": "Search",
+    "clear": "Clear",
+    "room": "Room",
+    "status": "Payment Status",
+    "date_month": "  Month",
+    "status_placeholder": "Bill status",
+    "room_placeholder": "Rooms",
+    "list_details": "Bill Details",
+    "rent_price": "Rent Price",
+    "total_price": "Total Price",
+    "statuses": {
+      "paid": "Paid",
+      "unpaid": "Un Paid",
+      "terminated": "Terminated"
+    },
+    "create": {
+      "title": "Create New Bill" 
+    },
+    "details": {
+      "title": "Bill Details" 
+    },
+    "table": {
+      "header": {
+        "code": "Bill Code",
+        "room": "Room",
+        "month": "Month",
+        "action": "Action",
+        "status": "Payment Status",
+        "total_bill": "Total Bill"
+      },
+      "utilities": {
+        "header": {
+          "name": "Name",
+          "amount": "Amount",
+          "unit_price": "Unit Price",
+          "price": "Price",
+          "total_util_cost": "Total Utilities Cost"
+        }
+      }
+    },
+    "form": {
+      "label_bill_code": "Bill Code",
+      "placeholder_bill_code": "Bill Code",
+      "label_room_code": "Room Code",
+      "placeholder_room_code": "Room Code",
+      "label_room_tenants": "Room Tenants",
+      "room_tenants_placeholder": "Room Tenants",
+      "label_room_landlord": "Landlord",
+      "room_landlord_placeholder": "Landlord",
+      "label_bill_status": "Bill Status",
+      "bill_status_placeholder": "Bill Status",
+      "bill_utility_amount_placeholder": "Amount",
+      "label_bill_date": "Date",
+      "bill_date_placeholder": "Date"
+    }
   },
   "dashboard": {
     "year_to_date": "Year to Date",
@@ -463,6 +526,7 @@
   "E-CM-021": "Contract name existed",
   "E-CM-022": "Start date must greater or equal current date",
   "E-CM-023": "Contract date is duplicated with another contract",
+  "E-CM-024": "Bill code is existed",
   "E-PW-001": "Password must be between {min} and {max} characters",
   "E-LO-700": "Limit must be a number",
   "E-LO-701": "Limit must be greater than or equal to 1",

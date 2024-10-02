@@ -15,6 +15,7 @@ export const useUtilityStore = defineStore("utility", () => {
         listUtilities.value = response.data.utilities.map((utility) => {
           return {
             id: utility.id,
+            unitPrice: utility.unitPrice,
             value:
               currentLanguage == EN_LOCALE ? utility.enName : utility.jaName,
           };

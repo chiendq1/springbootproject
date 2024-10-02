@@ -76,7 +76,7 @@ import IconBackMain from "@/svg/IconBackMain.vue";
 import PAGE_NAME from "@/constants/route-name.js";
 
 export default {
-  name: "UserProfile",
+  name: "RoomDetails",
   components: {
     Modal,
     ListUsersCard,
@@ -134,7 +134,7 @@ export default {
       if (!route.params.id) {
         isCreate.value = true;
       }
-      if (!isCreate.value) getRoomDetails(route.params.id);
+      if (!isCreate.value) getRoomDetails(route.params.id);      
     });
 
     onUnmounted(() => {

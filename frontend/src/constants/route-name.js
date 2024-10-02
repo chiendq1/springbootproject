@@ -10,6 +10,11 @@ const PAGE_NAME = {
     CONTRACT: {
         LIST: 'contract-list'
     },
+    BILL: {
+        LIST: 'bill-list',
+        DETAILS: 'bill-details',
+        CREATE: 'bill-create',
+    },
     LOGIN: 'login',
     HOME: 'home',
     PROFILE: 'profile',
