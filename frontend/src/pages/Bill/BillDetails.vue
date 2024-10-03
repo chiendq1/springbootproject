@@ -76,6 +76,7 @@ export default {
       billDetails,
       setBillDetails,
       resetBillDetails,
+      updateBill,
       getBillDetails,
       createNewBill,
     } = billStore;
@@ -98,7 +99,8 @@ export default {
     };
 
     const handleSubmit = () => {
-      createNewBill();
+      if(isCreate.value) createNewBill();
+      else updateBill(route.params.id);
     };
 
     const handleCancel = () => {

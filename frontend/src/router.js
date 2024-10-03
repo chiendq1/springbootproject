@@ -16,6 +16,8 @@ import Contract from "@/pages/Contract/Index.vue";
 import ContractList from "@/pages/Contract/ContractList.vue";
 import Bill from "@/pages/Bill/Index.vue";
 import BillList from "@/pages/Bill/BillList.vue";
+import Utility from "@/pages/Utility/Index.vue";
+import UtilityList from "@/pages/Utility/UtilityList.vue";
 import BillDetails from "@/pages/Bill/BillDetails.vue";
 import UserList from "@/pages/User/UserList.vue";
 import Forbidden from "@/pages/Forbidden.vue";
@@ -124,6 +126,20 @@ const routes = [
         path: PAGES.BILL_DETAILS,
         component: BillDetails,
         name: PAGE_NAME.BILL.DETAILS,
+      },
+    ],
+  },
+  {
+    path: PAGES.UTILITY,
+    component: Utility,
+    meta: {
+      middleware: ["authentication", "admin-role"],
+    },
+    children: [
+      {
+        path: "",
+        component: UtilityList,
+        name: PAGE_NAME.UTILITY.LIST,
       },
     ],
   },

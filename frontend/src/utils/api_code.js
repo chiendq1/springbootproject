@@ -17,7 +17,8 @@ const API_CODE = {
   API_ROOM_003: '/rooms/list-by-role',
 
   //Utilities
-  API_UTILITY_001: '/utility',
+  API_UTILITY_001: '/utilities',
+  API_UTILITY_002: '/utilities/deactivate',
 
   //Contracts
   API_CONTRACT_001: '/contracts',
@@ -26,6 +27,7 @@ const API_CODE = {
   //Bills
   API_BILL_001: '/bills',
   API_BILL_002: '/bills/create',
+  API_BILL_003: '/bills/pdf',
 };
 
 export default API_CODE;

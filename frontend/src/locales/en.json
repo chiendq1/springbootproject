@@ -214,7 +214,13 @@
       "terminate_contract_success": "Terminate contract success",
       "terminate_contract_failed": "Terminate contract failed",
       "create_bill_success": "Create bill success",
-      "create_bill_failed": "Create bill failed, please check contract and room again"
+      "create_bill_failed": "Create bill failed, please check contract and room again",
+      "update_bill_success": "Update bill success",
+      "update_bill_failed": "Update bill failed",
+      "create_utility_success": "Create utility success",
+      "create_utility_failed": "Create utility failed",
+      "update_utility_success": "Update utility success",
+      "update_utility_failed": "Update utility failed"
     }
   },
   "contract": {
@@ -441,7 +447,8 @@
       "room": "Rooms",
       "profile": "Profile",
       "contract": "Contracts",
-      "bill": "Bills"
+      "bill": "Bills",
+      "utility": "Utilities"
     }
   },
   "room": {
@@ -503,6 +510,35 @@
       "title_delete_room": "Delete Room"
     }
   },
+  "utility": {
+    "title": "Utility",
+    "add_new": "Add New",
+    "keyword": "Keyword",
+    "status_label": "Status",
+    "table": {
+      "header": {
+        "name": "Name",
+        "unit_price": "Unit Price",
+        "unit": "Unit",
+        "status": "Status",
+        "action": "Action"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "InActive"
+    },
+    "modal": {
+      "header": "Save Utility",
+      "name": "Name",
+      "unit_price": "Unit Price",
+      "unit": "Unit"
+    },
+    "modal_confirm": {
+      "title_delete": "Confirm Deactivate utility",
+      "message_delete": "WARNING: You will deactivate utility. Please type 'Deactivate' to continue."
+    }
+  },
   "E-CM-001": "Login Failed",
   "E-CM-002": "Required",
   "E-CM-003": "Field must be less than {max} characters",
@@ -527,6 +563,8 @@
   "E-CM-022": "Start date must greater or equal current date",
   "E-CM-023": "Contract date is duplicated with another contract",
   "E-CM-024": "Bill code is existed",
+  "E-CM-025": "Utility name has been existed",
+  "E-CM-026": "Utility name is duplicated",
   "E-PW-001": "Password must be between {min} and {max} characters",
   "E-LO-700": "Limit must be a number",
   "E-LO-701": "Limit must be greater than or equal to 1",

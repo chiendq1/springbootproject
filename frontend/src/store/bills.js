@@ -151,8 +151,24 @@ export const useBillStore = defineStore("bill", () => {
     );
   };
 
-  const updateBill = async () => {
+  const updateBill = async (id) => {
     mixinMethods.startLoading();
+    await $services.BillAPI.update(
+      id,
+      {
+        status: billDetails.value.status
+      },
+      (response) => {
+        validation.value = {};
+        mixinMethods.notifySuccess(t("response.message.update_bill_success"));
+        mixinMethods.endLoading();
+      },
+      (error) => {
+        validation.value = mixinMethods.handleErrorResponse(error.responseCode);
+        mixinMethods.endLoading();
+        mixinMethods.notifyError(t("response.message.update_bill_failed"));
+      }
+    );
   };
 
   const resetBillDetails = async () => {
@@ -181,17 +197,19 @@ export const useBillStore = defineStore("bill", () => {
       : billDetailsResponse.paymentStatus;
     billDetails.value.room.tenants = roomDetails.value.tenants;
     billDetails.value.landlord.fullName = roomDetails.value.landlordName;
+    let contracts = roomDetails.value.contracts.find(contract => contract.status == CONTRACT_STATUS_ACTIVE);
     billDetails.value.details = roomDetails.value.utilityDetails.map(
       (utility) => {
         let billAmount =
           billDetailsResponse?.billDetails.find(
             (bill) => bill.utility.id == utility.id
           ).amount ?? 0;
+        let utilUnitPrice = contracts.contractDetails.find(contract => contract.utilityId == utility.id).unitPrice;
         return {
           utilityId: utility.id,
           name: currentLanguage == EN_LOCALE ? utility.enName : utility.jaName,
           amount: isCreate ? 0 : billAmount,
-          unitPrice: utility.unitPrice,
+          unitPrice: utilUnitPrice,
           unit: utility.unit,
           price: isCreate ? 0 : billAmount * utility.unitPrice,
         };
@@ -213,12 +231,10 @@ export const useBillStore = defineStore("bill", () => {
     const isExistBill = bills.some((bill) => {
       let billDate = new Date(bill.date);
       let currentBillDate = new Date(billDetailsResponse.date);
-      console.log(bill.id != route.params.id &&
-        billDate.getMonth() == currentBillDate.getMonth() &&
-        billDate.getDate() < currentBillDate.getDate(), route.params.id, bill);
       
       return (
         bill.id != billDetailsResponse.id &&
+        billDate.getFullYear() == currentBillDate.getFullYear() &&
         billDate.getMonth() == currentBillDate.getMonth() &&
         billDate.getDate() < currentBillDate.getDate()
       );

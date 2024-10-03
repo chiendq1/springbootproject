@@ -72,6 +72,7 @@ import { useRoomStore } from "@/store/rooms.js";
 import { useUserStore } from "@/store/users.js";
 import { useUtilityStore } from "@/store/utility.js";
 import { TEXT_CONFIRM_DELETE } from "@/constants/application.js";
+import { ACTIVE_STATUS } from "@/constants/utility.js";
 import IconBackMain from "@/svg/IconBackMain.vue";
 import PAGE_NAME from "@/constants/route-name.js";
 
@@ -129,7 +130,7 @@ export default {
     ]);
 
     onMounted(() => {
-      getListAllUtilities();
+      getListAllUtilities({status: ACTIVE_STATUS});
       getListUsersByRole();
       if (!route.params.id) {
         isCreate.value = true;

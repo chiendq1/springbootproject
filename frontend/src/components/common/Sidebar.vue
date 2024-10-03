@@ -79,6 +79,7 @@ import IconUserGroup from "@/svg/IconUserGroup.vue";
 import IconContract from "@/svg/IconContract.vue";
 import IconBill from "@/svg/IconBill.vue";
 import IconRoom from "@/svg/IconRoom.vue";
+import IconUtility from "@/svg/IconUtility.vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import PAGE_NAME from "@/constants/route-name.js";
@@ -91,6 +92,7 @@ export default {
     IconUser,
     IconBill,
     IconUserGroup,
+    IconUtility,
     IconContract,
   },
   setup() {
@@ -118,6 +120,11 @@ export default {
         function_name: t("side_bar.label.bill"),
         function_page_name: PAGE_NAME.BILL.LIST,
         function_icon: "IconBill",
+      },
+      {
+        function_name: t("side_bar.label.utility"),
+        function_page_name: PAGE_NAME.UTILITY.LIST,
+        function_icon: "IconUtility",
       },
     ]);
     const listRouterOthers = ref([

@@ -97,7 +97,6 @@ import { ref } from "vue";
 import { LANDLORD, TENANT } from "@/constants/roles.js";
 import { useI18n } from "vue-i18n";
 import Modal from "@/components/common/Modal.vue";
-import { validate } from "vee-validate";
 
 export default {
   name: "UserModal",

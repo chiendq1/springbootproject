@@ -29,6 +29,7 @@ export const MAX_CAPACITY = 50;
 export const MAX_AREA = 100;
 export const TEXT_CONFIRM_DELETE="Delete"
 export const TEXT_CONFIRM_TERMINATE="Terminate"
+export const TEXT_CONFIRM_INACTIVE="Deactivate"
 export const BILL_DATE_FORMAT="YYYY-MM"
 export const IMPORT_VALID_EXTENSIONS = [".xlsx"];
 export const PDF_CONTENT_TYPE = /^application\/pdf/;
@@ -40,18 +41,3 @@ export const LIMIT = 20;
 export const ENTER_KEY_CODE = 13;
 export const MAX_MONTH = 12;
 export const MIN_MONTH = 1;
-
-export const MONTHS = {
-    1: 'common.january_short',
-    2: 'common.february_short',
-    3: 'common.march_short',
-    4: 'common.april_short',
-    5: 'common.may_short',
-    6: 'common.june_short',
-    7: 'common.july_short',
-    8: 'common.august_short',
-    9: 'common.september_short',
-    10: 'common.october_short',
-    11: 'common.november_short',
-    12: 'common.december_short',
-}

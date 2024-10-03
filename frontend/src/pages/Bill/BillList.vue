@@ -145,6 +145,7 @@ export default {
       resetBillDetails,
       totalItems,
       listStatuses,
+      getBillPdf,
       getBillDetails,
       getListBills,
     } = billStore;
@@ -188,7 +189,7 @@ export default {
     };
 
     const handleDownloadPDF = (id) => {
-      getContractPdf(id);
+      getBillPdf(id);
     };
 
     const handleCreateBill = () => {

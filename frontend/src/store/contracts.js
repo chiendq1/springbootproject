@@ -1,10 +1,7 @@
 import { defineStore } from "pinia";
-import Cookies from "js-cookie";
 import { mixinMethods, $services, $globalLocale } from "@/utils/variables";
 import { reactive } from "vue";
-import { EN_LOCALE } from "@/constants/application.js";
 import { useI18n } from "vue-i18n";
-import PAGE_NAME from "@/constants/route-name.js";
 import { useRouter } from "vue-router";
 
 export const useContractStore = defineStore("contract", () => {
