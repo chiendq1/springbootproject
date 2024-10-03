@@ -9,11 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UtilityDto {
+public class ContractDetailsDto {
     private int id;
-    private String enName;
-    private String jaName;
+    private int contractId;
+    private int utilityId;
     private float unitPrice;
-    private String unit;
-    private int status;
 }

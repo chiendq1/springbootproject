@@ -4,6 +4,7 @@ import jakarta.activation.DataSource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.example.springbootproject.entity.User;
 import org.example.springbootproject.repository.ParameterRepository;
 import org.example.springbootproject.utils.Constants;
@@ -18,10 +19,12 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
-public class EmailService {
+public class EmailService extends BaseService{
     private Map<String, String> dataCache = new HashMap<>();
 
     @Autowired
@@ -62,6 +65,20 @@ public class EmailService {
         String htmlContent = String.format(htmlContentTemplate, users, data.get("roomCode").toString(), data.get("date").toString(), Constants.SYSTEM_NAME);
         String[] emailTo = tenants.stream().map(User::getEmail).toArray(String[]::new);
         mailSender.send(this.createMimeMessage(emailTo, Constants.SYSTEM_EMAIL, "", "Room Bill Notice", htmlContent, fileName, fileContent));
+    }
+
+    public void sendEmailBillOverdue(String contentName, Map<String, Object> data) {
+        try {
+            String htmlContentTemplate = parameterRepository.findByName(contentName).getValue();
+            Set<User> tenants = (Set<User>) data.get("tenants");
+            String users = tenants.stream().map(User::getFullName).collect(Collectors.joining(", "));
+            String htmlContent = String.format(htmlContentTemplate, users, data.get("roomCode").toString(),data.get("date") ,data.get("overdue").toString(), Constants.SYSTEM_NAME);
+            String[] emailTo = tenants.stream().map(User::getEmail).toArray(String[]::new);
+            mailSender.send(this.createMimeMessage(emailTo, Constants.SYSTEM_EMAIL, "", "Room Overdue Bill", htmlContent, null, null));
+            logger.info("Send email success");
+        } catch(MessagingException ex) {
+            logger.error(ex.getMessage());
+        }
     }
 
     private MimeMessage createMimeMessage(String[] to, String from, String cc, String subject, String htmlContent, String fileName, ByteArrayOutputStream fileContent) throws MessagingException {

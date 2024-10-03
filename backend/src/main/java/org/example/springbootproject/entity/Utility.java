@@ -1,11 +1,13 @@
 package org.example.springbootproject.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "utilities")
@@ -31,8 +33,10 @@ public class Utility {
     @Column(name = "unit")
     private String unit;
 
-    @Override
-    public String toString() {
-        return String.format("Service: %s, Price: %.2f, Unit: %s", enName, unitPrice, unit);
-    }
+    @Column(name = "status")
+    private int status;
+
+    @OneToMany(mappedBy = "utility", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<BillDetails> billDetails;
 }

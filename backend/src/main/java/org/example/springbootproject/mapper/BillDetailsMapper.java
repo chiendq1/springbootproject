@@ -9,9 +9,6 @@ import org.springframework.stereotype.Component;
 public class BillDetailsMapper {
 
     @Autowired
-    private BillMapper billMapper;
-
-    @Autowired
     private UtilityMapper utilityMapper;
 
     public BillDetailsDto toBillDetailsDto(BillDetails billDetails) {

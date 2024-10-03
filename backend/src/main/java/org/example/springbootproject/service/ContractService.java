@@ -1,9 +1,7 @@
 package org.example.springbootproject.service;
 
 import org.example.springbootproject.dto.ContractDto;
-import org.example.springbootproject.entity.Contract;
-import org.example.springbootproject.entity.Room;
-import org.example.springbootproject.entity.User;
+import org.example.springbootproject.entity.*;
 import org.example.springbootproject.mapper.ContractMapper;
 import org.example.springbootproject.payload.request.CreateContractRequest;
 import org.example.springbootproject.payload.request.GetContractListRequest;
@@ -24,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ContractService {
@@ -87,7 +86,12 @@ public class ContractService {
         response.put("tenants", contract.getRoom().getRoomsTenants().stream().toList());
         response.put("securityDeposit", contract.getDeposit());
         response.put("contractDuration", contract.getStartDate() + " ~ " + contract.getEndDate());
-        response.put("services", contract.getRoom().getUtilities().stream().toList());
+        response.put("services", contract.getContractDetails().stream().map(contractDetails -> {
+            Utility utility = contractDetails.getUtility();
+            utility.setUnitPrice(contractDetails.getUnitPrice());
+
+            return utility;
+        }));
 
         return response;
     }
@@ -113,6 +117,14 @@ public class ContractService {
         contract.setStartDate(Date.valueOf(request.getStartDate()));
         contract.setEndDate(Date.valueOf(request.getEndDate()));
         contract.setDeposit(request.getDeposit());
+        contract.setContractDetails(room.getUtilities().stream().map(utility -> {
+            ContractDetails contractDetails = new ContractDetails();
+            contractDetails.setContract(contract);
+            contractDetails.setUtility(utility);
+            contractDetails.setUnitPrice(utility.getUnitPrice());
+
+            return contractDetails;
+        }).collect(Collectors.toSet()));
         contract.setRoom(room);
         contractRepository.save(contract);
         response.put("contract", contractMapper.toContractDto(contract));

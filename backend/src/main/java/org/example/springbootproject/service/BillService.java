@@ -1,5 +1,6 @@
 package org.example.springbootproject.service;
 
+import org.apache.tomcat.util.bcel.Const;
 import org.example.springbootproject.dto.BillDto;
 import org.example.springbootproject.dto.BillServiceDto;
 import org.example.springbootproject.dto.ContractDto;
@@ -111,7 +112,7 @@ public class BillService {
                 return billDetails;
             }).collect(Collectors.toList()));
             billRepository.save(bill);
-            response.put("bill", billMapper.toBillDto(bill));
+            response.put("bill", bill);
 
             return response;
         }
@@ -122,6 +123,7 @@ public class BillService {
     public Map<String, Object> updateBill(int id, int status) {
         Map<String, Object> response = new HashMap<>();
         Bill bill = billRepository.findById(id);
+        if(bill.getPaymentStatus() == Constants.BILL_STATUS_PAID) return null;
         bill.setPaymentStatus(status);
         billRepository.save(bill);
         response.put("bill", bill);
@@ -131,10 +133,7 @@ public class BillService {
 
     public  Map<String, List<Bill>> handleCheckBillDaily() {
         Map<String, List<Bill>> response = new HashMap<>();
-        Date currentDate = Date.valueOf(LocalDate.now());
-        Date dateAfter = Date.valueOf(LocalDate.now().plusDays(Constants.DATE_PLUS_CONTRACT));
-        response.put("listOverdueContracts", contractRepository.getContractsByEndDateBeforeAndStatusNot(currentDate, Constants.CONTRACT_STATUS_TERMINATED));
-        response.put("listRenewedContracts", contractRepository.getContractsByEndDateBetweenAndStatus(currentDate, dateAfter, Constants.CONTRACT_STATUS_ACTIVE));
+        response.put("listUnpaidBills", billRepository.getListBillOverDaysUnpaid(Constants.BILL_STATUS_UNPAID, Constants.OVERDUE_BILL_DATE));
 
         return response;
     }
@@ -143,7 +142,7 @@ public class BillService {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
         DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
         Map<String, Object> response = new HashMap<>();
-        boolean existedOtherBill = billRepository.checkExistBillByRoomIdAndMonth(bill.getRoom().getRoomId(), bill.getMonth());
+        boolean existedOtherBill = billRepository.checkExistEarlierBillByRoomIdAndMonth(bill.getRoom().getRoomId(), bill.getId(), bill.getMonth());
         Contract contract = contractRepository.getContractsByStatusAndRoom_RoomId(Constants.CONTRACT_STATUS_ACTIVE, bill.getRoom().getRoomId());
         float rentPrice = existedOtherBill ? 0 : getBillRentPrice(bill, contract);
         float totalServicePrice = 0;
@@ -153,10 +152,14 @@ public class BillService {
             BillServiceDto serviceDto = new BillServiceDto();
             float servicePriceValue = billDetails.getAmount() * billDetails.getUtility().getUnitPrice();
             String servicePrice = decimalFormat.format(servicePriceValue);
-
+            Float unitPrice = contract.getContractDetails().stream()
+                    .filter(contractDetails -> contractDetails.getUtility().getId() == billDetails.getUtility().getId())
+                    .map(ContractDetails::getUnitPrice)
+                    .findFirst()
+                    .orElse(null);
             // Set the properties of the DTO
             serviceDto.setEnName(billDetails.getUtility().getEnName());
-            serviceDto.setUnitPrice(decimalFormat.format(billDetails.getUtility().getUnitPrice()));
+            serviceDto.setUnitPrice(decimalFormat.format(unitPrice));
             serviceDto.setAmount(billDetails.getAmount());
             serviceDto.setUnit(billDetails.getUtility().getUnit());
             serviceDto.setPrice(servicePrice);
@@ -233,10 +236,10 @@ public class BillService {
         return result;
     }
 
-    public Map<String, Object> getBillDetails(int billId) {
+    public Map<String, Object> getBillDetails(int billId, boolean isGetDto) {
         Map<String, Object> response = new HashMap<>();
         Bill bill = billRepository.findById(billId);
-        response.put("bill", billMapper.toBillDto(bill));
+        response.put("bill", isGetDto ? billMapper.toBillDto(bill) : bill);
 
         return response;
     }

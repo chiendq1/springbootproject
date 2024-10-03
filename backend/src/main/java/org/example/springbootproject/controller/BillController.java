@@ -91,8 +91,8 @@ public class BillController extends BaseController {
 
     @GetMapping("/{id}")
     @PreAuthorize("@billService.checkBillRelatedTo(#id, authentication.name, false) or hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> create(@PathVariable int id) {
-        Map<String, Object> bill = billService.getBillDetails(id);
+    public ResponseEntity<ApiResponse<Map<String, Object>>> show(@PathVariable int id) {
+        Map<String, Object> bill = billService.getBillDetails(id, true);
 
         if (bill == null) {
             return new ResponseEntity<>(new ApiResponse<>(false, "get bill details failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
@@ -101,7 +101,7 @@ public class BillController extends BaseController {
         return new ResponseEntity<>(new ApiResponse<>(true, "get bill details success", bill, HttpStatus.OK), HttpStatus.OK);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("@billService.checkBillRelatedTo(#id, authentication.name, false) or hasRole('ADMIN')")
     ResponseEntity<ApiResponse<Map<String, Object>>> update(@PathVariable int id, @RequestBody UpdateBillRequest request) {
         Map<String, Object> bill = billService.updateBill(id, request.getStatus());
@@ -115,8 +115,8 @@ public class BillController extends BaseController {
     @PostMapping("/pdf")
     public ResponseEntity<?> exportPdf(@RequestBody GenerateBillPdfRequest request) {
         String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
-        String templateName = "bill_template_" + language;
-        Map<String, Object> bill = billService.getBillDetails(request.getBillId());
+        String templateName = "bill_details_" + language;
+        Map<String, Object> bill = billService.getBillDetails(request.getBillId(), false);
         Map<String, Object> billPdfData = billService.getBillPdfData((Bill) bill.get("bill"));
         String htmlContent = fileService.parseThymeleafTemplate(templateName, billPdfData);
         ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);

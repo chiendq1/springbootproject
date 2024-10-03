@@ -54,12 +54,26 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
             @Param("billCode") String billCode
     );
     @Query("""
-                SELECT CASE WHEN COUNT(b) > 0 THEN TRUE ELSE FALSE END
-                FROM Bill b
-                WHERE b.room.roomId = :roomId
-                AND MONTH(b.month) = MONTH(:month)
-            """)
-    boolean checkExistBillByRoomIdAndMonth(@Param("roomId") int roomId, @Param("month") Date month);
+       SELECT CASE WHEN COUNT(b) > 0 THEN TRUE ELSE FALSE END
+       FROM Bill b
+       WHERE b.id != :currentBillId
+       AND b.room.roomId = :roomId
+       AND YEAR(b.month) = YEAR(:month)
+       AND MONTH(b.month) = MONTH(:month)
+       AND DAY(b.month) < DAY(:month)
+       """)
+    boolean checkExistEarlierBillByRoomIdAndMonth(
+            @Param("roomId") int roomId,
+            @Param("currentBillId") int currentBillId,
+            @Param("month") Date month
+    );
 
-    List<Bill> getBillsByPaymentStatus(int paymentStatus);
+
+    @Query("""
+        SELECT b
+        FROM Bill b
+        WHERE b.paymentStatus = :status
+        AND DATEDIFF(CURRENT_DATE(), b.createAt) > :overdueDate
+    """)
+    List<Bill> getListBillOverDaysUnpaid(@Param("status") int paymentStatus, @Param("overdueDate") int overdueDate);
 }

@@ -1,6 +1,7 @@
 package org.example.springbootproject.payload.request;
 
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class CreateContractRequest {
     @NotBlank(message = "{common.required}")
     private String endDate;
 
+    @Min(value = Constants.MIN_SIZE_NUMBER, message = "{common.number_min}")
     @Max(value = Constants.MAX_SIZE_NUMBER, message = "{common.number_max}")
     private float deposit;
 

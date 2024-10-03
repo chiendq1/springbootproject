@@ -128,7 +128,7 @@ public class ContractController extends BaseController {
     @PostMapping("/pdf")
     public ResponseEntity<?> exportPdf(@RequestBody GenerateContractPdfRequest request) {
         String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
-        String templateName = "bill_template_" + language;
+        String templateName = "contract_template_" + language;
         Map<String, Object> contractData = contractService.getContractData(request.getContractId());
         String htmlContent = fileService.parseThymeleafTemplate(templateName, contractData);
         ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);

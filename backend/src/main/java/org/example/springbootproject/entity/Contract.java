@@ -1,10 +1,13 @@
 package org.example.springbootproject.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "contracts")
@@ -38,6 +41,10 @@ public class Contract {
 
     @Column(name = "status", nullable = false)
     private int status;
+
+    @OneToMany(mappedBy = "contract",  cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<ContractDetails> contractDetails;
 
     @Column(name = "created_at", nullable = false)
     private Date createAt;

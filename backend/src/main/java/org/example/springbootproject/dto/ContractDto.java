@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.springbootproject.entity.ContractDetails;
 
 import java.sql.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,4 +22,5 @@ public class ContractDto {
     private float deposit;
     private int type;
     private int status;
+    private Set<ContractDetailsDto> contractDetails;
 }
