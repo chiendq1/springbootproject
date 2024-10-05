@@ -7,7 +7,7 @@ import { FRONT_END_URL } from "@/constants/application";
 import { $PAGES } from "@/utils/variables";
 
 const headers = {
-  "x-locale": Cookies.get("CurrentLanguage") || "ja",
+  "x-locale": localStorage.getItem('CurrentLanguage') || "ja",
 };
 
 const token = Cookies.get("access_token");

@@ -5,6 +5,7 @@ import { UserAPI } from "@/services/UserAPI";
 import { RoomAPI } from "@/services/RoomAPI";
 import { UtilityAPI } from "@/services/UtilityAPI";
 import { ContractAPI } from "@/services/ContractAPI";
+import { CurrencyAPI } from "@/services/CurrencyAPI";
 import { BillAPI } from "@/services/BillAPI";
 
 // Initialize the BaseService with the axios instance and API prefix
@@ -18,6 +19,7 @@ const services = {
   RoomAPI,
   UtilityAPI,
   ContractAPI,
+  CurrencyAPI,
   BillAPI,
 };
 

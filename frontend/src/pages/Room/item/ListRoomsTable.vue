@@ -50,7 +50,7 @@
           </template>
 
           <template #default="scope">
-            <span class="data-table">{{ scope.row.rentPrice }} </span>
+            <span class="data-table">{{ formatMoney(scope.row.rentPrice) }} </span>
           </template>
         </el-table-column>
 
@@ -91,6 +91,7 @@
 import IconEdit from "@/svg/IconEdit.vue";
 import IconTrash from "@/svg/IconTrash.vue";
 import { ROOM_STATUSES } from "@/constants/room.js";
+import { mixinMethods } from "@/utils/variables";
 
 export default {
   name: "RoomsTable",
@@ -108,8 +109,13 @@ export default {
     const handleStatus = (statusId) => {
       return ROOM_STATUSES[statusId];
     };
+
+    const formatMoney = (number) => {
+      return mixinMethods.formatCurrency(number);
+    };
     return {
       handleStatus,
+      formatMoney,
     };
   },
 };

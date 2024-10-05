@@ -42,7 +42,9 @@
           </div>
         </li>
       </ul>
-      <p class="nav_others" v-if="listRouter.length">{{ $t("common.other") }}</p>
+      <p class="nav_others" v-if="listRouter.length">
+        {{ $t("common.other") }}
+      </p>
       <ul class="nav">
         <li
           v-for="(route, index) in listRouterOthers"
@@ -72,7 +74,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import IconCart from "@/svg/IconCart.vue";
 import IconUser from "@/svg/IconUser.vue";
 import IconUserGroup from "@/svg/IconUserGroup.vue";
@@ -100,7 +102,7 @@ export default {
     const router = useRouter();
     const isShowComponent = ref(true);
     const menuOpen = ref("");
-    const listRouter = ref([
+    const listRouter = computed(() => [
       {
         function_name: t("side_bar.label.user"),
         function_page_name: PAGE_NAME.USER.LIST,
@@ -127,7 +129,8 @@ export default {
         function_icon: "IconUtility",
       },
     ]);
-    const listRouterOthers = ref([
+
+    const listRouterOthers = computed(() => [
       {
         function_name: t("side_bar.label.profile"),
         function_page_name: PAGE_NAME.PROFILE,
@@ -138,11 +141,13 @@ export default {
 
     const navigateChangeRoute = async (route) => {
       currentPath.value = route.function_page_name;
-      await router.push({name: route.function_page_name});
+      await router.push({ name: route.function_page_name });
     };
 
     const classActive = (route) => {
-      return currentPath.value.includes(route.function_page_name) ? "active" : "";
+      return currentPath.value.includes(route.function_page_name)
+        ? "active"
+        : "";
     };
 
     return {
@@ -166,6 +171,10 @@ export default {
   padding-left: 70px;
   font-family: "Poppins", sans-serif;
   margin: 23px 0 3px;
+}
+
+.sidebar-text {
+  width: 100%;
 }
 
 .active-expander {

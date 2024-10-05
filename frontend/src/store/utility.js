@@ -1,12 +1,11 @@
 import { defineStore } from "pinia";
 import { mixinMethods, $services } from "@/utils/variables";
 import { reactive } from "vue";
-import Cookies from "js-cookie";
 import { EN_LOCALE } from "@/constants/application.js";
 import { useI18n } from "vue-i18n";
 
 export const useUtilityStore = defineStore("utility", () => {
-  const currentLanguage = Cookies.get("CurrentLanguage");
+  const currentLanguage = localStorage.getItem('CurrentLanguage');
   const { t } = useI18n();
   const isShowUtilityModal = reactive({ value: false });
   const showModalConfirm = reactive({ value: false });

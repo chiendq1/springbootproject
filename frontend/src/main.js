@@ -6,6 +6,7 @@ import ElementPlus from "@/plugins/element-plus";
 import globalVariable from "@/utils/variables";
 import mixins from "@/helpers/mixins";
 import { i18n } from "@/utils/i18n";
+import Cookies from "js-cookie";
 import elen from "element-plus/es/locale/lang/en";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 

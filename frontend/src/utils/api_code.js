@@ -28,6 +28,9 @@ const API_CODE = {
   API_BILL_001: '/bills',
   API_BILL_002: '/bills/create',
   API_BILL_003: '/bills/pdf',
+
+  //Currency
+  API_CURRENCY_001: '/currencies'
 };
 
 export default API_CODE;

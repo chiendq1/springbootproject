@@ -213,7 +213,7 @@ export default {
       resetPasswordForm,
       isShowModal,
     } = authStore;
-    const selectedLanguage = ref(Cookies.get("CurrentLanguage") || EN_LOCALE);
+    const selectedLanguage = ref(localStorage.getItem('CurrentLanguage') || EN_LOCALE);
     const dataRequest = ref({
       username: "",
       password: "",

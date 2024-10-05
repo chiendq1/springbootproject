@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 import { mixinMethods, $services, $globalLocale } from "@/utils/variables";
 import { reactive } from "vue";
@@ -20,7 +19,7 @@ export const useBillStore = defineStore("bill", () => {
   const { t } = useI18n();
   const router = useRouter();
   const route = useRoute();
-  const currentLanguage = Cookies.get("CurrentLanguage");
+  const currentLanguage = localStorage.getItem('CurrentLanguage');
   const roomStore = useRoomStore();
   const { setRoomDetails, roomDetails } = roomStore;
   const validation = reactive({ value: {} });

@@ -3,7 +3,7 @@
     <div class="d-flex bill-details-header">
       <h3>{{ $t("bill.bill_details_title") }}</h3>
     </div>
-    <el-form class="bill-details-body" :model="billDetails" label-width="120px">
+    <el-form class="bill-details-body" :model="billDetails" label-width="140px">
       <el-form-item :label="$t('bill.form.label_bill_code')">
         <el-input
           v-model="billDetails.billCode"

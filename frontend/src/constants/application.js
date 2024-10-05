@@ -28,6 +28,7 @@ export const MAX_PRICE = 10000;
 export const MAX_CAPACITY = 50;
 export const MAX_AREA = 100;
 export const TEXT_CONFIRM_DELETE="Delete"
+export const DEFAULT_EXCHANGE_RATE = 1;
 export const TEXT_CONFIRM_TERMINATE="Terminate"
 export const TEXT_CONFIRM_INACTIVE="Deactivate"
 export const BILL_DATE_FORMAT="YYYY-MM"

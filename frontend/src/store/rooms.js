@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
-import Cookies from "js-cookie";
 import { mixinMethods, $services } from "@/utils/variables";
-import { reactive } from "vue";
+import { computed, reactive } from "vue";
 import { EN_LOCALE } from "@/constants/application.js";
 import { ROOM_STATUSES } from "@/constants/room.js";
 import { useI18n } from "vue-i18n";
@@ -12,7 +11,7 @@ import { useRouter } from "vue-router";
 export const useRoomStore = defineStore("room", () => {
   const userStore = useUserStore();
   const { listLandlords } = userStore;
-  const currentLanguage = Cookies.get("CurrentLanguage");
+  const currentLanguage = localStorage.getItem('CurrentLanguage');
   const { t } = useI18n();
   const validation = reactive({ value: {} });
   const listRooms = reactive({ value: [] });
@@ -102,7 +101,7 @@ export const useRoomStore = defineStore("room", () => {
       if (existingUtility) {
         existingUtility.amount += (details.amount - existingUtility.amount);
         existingUtility.price = mixinMethods.formatCurrency(
-          details.utility.unitPrice * existingUtility.amount
+          details.utility.unitPrice * existingUtility.amount,
         );
       } else {
         utilitiesConsumer.value.push({
@@ -113,7 +112,7 @@ export const useRoomStore = defineStore("room", () => {
           amount: details.amount,
           unit: details.utility.unit,
           price: mixinMethods.formatCurrency(
-            details.utility.unitPrice * details.amount
+            details.utility.unitPrice * details.amount,
           ),
         });
       }
