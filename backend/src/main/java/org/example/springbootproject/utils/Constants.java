@@ -53,6 +53,9 @@ public class Constants {
     public static int DATE_PLUS_CONTRACT = 15;
     public static String SYSTEM_NAME;
     public static int OVERDUE_BILL_DATE = 7;
+    public static String EXCHANGE_RATE_URL;
+    public static String EXCHANGE_RATE_API_KEY;
+    public static String EXCHANGE_RATE_REGION;
 
     @Value("${app.secret_key}")
     private String secretKey;
@@ -81,6 +84,15 @@ public class Constants {
     @Value("${app.bill_overdue_date:7}")
     private int overdueDate;
 
+    @Value("${app.exchange_rate_url}")
+    private String exchangeUrl;
+
+    @Value("${app.exchange_rate_api_key}")
+    private String exchangeRateApiKey;
+
+    @Value("${app.exchange_rate_region}")
+    private String exchangeRateRegion;
+
     @PostConstruct
     private void init() {
         SECRET_KEY = secretKey;
@@ -92,6 +104,9 @@ public class Constants {
         PAGE_SIZE = pageSize;
         DATE_PLUS_CONTRACT = dateMinus;
         OVERDUE_BILL_DATE = overdueDate;
+        EXCHANGE_RATE_URL= exchangeUrl;
+        EXCHANGE_RATE_API_KEY= exchangeRateApiKey;
+        EXCHANGE_RATE_REGION= exchangeRateRegion;
         ALLOW_ENDPOINTS.put("AUTH_API", "api/auth/**");
         ALLOW_ENDPOINTS.put("SWAGGER", "swagger-ui/**");
         ALLOW_ENDPOINTS.put("API_DOCS", "v3/api-docs/**");

@@ -112,6 +112,7 @@ public class BillController extends BaseController {
 
         return new ResponseEntity<>(new ApiResponse<>(true, "update bill details success", bill, HttpStatus.OK), HttpStatus.OK);
     }
+
     @PostMapping("/pdf")
     public ResponseEntity<?> exportPdf(@RequestBody GenerateBillPdfRequest request) {
         String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
