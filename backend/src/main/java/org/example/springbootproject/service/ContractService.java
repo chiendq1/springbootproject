@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -103,15 +104,6 @@ public class ContractService {
         Map<String, Object> response = new HashMap<>();
         Contract contract = new Contract();
         Room room = roomRepository.getRoomByRoomId(request.getRoomId());
-        if (!request.getTenants().isEmpty()) {
-            if (request.getTenants().size() + room.getRoomsTenants().size() > room.getCapacity()) {
-                response.put("tenants", "E-CM-019");
-
-                return response;
-            }
-            Set<User> users = userRepository.getUsersByIdIn(request.getTenants());
-            room.setRoomsTenants(users);
-        }
         room.setStatus(Constants.ROOM_STATUS_RENT);
         room.getContracts().forEach(contractChange -> contractChange.setStatus(Constants.CONTRACT_STATUS_TERMINATED));
         contract.setContractName(request.getContractName());
@@ -158,7 +150,7 @@ public class ContractService {
     @Transactional
     public void changeListContractStatus(List<Contract> listContracts, int status) {
         listContracts.forEach(contract -> {
-            if(status == Constants.CONTRACT_STATUS_TERMINATED) {
+            if (status == Constants.CONTRACT_STATUS_TERMINATED) {
                 terminateContract(contract.getId());
             } else {
                 contract.setStatus(status);
@@ -192,14 +184,10 @@ public class ContractService {
 
     public boolean checkContractRelatedTo(int contractId, String userName, boolean isCheckTenant) {
         Contract contract = contractRepository.getContractById(contractId);
-        boolean result = false;
         if (contract != null) {
-            result = contract.getRoom().getLandlord().getUsername().equals(userName);
-            if (isCheckTenant) {
-                result = contract.getRoom().getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName));
-            }
+            return contract.getRoom().getLandlord().getUsername().equals(userName) || !isCheckTenant || contract.getRoom().getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName));
         }
 
-        return result;
+        return false;
     }
 }

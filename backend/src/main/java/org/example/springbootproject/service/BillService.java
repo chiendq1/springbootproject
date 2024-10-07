@@ -123,7 +123,7 @@ public class BillService {
     public Map<String, Object> updateBill(int id, int status) {
         Map<String, Object> response = new HashMap<>();
         Bill bill = billRepository.findById(id);
-        if(bill.getPaymentStatus() == Constants.BILL_STATUS_PAID) return null;
+        if (bill.getPaymentStatus() == Constants.BILL_STATUS_PAID) return null;
         bill.setPaymentStatus(status);
         billRepository.save(bill);
         response.put("bill", bill);
@@ -131,7 +131,7 @@ public class BillService {
         return response;
     }
 
-    public  Map<String, List<Bill>> handleCheckBillDaily() {
+    public Map<String, List<Bill>> handleCheckBillDaily() {
         Map<String, List<Bill>> response = new HashMap<>();
         response.put("listUnpaidBills", billRepository.getListBillOverDaysUnpaid(Constants.BILL_STATUS_UNPAID, Constants.OVERDUE_BILL_DATE));
 
@@ -225,15 +225,12 @@ public class BillService {
 
     public boolean checkBillRelatedTo(int billId, String userName, boolean isCheckTenant) {
         Bill bill = billRepository.findById(billId);
-        boolean result = false;
-        result = bill.getRoom().getLandlord().getUsername().equals(userName);
         if (bill != null) {
-            if (isCheckTenant) {
-                result = bill.getRoom().getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName));
-            }
+            return bill.getRoom().getLandlord().getUsername().equals(userName) || !isCheckTenant ||
+            bill.getRoom().getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName));
         }
 
-        return result;
+        return false;
     }
 
     public Map<String, Object> getBillDetails(int billId, boolean isGetDto) {
