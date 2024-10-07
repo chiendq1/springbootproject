@@ -86,7 +86,7 @@
               <button @click="$emit('details', scope.row.roomId)" class="btn-edit">
                 <IconEdit />
               </button>
-              <button @click="$emit('delete', scope.row.roomId)" class="btn-edit">
+              <button v-if="highest_role == ADMIN || highest_role == LANDLORD" @click="$emit('delete', scope.row.roomId)" class="btn-edit">
                 <IconTrash />
               </button>
             </div>
@@ -100,8 +100,10 @@
 <script>
 import IconEdit from "@/svg/IconEdit.vue";
 import IconTrash from "@/svg/IconTrash.vue";
+import Cookies from "js-cookie";
 import { ROOM_STATUSES } from "@/constants/room.js";
 import { mixinMethods } from "@/utils/variables";
+import { ADMIN, LANDLORD } from "@/constants/roles.js";
 
 export default {
   name: "RoomsTable",
@@ -116,6 +118,7 @@ export default {
     }
   },
   setup() {
+    const highest_role = Cookies.get("highest_role");
     const handleStatus = (statusId) => {
       return ROOM_STATUSES[statusId];
     };
@@ -124,6 +127,9 @@ export default {
       return mixinMethods.formatCurrency(number);
     };
     return {
+      highest_role,
+      LANDLORD,
+      ADMIN,
       handleStatus,
       formatMoney,
     };

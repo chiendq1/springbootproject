@@ -3,7 +3,7 @@ import { mixinMethods, $services, $globalLocale } from "@/utils/variables";
 import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-
+import { CONTRACT_STATUS_TERMINATED } from "@/constants/contract.js";
 export const useContractStore = defineStore("contract", () => {
   const { t } = useI18n();
   const validation = reactive({ value: {} });
@@ -13,7 +13,7 @@ export const useContractStore = defineStore("contract", () => {
   const isCreate = reactive({ value: false });
   const isViewDetails = reactive({ value: false });
   const dateRangeModal = reactive({ value: [] });
-  const isShowModalConfirm = reactive({value: false});
+  const isShowModalConfirm = reactive({ value: false });
   const router = useRouter();
   const isShowModalSave = reactive({ value: false });
   const contractDetails = reactive({
@@ -119,12 +119,18 @@ export const useContractStore = defineStore("contract", () => {
     );
   };
 
-  const createNewContract = async () => {
+  const createNewContract = async (id = null) => {
     mixinMethods.startLoading();
     await $services.ContractAPI.create(
       { ...contractDetails.value, language: $globalLocale.value._value },
       (response) => {
         listContracts.value.push(response.data.contract);
+        if (id)
+          listContracts.value.forEach((contract) => {
+            if (contract.id === id) {
+              contract.status = CONTRACT_STATUS_TERMINATED;
+            }
+          });
         isShowModalSave.value = false;
         validation.value = [];
         resetContractDetails();
@@ -146,11 +152,11 @@ export const useContractStore = defineStore("contract", () => {
     await $services.ContractAPI.update(
       contractDetails.value.id,
       {
-        ...contractDetails.value
+        ...contractDetails.value,
       },
       (response) => {
         isViewDetails.value = false;
-        listContracts.value = listContracts.value.map(contract => {
+        listContracts.value = listContracts.value.map((contract) => {
           if (response.data.contract.id === contract.id) {
             return {
               ...contract, // Keep other contract properties unchanged
@@ -161,7 +167,9 @@ export const useContractStore = defineStore("contract", () => {
         });
         resetContractDetails();
         isShowModalSave.value = false;
-        mixinMethods.notifySuccess(t("response.message.terminate_contract_success"));
+        mixinMethods.notifySuccess(
+          t("response.message.terminate_contract_success")
+        );
         mixinMethods.endLoading();
       },
       () => {
@@ -171,7 +179,7 @@ export const useContractStore = defineStore("contract", () => {
         mixinMethods.endLoading();
       }
     );
-  }
+  };
 
   const resetContractDetails = async () => {
     contractDetails.value.contractName = "";

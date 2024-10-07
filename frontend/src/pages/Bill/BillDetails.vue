@@ -46,7 +46,8 @@ import PAGE_NAME from "@/constants/route-name.js";
 import BillRoomInforCard from "./item/BillRoomInforCard.vue";
 import BillFeeCard from "./item/BillFeeCard.vue";
 import Cookies from "js-cookie";
-import { onMounted, onUnmounted, reactive, ref } from "vue";
+import { LANDLORD, ADMIN } from "@/constants/roles.js";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useBillStore } from "@/store/bills.js";
@@ -113,6 +114,8 @@ export default {
     return {
       listTenants,
       highest_role,
+      LANDLORD,
+      ADMIN,
       validation,
       billDetails,
       listRoomsByRole,

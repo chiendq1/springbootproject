@@ -326,7 +326,7 @@ export default {
           contractDetails.value.deposit
         );
         dateRangeModal.value = [];
-        createNewContract();
+        createNewContract(contractDetails.value.id);
       } else {
         isViewDetails.value = false;
       }

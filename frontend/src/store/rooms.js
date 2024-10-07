@@ -70,6 +70,10 @@ export const useRoomStore = defineStore("room", () => {
       {},
       (response) => {
         const currentDate = new Date();
+        listLandlords.value.push({
+          id: response.data.roomDetails.landlord.id,
+          value: response.data.roomDetails.landlord.username,
+        });
         setRoomDetails(response.data.roomDetails);
         setRoomUsers(response.data);
         response.data.roomDetails.bills.map((bill) => {
@@ -286,7 +290,6 @@ export const useRoomStore = defineStore("room", () => {
     isOpenDataUsersModal,
     isShowModalConfirm,
     isCreate,
-    listLandlords,
     listRoomsByRole,
     deleteRoom,
     setRoomDetails,

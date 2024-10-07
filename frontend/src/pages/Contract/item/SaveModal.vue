@@ -105,7 +105,7 @@
             </p>
           </el-form-item>
 
-          <el-form-item v-if="!isViewDetails" :label="$t('contract.create.tenants')">
+          <el-form-item v-if="false" :label="$t('contract.create.tenants')">
             <MultipleOptionSelect
               v-model="contractDetails.tenants"
               :list-data="listTenants"

@@ -92,7 +92,11 @@
     </div>
 
     <div class="bidding-body-table" style="margin-top: 16px; min-height: 250px">
-      <RoomTable :listRooms="listRooms" @details="handleGetRoomDetails" @delete="handleOpenModalConfirm"/>
+      <RoomTable
+        :listRooms="listRooms"
+        @details="handleGetRoomDetails"
+        @delete="handleOpenModalConfirm"
+      />
       <LoadMore
         :listData="listRooms.value"
         :totalItems="totalItems.value"
@@ -119,9 +123,11 @@ import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
 import MultipleOptionSelect from "@/components/common/MultipleOptionSelect.vue";
 import CommonSlider from "@/components/common/SliderRange.vue";
 import RoomTable from "./item/ListRoomsTable.vue";
+import LoadMore from "@/components/common/LoadMore.vue";
+import PAGE_NAME from "@/constants/route-name.js";
+import Cookies from "js-cookie";
 import { onMounted, onUnmounted, ref } from "vue";
 import { ADMIN, LANDLORD } from "@/constants/roles.js";
-import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 import {
   TEXT_CONFIRM_DELETE,
@@ -131,8 +137,11 @@ import {
 } from "@/constants/application.js";
 import { useRoomStore } from "@/store/rooms.js";
 import { useRouter } from "vue-router";
-import PAGE_NAME from "@/constants/route-name.js";
-import LoadMore from "@/components/common/LoadMore.vue";
+import {
+  VACANT_STATUS,
+  RENTED_STATUS,
+  UNDER_REPAIRED_STATUS,
+} from "@/constants/room.js";
 
 export default {
   name: "RoomList",
@@ -170,15 +179,15 @@ export default {
     const deleteId = ref(0);
     const listStatus = ref([
       {
-        id: 0,
+        id: VACANT_STATUS,
         value: t("room.status.vacant"),
       },
       {
-        id: 1,
+        id: RENTED_STATUS,
         value: t("room.status.rented"),
       },
       {
-        id: 2,
+        id: UNDER_REPAIRED_STATUS,
         value: t("room.status.under_repair"),
       },
     ]);
@@ -191,7 +200,7 @@ export default {
 
     onUnmounted(() => {
       listRooms.value = [];
-    })
+    });
 
     const handleSearchForm = () => {
       isShowBoxSearch.value = !isShowBoxSearch.value;
@@ -228,21 +237,21 @@ export default {
       router.push({
         name: PAGE_NAME.ROOM.CREATE,
       });
-    }
+    };
 
     const handleCloseModal = () => {
       isShowModalConfirm.value = false;
-    }
+    };
 
     const handleOpenModalConfirm = (id) => {
       deleteId.value = id;
       isShowModalConfirm.value = true;
-    }
+    };
 
     const handleConfirm = () => {
       deleteRoom(deleteId.value);
       handleCloseModal();
-    }
+    };
 
     const handleLoadMore = () => {
       currentPage.value++;

@@ -14,13 +14,16 @@ import { useI18n } from "vue-i18n";
 import PAGE_NAME from "@/constants/route-name.js";
 import { useRouter, useRoute } from "vue-router";
 import { useRoomStore } from "@/store/rooms.js";
+import { useUserStore } from "@/store/users.js";
 
 export const useBillStore = defineStore("bill", () => {
   const { t } = useI18n();
+  const userStore = useUserStore();
   const router = useRouter();
   const route = useRoute();
   const currentLanguage = localStorage.getItem('CurrentLanguage');
   const roomStore = useRoomStore();
+  const { listTenants } = userStore;
   const { setRoomDetails, roomDetails } = roomStore;
   const validation = reactive({ value: {} });
   const listBills = reactive({ value: [] });
@@ -87,6 +90,15 @@ export const useBillStore = defineStore("bill", () => {
     await $services.BillAPI.show(
       id,
       (response) => {
+        response.data.bill.room.roomsTenants.map(tenant => {
+          listTenants.value.push({
+            id: tenant.id,
+            fullName: tenant.fullName,
+            phoneNumber: tenant.phoneNumber,
+            email: tenant.email,
+            value: tenant.username,
+          });
+        });
         setRoomDetails(response.data.bill.room);
         setBillDetails(roomDetails, false, response.data.bill);
         router.push({ name: PAGE_NAME.BILL.DETAILS, params: { id: id } });
@@ -227,9 +239,9 @@ export const useBillStore = defineStore("bill", () => {
     const currentContract = contracts.find(
       (contract) => contract.status === CONTRACT_STATUS_ACTIVE
     );
-    const isExistBill = bills.some((bill) => {
+    const isExistBillByMonth = bills.some((bill) => {
       let billDate = new Date(bill.date);
-      let currentBillDate = new Date(billDetailsResponse?.date);
+      let currentBillDate = billDetailsResponse ? new Date(billDetailsResponse?.date) : currentDate;
       
       return (
         bill.id != billDetailsResponse?.id &&
@@ -238,7 +250,7 @@ export const useBillStore = defineStore("bill", () => {
         billDate.getDate() < currentBillDate.getDate()
       );
     });
-    if (!isExistBill && currentContract) {
+    if (!isExistBillByMonth && currentContract) {
       const contractStartDate = new Date(currentContract.startDate);
       const monthsDifference = getMonthsDifference(
         contractStartDate,
