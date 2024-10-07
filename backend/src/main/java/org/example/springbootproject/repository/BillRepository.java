@@ -49,9 +49,13 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
                 SELECT CASE WHEN COUNT(b) > 0 THEN TRUE ELSE FALSE END
                 FROM Bill b
                 WHERE b.billCode = :billCode
+                AND (
+                :userName = '' OR b.room.landlord.username = :userName
+                )
             """)
     boolean checkBillCodeExist(
-            @Param("billCode") String billCode
+            @Param("billCode") String billCode,
+            @Param("userName") String userName
     );
     @Query("""
        SELECT CASE WHEN COUNT(b) > 0 THEN TRUE ELSE FALSE END

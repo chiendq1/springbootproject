@@ -34,6 +34,7 @@ public class CreateContractRequest {
     private int roomId;
 
     private Set<Integer> tenants;
+    private String language;
 }
 
 

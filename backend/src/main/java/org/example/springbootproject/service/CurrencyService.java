@@ -17,7 +17,10 @@ import java.util.Map;
 
 @Service
 public class CurrencyService extends BaseService{
+    private Map<String, Float> dataCache = new HashMap<>();
+
     public Map<String, Object> getExchangeRate(String language) throws IOException {
+
         String url_str = Constants.EXCHANGE_RATE_URL + Constants.EXCHANGE_RATE_API_KEY + "/latest/" + Constants.EXCHANGE_RATE_REGION;
         // Making Request
         URL url = new URL(url_str);
@@ -38,10 +41,18 @@ public class CurrencyService extends BaseService{
             currencyDto.setCode(Constants.EN_LANGUAGE);
             currencyDto.setRate(req_result.getAsJsonObject().get("USD").getAsFloat());
         }
+        dataCache.put("rate", currencyDto.getRate());
         Map<String, Object> result = new HashMap<>();
         result.put("result", currencyDto);
 
         return result;
+    }
+
+    public Float getCurrentExchangeRate() {
+        if(dataCache.get("rate") != null) {
+            return dataCache.get("rate");
+        }
+        return (float) Constants.DEFAULT_EXCHANGE_RATE;
     }
 }
 

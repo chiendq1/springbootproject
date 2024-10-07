@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +77,8 @@ public class ContractService {
         return response;
     }
 
-    public Map<String, Object> getContractData(int contractId) {
+    public Map<String, Object> getContractData(int contractId, float exchangeRate) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
         Map<String, Object> response = new HashMap<>();
         Contract contract = contractRepository.getContractById(contractId);
         response.put("landlordName", contract.getRoom().getLandlord().getFullName());
@@ -84,11 +86,11 @@ public class ContractService {
         response.put("monthlyRent", contract.getTypeText());
         response.put("roomCode", contract.getRoom().getRoomCode());
         response.put("tenants", contract.getRoom().getRoomsTenants().stream().toList());
-        response.put("securityDeposit", contract.getDeposit());
+        response.put("securityDeposit", decimalFormat.format(contract.getDeposit() * exchangeRate));
         response.put("contractDuration", contract.getStartDate() + " ~ " + contract.getEndDate());
         response.put("services", contract.getContractDetails().stream().map(contractDetails -> {
             Utility utility = contractDetails.getUtility();
-            utility.setUnitPrice(contractDetails.getUnitPrice());
+            utility.setUnitPrice(contractDetails.getUnitPrice() * exchangeRate);
 
             return utility;
         }));
@@ -175,10 +177,10 @@ public class ContractService {
         return response;
     }
 
-    public boolean checkContractExistByField(String field, String value) {
+    public boolean checkContractExistByField(String field, String value, String userName) {
         switch (field) {
             case "contractName":
-                return contractRepository.existsContractByContractName(value);
+                return contractRepository.existsContractByContractName(value, userName);
         }
 
         return false;
@@ -192,10 +194,10 @@ public class ContractService {
         Contract contract = contractRepository.getContractById(contractId);
         boolean result = false;
         if (contract != null) {
+            result = contract.getRoom().getLandlord().getUsername().equals(userName);
             if (isCheckTenant) {
                 result = contract.getRoom().getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName));
             }
-            result = contract.getRoom().getLandlord().getUsername().equals(userName);
         }
 
         return result;

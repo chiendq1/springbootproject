@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 public class EmailService extends BaseService{
     private Map<String, String> dataCache = new HashMap<>();
@@ -54,6 +53,17 @@ public class EmailService extends BaseService{
         String htmlContentTemplate = parameterRepository.findByName(contentName).getValue();
         String htmlContent = String.format(htmlContentTemplate, data.get("tenants"), data.get("roomCode"), data.get("terminateDate"), Constants.SYSTEM_NAME);
         mailSender.send(this.createMimeMessage(to, Constants.SYSTEM_EMAIL, data.get("cc"), data.get("subject"), htmlContent, null, null));
+    }
+
+    @Async
+    public void sendEmailCreateContract(String contentName, Map<String, Object> data, ByteArrayOutputStream fileContent) throws MessagingException {
+        String htmlContentTemplate = parameterRepository.findByName(contentName).getValue();
+        String fileName = data.get("roomCode").toString();
+        List<User> tenants = (List<User>) data.get("tenants");
+        String users = tenants.stream().map(User::getFullName).collect(Collectors.joining(", "));
+        String htmlContent = String.format(htmlContentTemplate, users, data.get("roomCode").toString(), Constants.SYSTEM_NAME);
+        String[] emailTo = tenants.stream().map(User::getEmail).toArray(String[]::new);
+        mailSender.send(this.createMimeMessage(emailTo, Constants.SYSTEM_EMAIL, "", "Contract Create Notice", htmlContent, fileName, fileContent));
     }
 
     @Async

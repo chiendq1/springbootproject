@@ -38,6 +38,9 @@ public class BillController extends BaseController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private CurrencyService currencyService;
+
     @GetMapping()
     public ResponseEntity<ApiResponse<Map<String, Object>>> index(
             @RequestParam(value = "month", required = false) String month,
@@ -72,12 +75,13 @@ public class BillController extends BaseController {
         try {
             String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
             String templateName = "bill_template_" + language;
+            float exhangeRate = currencyService.getCurrentExchangeRate();
             Map<String, Object> bill = billService.createBill(request);
             if (bill == null) {
                 return new ResponseEntity<>(new ApiResponse<>(false, "create bill failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
             }
 
-            Map<String, Object> billPdfData = billService.getBillPdfData((Bill) bill.get("bill"));
+            Map<String, Object> billPdfData = billService.getBillPdfData((Bill) bill.get("bill"), exhangeRate);
             String htmlContent = fileService.parseThymeleafTemplate("bill_details_" + language, billPdfData);
             ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);
             emailService.sendEmailBill(templateName, billPdfData, outputStream);
@@ -90,7 +94,7 @@ public class BillController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@billService.checkBillRelatedTo(#id, authentication.name, false) or hasRole('ADMIN')")
+    @PreAuthorize("@billService.checkBillRelatedTo(#id, authentication.name, true) or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, Object>>> show(@PathVariable int id) {
         Map<String, Object> bill = billService.getBillDetails(id, true);
 
@@ -117,8 +121,9 @@ public class BillController extends BaseController {
     public ResponseEntity<?> exportPdf(@RequestBody GenerateBillPdfRequest request) {
         String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
         String templateName = "bill_details_" + language;
+        float exhangeRate = currencyService.getCurrentExchangeRate();
         Map<String, Object> bill = billService.getBillDetails(request.getBillId(), false);
-        Map<String, Object> billPdfData = billService.getBillPdfData((Bill) bill.get("bill"));
+        Map<String, Object> billPdfData = billService.getBillPdfData((Bill) bill.get("bill"), exhangeRate);
         String htmlContent = fileService.parseThymeleafTemplate(templateName, billPdfData);
         ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);
         HttpHeaders headers = new HttpHeaders();

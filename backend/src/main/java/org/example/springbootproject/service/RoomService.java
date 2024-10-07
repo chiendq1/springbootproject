@@ -45,13 +45,16 @@ public class RoomService extends BaseService {
     public Map<String, Object> getListRooms(GetRoomListRequest request, String currentUserName) {
         User currentUser = userRepository.findUserByUsername(currentUserName);
         boolean isAdmin = currentUser.getRoles().stream().anyMatch(role -> role.getRoleName().equals("ADMIN"));
+        boolean isLandlord = currentUser.getRoles().stream().anyMatch(role -> role.getRoleName().equals("LANDLORD"));
         boolean isTenant = currentUser.getRoles().stream().anyMatch(role -> role.getRoleName().equals("TENANT"));
 
         Pageable paging = PageRequest.of(request.getPageNo(), Constants.PAGE_SIZE, Sort.by(request.getSortBy()).descending());
 
         Page<Room> listRooms = roomRepository.getListRooms(
-                currentUser,
+//                currentUser,
+                currentUser.getId(),
                 isAdmin,
+                isLandlord,
                 isTenant,
                 request.getSearchValue(),
                 request.getPriceRange()[0],
@@ -107,7 +110,7 @@ public class RoomService extends BaseService {
     public Map<String, Object> createRoom(CreateRoomRequest request) {
         Map<String, Object> response = new HashMap<>();
         Room room = new Room();
-        if(request.getCapacity() < request.getListTenants().size()) {
+        if (request.getCapacity() < request.getListTenants().size()) {
             response.put("errors", "E-CM-019"); // Capacity exceeded error
             return response;
         }
@@ -186,16 +189,17 @@ public class RoomService extends BaseService {
     public boolean hasRoom(int id, String userName, boolean isCheckLandlord) {
         Room roomDetails = roomRepository.getRoomByRoomId(id);
 
-        return roomDetails != null && (!roomDetails.getLandlord().getUsername().equals(userName) && isCheckLandlord || roomDetails.getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName)));
+        boolean res = roomDetails != null && (roomDetails.getLandlord().getUsername().equals(userName) || isCheckLandlord || roomDetails.getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName)));
+        return res;
     }
 
-    public String checkDuplicateField(String fieldName, String fieldValue, Integer id) {
+    public String checkDuplicateField(String fieldName, String fieldValue, Integer id, int landlordId) {
         if (id == null) {
-            if (roomRepository.existsRoomByRoomCode(fieldValue)) return "E-CM-017";
+            if (roomRepository.existsRoomByRoomCode(fieldValue, landlordId)) return "E-CM-017";
         } else {
             switch (fieldName) {
                 case "roomCode" -> {
-                    if (roomRepository.duplicateRoomCode(fieldValue, id)) return "E-CM-017";
+                    if (roomRepository.duplicateRoomCode(fieldValue, id, landlordId)) return "E-CM-017";
                 }
             }
         }

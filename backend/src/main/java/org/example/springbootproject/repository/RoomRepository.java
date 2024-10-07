@@ -14,19 +14,50 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
 
-    @Query("SELECT r FROM Room r JOIN r.landlord u " +
-            "WHERE (:isAdmin = true OR r.landlord = :currentUser) " +  // Filter by landlord if user is not admin
-            "AND (:isTenant = false OR :currentUser MEMBER OF r.roomsTenants) " + // Filter by tenant relationship
+//    @Query("SELECT r FROM Room r " +
+//            "WHERE (:isAdmin = true) " +  // Filter by landlord if user is not admin
+//            "OR (:isLandlord = false AND r.landlord.id = :userId) " + // Filter by tenant relationship
+//            "OR (:isTenant = false AND :userId IN (SELECT t.id FROM r.roomsTenants t)) " // Filter by tenant relationship
+//            "AND (:searchValue IS NULL OR :searchValue = '' OR " +
+//            "LOWER(r.roomCode) LIKE LOWER(CONCAT('%', :searchValue, '%')) OR " + // Filter by roomCode search value
+//            "LOWER(r.landlord.fullName) LIKE LOWER(CONCAT('%', :searchValue, '%'))) " +   // Filter by landlord fullName search value
+//            "AND ((:minPrice = 0 AND :maxPrice = 0) OR (r.rentPrice BETWEEN :minPrice AND :maxPrice)) " +  // Filter by price range
+//            "AND ((:minCapacity = 0 AND :maxCapacity = 0) OR (r.capacity BETWEEN :minCapacity AND :maxCapacity)) " + // Filter by capacity range
+//            "AND ((:minArea = 0 AND :maxArea = 0) OR (r.area BETWEEN :minArea AND :maxArea)) " +  // Filter by area range
+//            "AND (:status IS NULL OR r.status IN :status)" // Filter by status
+//    )
+//    Page<Room> getListRooms(
+//            @Param("userId") int userId,
+//            @Param("isAdmin") boolean isAdmin,
+//            @Param("isLandlord") boolean isLandlord,
+//            @Param("isTenant") boolean isTenant,
+//            @Param("searchValue") String searchValue,
+//            @Param("minPrice") float minPrice,
+//            @Param("maxPrice") float maxPrice,
+//            @Param("minCapacity") int minCapacity,
+//            @Param("maxCapacity") int maxCapacity,
+//            @Param("minArea") float minArea,
+//            @Param("maxArea") float maxArea,
+//            @Param("status") int[] status,
+//            Pageable pageable
+//    );
+
+    @Query("SELECT r FROM Room r " +
+            "WHERE :isAdmin = true " +  // Admin gets all rooms
+            "OR (:isLandlord = true AND r.landlord.id = :userId) " +  // Landlord gets only their rooms
+            "OR (:isTenant = true AND :userId IN (SELECT t.id FROM r.roomsTenants t))" +
             "AND (:searchValue IS NULL OR :searchValue = '' OR " +
             "LOWER(r.roomCode) LIKE LOWER(CONCAT('%', :searchValue, '%')) OR " + // Filter by roomCode search value
-            "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :searchValue, '%'))) " +   // Filter by landlord fullName search value
+            "LOWER(r.landlord.fullName) LIKE LOWER(CONCAT('%', :searchValue, '%'))) " +   // Filter by landlord fullName search value
             "AND ((:minPrice = 0 AND :maxPrice = 0) OR (r.rentPrice BETWEEN :minPrice AND :maxPrice)) " +  // Filter by price range
             "AND ((:minCapacity = 0 AND :maxCapacity = 0) OR (r.capacity BETWEEN :minCapacity AND :maxCapacity)) " + // Filter by capacity range
             "AND ((:minArea = 0 AND :maxArea = 0) OR (r.area BETWEEN :minArea AND :maxArea)) " +  // Filter by area range
-            "AND (:status IS NULL OR r.status IN :status)")  // Filter by status
+            "AND (:status IS NULL OR r.status IN :status)" // Filter by status// Tenant gets rooms they belong to
+    )
     Page<Room> getListRooms(
-            @Param("currentUser") User currentUser,
+            @Param("userId") int userId,
             @Param("isAdmin") boolean isAdmin,
+            @Param("isLandlord") boolean isLandlord,
             @Param("isTenant") boolean isTenant,
             @Param("searchValue") String searchValue,
             @Param("minPrice") float minPrice,
@@ -39,12 +70,24 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             Pageable pageable
     );
 
+
     Room getRoomByRoomId(int id);
 
-    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END FROM Room r WHERE r.roomCode = :fieldValue " +
-            "AND (:id IS NOT NULL AND r.roomId != :id)")
-    boolean duplicateRoomCode(@Param("fieldValue") String fieldValue, @Param("id") Integer id);
-    boolean existsRoomByRoomCode(String roomCode);
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END FROM Room r " +
+            "WHERE r.roomCode = :fieldValue " +
+            "AND (:id IS NULL OR r.roomId != :id) " +  // Exclude the room with the given id
+            "AND r.landlord.id = :landlordId")     // Filter by landlord's name
+    boolean duplicateRoomCode(@Param("fieldValue") String fieldValue,
+                              @Param("id") Integer id,
+                              @Param("landlordId") int landlordId);
+
+
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END FROM Room r " +
+            "WHERE r.roomCode = :fieldValue " +
+            "AND r.landlord.id = :landlordId")  // Filter by landlord's name
+    boolean existsRoomByRoomCode(@Param("fieldValue") String roomCode,
+                                 @Param("landlordId") int landlordId);
+
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN r.contracts c " +
@@ -52,7 +95,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "AND (:highestRole = 'ADMIN') " +
             "OR (:highestRole = 'LANDLORD' AND r.landlord.id = :userId) " +
             "OR (:highestRole = 'TENANT' AND :userId IN (SELECT t.id FROM r.roomsTenants t)) "
-            )
+    )
     List<Room> getListRoomsByRole(
             @Param("highestRole") String highestRole,
             @Param("userId") int userId,

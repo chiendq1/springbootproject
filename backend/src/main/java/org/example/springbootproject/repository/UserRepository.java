@@ -89,5 +89,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             @Param("userId") Integer userId
     );
 
+    @Query("SELECT u FROM User u " +
+            "JOIN u.roles r " +
+            "WHERE r.roleName = 'TENANT' " +
+            "AND u.roomsTenants IS EMPTY")
+    List<User> getListFreeTenants();
+
     Set<User> getUsersByIdIn(Set<Integer> ids);
 }

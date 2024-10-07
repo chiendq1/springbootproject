@@ -1,14 +1,12 @@
 package org.example.springbootproject.controller;
 
 import jakarta.validation.Valid;
+import org.example.springbootproject.dto.ContractDto;
 import org.example.springbootproject.payload.request.CreateContractRequest;
 import org.example.springbootproject.payload.request.GenerateContractPdfRequest;
 import org.example.springbootproject.payload.request.GetContractListRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
-import org.example.springbootproject.service.AuthService;
-import org.example.springbootproject.service.ContractService;
-import org.example.springbootproject.service.FileService;
-import org.example.springbootproject.service.RoomService;
+import org.example.springbootproject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -34,10 +32,13 @@ public class ContractController extends BaseController {
     private ContractService contractService;
 
     @Autowired
-    private RoomService roomService;
+    private CurrencyService currencyService;
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<Map<String, Object>>> index(
@@ -89,6 +90,15 @@ public class ContractController extends BaseController {
                 return new ResponseEntity<>(contractData, HttpStatus.BAD_REQUEST);
             }
 
+            String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
+            String templateName = "contract_template_" + language;
+            ContractDto contractDto = (ContractDto) contractData.get("contract");
+            float exchangeRate = currencyService.getCurrentExchangeRate();
+            Map<String, Object> contractDataPdf = contractService.getContractData(contractDto.getId(), exchangeRate);
+            String htmlContent = fileService.parseThymeleafTemplate(templateName, contractDataPdf);
+            ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);
+            emailService.sendEmailCreateContract("contract_create_" + language, contractDataPdf, outputStream);
+
             return new ResponseEntity<>(new ApiResponse<>(true, "create contract success", contractData, HttpStatus.OK), HttpStatus.OK);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -129,7 +139,8 @@ public class ContractController extends BaseController {
     public ResponseEntity<?> exportPdf(@RequestBody GenerateContractPdfRequest request) {
         String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
         String templateName = "contract_template_" + language;
-        Map<String, Object> contractData = contractService.getContractData(request.getContractId());
+        float exchangeRate = currencyService.getCurrentExchangeRate();
+        Map<String, Object> contractData = contractService.getContractData(request.getContractId(), exchangeRate);
         String htmlContent = fileService.parseThymeleafTemplate(templateName, contractData);
         ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);
         HttpHeaders headers = new HttpHeaders();

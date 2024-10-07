@@ -53,7 +53,15 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
 
     Contract getContractById(int id);
 
-    boolean existsContractByContractName(String contractName);
+    @Query("""
+                SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END
+                FROM Contract c
+                WHERE c.contractName = :contractName
+                AND (
+                :userName = '' OR c.room.landlord.username = :userName
+                )
+            """)
+    boolean existsContractByContractName(@Param("contractName") String contractName, @Param("userName") String userName);
 
     @Query("""
     SELECT CASE WHEN COUNT(c) > 0 THEN TRUE ELSE FALSE END

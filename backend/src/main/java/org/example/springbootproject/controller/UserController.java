@@ -58,6 +58,13 @@ public class UserController extends BaseController {
         return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
     }
 
+    @GetMapping("/free-tenants")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getListFreeTenants() {
+        Map<String, Object> response = userService.getListFreeTenants();
+
+        return new ResponseEntity<>(new ApiResponse<>(true, "get users success", response, HttpStatus.OK), HttpStatus.OK);
+    }
+
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN') or hasRole('LANDLORD')")
     public ResponseEntity<ApiResponse<UserDto>> create(@RequestBody @Valid CreateUserRequest request) {

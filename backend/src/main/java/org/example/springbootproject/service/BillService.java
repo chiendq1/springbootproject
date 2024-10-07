@@ -138,19 +138,19 @@ public class BillService {
         return response;
     }
 
-    public Map<String, Object> getBillPdfData(Bill bill) {
+    public Map<String, Object> getBillPdfData(Bill bill, float exchangeRate) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
         DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
         Map<String, Object> response = new HashMap<>();
         boolean existedOtherBill = billRepository.checkExistEarlierBillByRoomIdAndMonth(bill.getRoom().getRoomId(), bill.getId(), bill.getMonth());
         Contract contract = contractRepository.getContractsByStatusAndRoom_RoomId(Constants.CONTRACT_STATUS_ACTIVE, bill.getRoom().getRoomId());
-        float rentPrice = existedOtherBill ? 0 : getBillRentPrice(bill, contract);
+        float rentPrice = existedOtherBill ? 0 : getBillRentPrice(bill, contract) * exchangeRate;
         float totalServicePrice = 0;
         List<BillServiceDto> listServices = new ArrayList<>();
 
         for (BillDetails billDetails : bill.getBillDetails()) {
             BillServiceDto serviceDto = new BillServiceDto();
-            float servicePriceValue = billDetails.getAmount() * billDetails.getUtility().getUnitPrice();
+            float servicePriceValue = billDetails.getAmount() * billDetails.getUtility().getUnitPrice() * exchangeRate;
             String servicePrice = decimalFormat.format(servicePriceValue);
             Float unitPrice = contract.getContractDetails().stream()
                     .filter(contractDetails -> contractDetails.getUtility().getId() == billDetails.getUtility().getId())
@@ -159,7 +159,7 @@ public class BillService {
                     .orElse(null);
             // Set the properties of the DTO
             serviceDto.setEnName(billDetails.getUtility().getEnName());
-            serviceDto.setUnitPrice(decimalFormat.format(unitPrice));
+            serviceDto.setUnitPrice(decimalFormat.format(unitPrice * exchangeRate));
             serviceDto.setAmount(billDetails.getAmount());
             serviceDto.setUnit(billDetails.getUtility().getUnit());
             serviceDto.setPrice(servicePrice);
@@ -219,18 +219,18 @@ public class BillService {
         return 0;
     }
 
-    public boolean checkBillCodeExist(String billCode) {
-        return billRepository.checkBillCodeExist(billCode);
+    public boolean checkBillCodeExist(String billCode, String username) {
+        return billRepository.checkBillCodeExist(billCode, username);
     }
 
     public boolean checkBillRelatedTo(int billId, String userName, boolean isCheckTenant) {
         Bill bill = billRepository.findById(billId);
         boolean result = false;
+        result = bill.getRoom().getLandlord().getUsername().equals(userName);
         if (bill != null) {
             if (isCheckTenant) {
                 result = bill.getRoom().getRoomsTenants().stream().anyMatch(tenant -> tenant.getUsername().equals(userName));
             }
-            result = bill.getRoom().getLandlord().getUsername().equals(userName);
         }
 
         return result;

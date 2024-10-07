@@ -84,6 +84,23 @@ public class UserService extends BaseService {
         return null;
     }
 
+    public Map<String, Object> getListFreeTenants() {
+        try {
+            Map<String, Object> response = new HashMap<>();
+            List<User> listUsers = userRepository.getListFreeTenants();
+            List<UserDto> users = listUsers.stream()
+                    .map(user -> userMapper.toDTO(user))
+                    .toList();
+            response.put("users", users);
+
+            return response;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+
     @Transactional
     public UserDto updateUserDtoById(int id, ProfileUpdateRequest request, String currentUserRole) {
         User user = userRepository.findUserById(id);

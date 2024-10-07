@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(
                                 Constants.ALLOW_ENDPOINTS.get("AUTH_API"),
+                                Constants.ALLOW_ENDPOINTS.get("CURRENCY_API"),
                                 Constants.ALLOW_ENDPOINTS.get("API_DOCS"),
                                 Constants.ALLOW_ENDPOINTS.get("SWAGGER")
                         ).permitAll()

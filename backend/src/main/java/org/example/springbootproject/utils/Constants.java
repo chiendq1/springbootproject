@@ -29,6 +29,7 @@ public class Constants {
     public static String SYSTEM_EMAIL;
     public static int OTP_COOKIE_EXPIRE_TIME = 600;
     public static int OTP_LENGTH = 6;
+    public static int DEFAULT_EXCHANGE_RATE = 1;
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
     public static final int MAX_SIZE_NUMBER = 100000000;
     public static final int MIN_SIZE_NUMBER = 1;
@@ -108,6 +109,7 @@ public class Constants {
         EXCHANGE_RATE_API_KEY= exchangeRateApiKey;
         EXCHANGE_RATE_REGION= exchangeRateRegion;
         ALLOW_ENDPOINTS.put("AUTH_API", "api/auth/**");
+        ALLOW_ENDPOINTS.put("CURRENCY_API", "api/currencies/**");
         ALLOW_ENDPOINTS.put("SWAGGER", "swagger-ui/**");
         ALLOW_ENDPOINTS.put("API_DOCS", "v3/api-docs/**");
     }

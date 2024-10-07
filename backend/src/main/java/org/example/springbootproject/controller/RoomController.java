@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,7 +93,7 @@ public class RoomController extends BaseController {
     @PreAuthorize("hasRole('LANDLORD') or hasRole('ADMIN')")
     public ResponseEntity<?> create(@RequestBody @Valid CreateRoomRequest request) {
         Map<String, String> errors = new HashMap<>();
-        String roomCodeError = roomService.checkDuplicateField("roomCode", request.getRoomCode(), null);
+        String roomCodeError = roomService.checkDuplicateField("roomCode", request.getRoomCode(), null, request.getLandlordId());
 
         if(!roomCodeError.isEmpty()) {
             errors.put("roomCode", roomCodeError);
@@ -114,7 +115,7 @@ public class RoomController extends BaseController {
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody @Valid UpdateRoomDetailsRequest request) {
         try {
             Map<String, String> errors = new HashMap<>();
-            String roomCodeError = roomService.checkDuplicateField("roomCode", request.getRoomCode(), id);
+            String roomCodeError = roomService.checkDuplicateField("roomCode", request.getRoomCode(), id, request.getLandlordId());
 
             if(!roomCodeError.isEmpty()) {
                 errors.put("roomCode", roomCodeError);

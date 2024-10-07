@@ -13,6 +13,8 @@ public class UpdateRoomDetailsRequest {
 
     private int roomId;
 
+    private int landlordId;
+
     @NotBlank(message = "{common.required}")
     @Size(max = Constants.STRING_MAX_LENGTH, message = "{common.string_max_length}")
     private String roomCode;
