@@ -71,7 +71,7 @@ const routes = [
     path: PAGES.ROOM,
     component: Room,
     meta: {
-      middleware: ["authentication", "manager-role"],
+      middleware: ["authentication"],
     },
     children: [
       {
@@ -95,7 +95,7 @@ const routes = [
     path: PAGES.CONTRACT,
     component: Contract,
     meta: {
-      middleware: ["authentication", "manager-role"],
+      middleware: ["authentication"],
     },
     children: [
       {

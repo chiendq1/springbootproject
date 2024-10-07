@@ -7,7 +7,7 @@ import { $globalLocale } from "../utils/variables";
 
 export const i18n = createI18n({
   legacy: false,
-  locale: computed(() => $globalLocale.value || EN_LOCALE),
+  locale: computed(() => $globalLocale.value._value || EN_LOCALE),
   fallbackLocale: EN_LOCALE,
   messages: { en, ja },
   globalInjection: true,

@@ -73,7 +73,11 @@
         @details="getUserDetails"
         @delete="handleOpenModalConfirm"
       />
-      <LoadMore :listData="listUsers.value" :totalItems="totalItems.value" @loadMore="handleLoadMore" />
+      <LoadMore
+        :listData="listUsers.value"
+        :totalItems="totalItems.value"
+        @loadMore="handleLoadMore"
+      />
     </div>
     <UserModal
       v-if="isShowUserModal.value"
@@ -161,8 +165,8 @@ export default {
     ]);
 
     onMounted(() => {
-      listUsers.value = [];
       getListUsers(searchForms.value);
+      listUsers.value = [];
       clearUserDetailsAttr();
     });
 

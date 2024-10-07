@@ -480,6 +480,8 @@ $screen-adjustment: $screen-lg-min + $sidebar-width-narrow - $breakpoint-wide;
       &-logo {
         .logo_zoom_out {
           display: block;
+          width: 64px;
+          height: 48px;
         }
 
         .logo_zoom_in {
@@ -487,6 +489,8 @@ $screen-adjustment: $screen-lg-min + $sidebar-width-narrow - $breakpoint-wide;
         }
         @media (max-width: 1025px) {
           .logo_zoom_in {
+            width: 64px;
+            height: 48px;
             display: block;
           }
 

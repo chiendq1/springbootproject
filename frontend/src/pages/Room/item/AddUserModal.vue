@@ -15,6 +15,7 @@
           :data="dataUsers"
           :selectedUsers="selectedUsers"
           :disabled="disabled"
+          :isPicker="true"
           @pick="handleUserPick"
         />
       </div>

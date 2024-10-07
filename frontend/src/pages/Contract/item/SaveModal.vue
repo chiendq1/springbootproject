@@ -59,6 +59,7 @@
           <el-form-item :label="$t('contract.create.deposit')">
             <el-input
               v-model="contractDetails.deposit"
+              :formatter="(value) => mixinMethods.formatInputCurrency(value)"
               :disabled="isViewDetails"
             />
             <p v-if="validation.value.deposit" class="error-feedback">
@@ -104,7 +105,7 @@
             </p>
           </el-form-item>
 
-          <el-form-item :label="$t('contract.create.tenants')">
+          <el-form-item v-if="!isViewDetails" :label="$t('contract.create.tenants')">
             <MultipleOptionSelect
               v-model="contractDetails.tenants"
               :list-data="listTenants"
@@ -235,6 +236,7 @@ export default {
       CONTRACT_STATUS_TERMINATED,
       handleChangeDate,
       handleSubmit,
+      mixinMethods,
     };
   },
 };

@@ -220,7 +220,8 @@
       "create_utility_success": "Create utility success",
       "create_utility_failed": "Create utility failed",
       "update_utility_success": "Update utility success",
-      "update_utility_failed": "Update utility failed"
+      "update_utility_failed": "Update utility failed",
+      "get_bill_details_failed": "Get bill details failed"
     }
   },
   "contract": {
@@ -314,7 +315,8 @@
         "month": "Month",
         "action": "Action",
         "status": "Payment Status",
-        "total_bill": "Total Bill"
+        "total_bill": "Total Bill",
+        "landlord": "Landlord"
       },
       "utilities": {
         "header": {
@@ -468,7 +470,8 @@
         "price": "Price",
         "status": "Status",
         "utilities": "Utilities",
-        "action": "Action"
+        "action": "Action",
+        "landlord": "Landlord"
       },
       "utilities": {
         "header": {
@@ -482,7 +485,7 @@
       "label_room_code": "Room Code",
       "label_room_area": "Area",
       "label_room_capacity": "Capacity",
-      "label_room_rent_price": "Rent Price(VND)",
+      "label_room_rent_price": "Rent Price",
       "label_room_status": "Status",
       "label_room_utilities": "Utilities",
       "label_room_landlord": "LandLord",

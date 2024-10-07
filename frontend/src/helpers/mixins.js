@@ -2,17 +2,13 @@ import { ElLoading, ElNotification } from "element-plus";
 import Cookies from "js-cookie";
 import moment from "moment";
 import { RULES_VALIDATION } from "@/constants/application";
-import { $exchangeRate, $globalLocale } from "@/utils/variables"
-import { watch } from "vue";
+import { $exchangeRate, $globalLocale } from "@/utils/variables";
 
 const mixins = {
   data() {
     return {
       screenLoading: false,
     };
-  },
-  computed: {
-    
   },
   methods: {
     startLoading() {
@@ -22,7 +18,6 @@ const mixins = {
         background: "rgba(0, 0, 0, 0.7)",
       });
     },
-
     async endLoading() {
       if (!this.checkEmpty(this.screenLoading)) {
         await this.screenLoading.close();
@@ -162,7 +157,8 @@ const mixins = {
         message = messages;
       }
 
-      let notifyObj = notify ?? this.$notify;
+      // Use provided notify or default to ElNotification
+      let notifyObj = notify ?? ElNotification;
 
       notifyObj.error({
         message,
@@ -172,7 +168,6 @@ const mixins = {
         showClose: false,
       });
     },
-
     notifySuccess(messages, useHTML = false, notify = null) {
       let message = "";
       if (useHTML && Array.isArray(messages)) {
@@ -183,7 +178,8 @@ const mixins = {
         message = messages;
       }
 
-      let notifyObj = notify ?? this.$notify;
+      // Use provided notify or default to ElNotification
+      let notifyObj = notify ?? ElNotification;
 
       notifyObj.success({
         message,
@@ -202,7 +198,7 @@ const mixins = {
     showDateTime(dateTime, formatString = undefined) {
       if (this.checkEmpty(dateTime)) return;
       if (!formatString) {
-        formatString = process.env.VUE_APP_FORMATDATE;
+        formatString = import.meta.env.VITE_APP_FORMATDATE;
       }
       return moment(dateTime, [
         "YYYY/MM",
@@ -215,21 +211,25 @@ const mixins = {
       ]).format(formatString);
     },
     getDayOfMonth(type, offset = 0, formatString = undefined) {
-      let currentDate = moment().add(offset, 'months');
+      let currentDate = moment().add(offset, "months");
       switch (type) {
-        case 'first':
-          currentDate.startOf('month');
+        case "first":
+          currentDate.startOf("month");
           break;
-        case 'mid':
-          currentDate.startOf('month').add(Math.floor(currentDate.daysInMonth() / 2), 'days');
+        case "mid":
+          currentDate
+            .startOf("month")
+            .add(Math.floor(currentDate.daysInMonth() / 2), "days");
           break;
-        case 'last':
-          currentDate.endOf('month');
+        case "last":
+          currentDate.endOf("month");
           break;
         default:
-          throw new Error('Invalid type. Choose from "first", "mid", or "last".');
+          throw new Error(
+            'Invalid type. Choose from "first", "mid", or "last".'
+          );
       }
-      return this.showDateTime(currentDate.format('YYYY-MM-DD'), formatString);
+      return this.showDateTime(currentDate.format("YYYY-MM-DD"), formatString);
     },
     splitEndLine(data) {
       return data.split(/(?:\r\n|\r|\n|↵)/g);
@@ -388,17 +388,26 @@ const mixins = {
     },
     formatCurrency(money, decimal = 0, s_delimiter = ",") {
       if (!money) return "";
-    
+
+      // Define the currency symbol based on the global locale
       const isJapaneseLocale = $globalLocale.value._value === "ja";
       const currencySymbol = isJapaneseLocale ? "円" : "$";
-      
+
+      // Adjust the formatting for English and Japanese locales
       const rex = "\\d(?=(\\d{3})+" + (decimal > 0 ? "\\D" : "$") + ")";
-      const convertedMoney = (money * $exchangeRate.value._value).toFixed(Math.max(0, ~~decimal));
-    
-      const str = convertedMoney.replace(new RegExp(rex, "g"), "$&" + (s_delimiter || ","));
-    
+      const convertedMoney = (money * $exchangeRate.value._value).toFixed(
+        Math.max(0, ~~decimal)
+      );
+
+      // Format number based on locale
+      const str = convertedMoney.replace(
+        new RegExp(rex, "g"),
+        "$&" + (s_delimiter || ",")
+      );
+
+      // Return the formatted currency string
       return isJapaneseLocale ? str + currencySymbol : currencySymbol + str;
-    },    
+    },
     cloneObject(obj) {
       return JSON.parse(JSON.stringify(obj));
     },
@@ -494,7 +503,7 @@ const mixins = {
     splitThousandYen(number) {
       return number != undefined
         ? this.$t("common.money") +
-        String(number).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+            String(number).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
         : "";
     },
     splitThousandNumber(number) {
@@ -642,11 +651,11 @@ const mixins = {
       if (splitLength == 3) {
         return dataIndex == -1
           ? this[`${dataNameArr[0]}`][`${dataNameArr[1]}`][
-          `${dataNameArr.pop()}`
-          ]
+              `${dataNameArr.pop()}`
+            ]
           : this[`${dataNameArr[0]}`][`${dataNameArr[1]}`][dataIndex][
-          `${dataNameArr.pop()}`
-          ];
+              `${dataNameArr.pop()}`
+            ];
         //Default with 2 level of split name
       } else {
         return dataIndex == -1
@@ -714,8 +723,8 @@ const mixins = {
             data == 0
               ? 0
               : String(parseFloat(data).toFixed(2))
-                .replace(/^(?!00[^0])0/, "")
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  .replace(/^(?!00[^0])0/, "")
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           splitDataName
             ? this.setDataSplitNameCommon(dataName, returnStr, index)
             : (this[`${dataName}`][index] = returnStr);
@@ -726,9 +735,9 @@ const mixins = {
             data == 0
               ? 0
               : data
-                .replace(/(\..*?)\..*/g, "$1")
-                .replace(/^(?!00[^0])0/, "")
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  .replace(/(\..*?)\..*/g, "$1")
+                  .replace(/^(?!00[^0])0/, "")
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           splitDataName
             ? this.setDataSplitNameCommon(dataName, returnStr, index)
             : (this[`${dataName}`][index] = returnStr);
@@ -750,8 +759,8 @@ const mixins = {
           data == 0
             ? 0
             : String(parseFloat(data).toFixed(2))
-              .replace(/^(?!00[^0])0/, "")
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                .replace(/^(?!00[^0])0/, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         splitDataName
           ? this.setDataSplitNameCommon(dataName, returnStr)
           : (this[`${dataName}`] = returnStr);
@@ -762,9 +771,9 @@ const mixins = {
           data == 0
             ? 0
             : data
-              .replace(/(\..*?)\..*/g, "$1")
-              .replace(/^(?!00[^0])0/, "")
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                .replace(/(\..*?)\..*/g, "$1")
+                .replace(/^(?!00[^0])0/, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
         splitDataName
           ? this.setDataSplitNameCommon(dataName, returnStr)
@@ -873,7 +882,7 @@ const mixins = {
 
     formatInputCurrency(value, isEmpty = false, withoutComma = false) {
       if (!value) {
-        return isEmpty ? '' : 0;
+        return isEmpty ? "" : 0;
       }
       let stringValue = String(value).replace(/[^0-9.+-]/g, "");
       if (withoutComma) return Math.round(parseFloat(stringValue) * 100) / 100;
@@ -898,29 +907,58 @@ const mixins = {
       const dataTransfer = new DataTransfer();
       dataTransfer.items.add(file);
 
-      return fileInput.files = dataTransfer.files;
+      return (fileInput.files = dataTransfer.files);
     },
 
-    handleChangeNumber(e, max = 10) {
-      let value = e.target.value.replaceAll(",", "");
-      if (value.length > max) value = value.slice(0, max);
-      e.target.value = this.formatInputCurrency(value);
+    handleChangeNumber(number) {
+      return number.toString().replaceAll(",", "");
     },
-    ucfirst(string) {
-      if (this.checkEmpty(string)) {
-        return "";
+    handleErrorResponse(error) {
+      const formattedErrors = {};
+      // Iterate over each error field in the response
+      try {
+        for (const field in error) {
+          if (error.hasOwnProperty(field) && field != "success") {
+            const errorValue = error[field];
+
+            // Check if the error value is just a simple code (e.g., "E-CM-004")
+            if (!errorValue.includes(",")) {
+              formattedErrors[field] = {
+                code: errorValue,
+                options: {}, // Store the error code directly
+              };
+            } else {
+              // Split the string by comma and trim spaces for more complex errors
+              const parts = errorValue.split(",").map((part) => part.trim());
+
+              // Extract the code (first part) and options (remaining parts)
+              const code = parts[0];
+              const options = {};
+
+              // Process the remaining parts to extract key-value pairs (like min: 8)
+              parts.slice(1).forEach((option) => {
+                const [key, value] = option
+                  .split(":")
+                  .map((part) => part.trim());
+                if (key && value) {
+                  options[key] = isNaN(value) ? value : Number(value); // Convert numeric strings to numbers
+                }
+              });
+
+              // Construct the final structure
+              formattedErrors[field] = {
+                code: code.split(":")[1], // Extract the error code part
+                ...(Object.keys(options).length > 0 && { options }), // Add options only if they exist
+              };
+            }
+          }
+        }
+      } catch (error) {
+        return formattedErrors;
       }
 
-      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-    }
-  },
-  created() {
-    watch(
-      () => $exchangeRate.value._value,
-      (newRate) => {
-        this.currentExchangeRate = newRate;
-      }
-    );
+      return formattedErrors;
+    },
   },
 };
 

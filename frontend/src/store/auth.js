@@ -4,6 +4,9 @@ import Cookies from "js-cookie";
 import { mixinMethods, $services } from "@/utils/variables";
 import { COOKIE_EXPIRE_TIME } from "@/constants/application";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { ADMIN } from "@/constants/roles.js";
+import PAGE_NAME from "@/constants/route-name.js";
 
 export const useAuthStore = defineStore(
   "auth",
@@ -11,6 +14,7 @@ export const useAuthStore = defineStore(
     const { t } = useI18n();
     const loggedIn = reactive({ value: false });
     const isShowModal = reactive({ value: false });
+    const router = useRouter();
     const resetPasswordForm = reactive({
       value: {
         email: "",
@@ -49,6 +53,11 @@ export const useAuthStore = defineStore(
             Cookies.set("refresh_token", refresh_token, {
               expires: parseInt(COOKIE_EXPIRE_TIME),
             });
+            if(highestRole !== ADMIN) {
+              router.push({name: PAGE_NAME.ROOM.LIST})
+            } else {
+              router.push({name: PAGE_NAME.USER.LIST})
+            }
             loggedIn.value = true;
             validation.value = {};
           }
@@ -113,7 +122,6 @@ export const useAuthStore = defineStore(
           validation.value = {};
           isShowModal.value = false;
           loadingSaveButton.value = false;
-          mixinMethods.notifySuccess(t("response.message.reset_password_success"));
         },
         (error) => {
           validation.value = mixinMethods.handleErrorResponse(

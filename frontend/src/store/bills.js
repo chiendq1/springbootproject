@@ -95,7 +95,7 @@ export const useBillStore = defineStore("bill", () => {
       (error) => {
         validation.value = mixinMethods.handleErrorResponse(error.responseCode);
         mixinMethods.endLoading();
-        mixinMethods.notifyError(t("response.message.create_bill_failed"));
+        mixinMethods.notifyError(t("response.message.get_bill_details_failed"));
       }
     );
   };
@@ -229,10 +229,10 @@ export const useBillStore = defineStore("bill", () => {
     );
     const isExistBill = bills.some((bill) => {
       let billDate = new Date(bill.date);
-      let currentBillDate = new Date(billDetailsResponse.date);
+      let currentBillDate = new Date(billDetailsResponse?.date);
       
       return (
-        bill.id != billDetailsResponse.id &&
+        bill.id != billDetailsResponse?.id &&
         billDate.getFullYear() == currentBillDate.getFullYear() &&
         billDate.getMonth() == currentBillDate.getMonth() &&
         billDate.getDate() < currentBillDate.getDate()

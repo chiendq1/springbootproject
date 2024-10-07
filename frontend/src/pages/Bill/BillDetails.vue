@@ -8,11 +8,11 @@
       <div class="bill-header-item">
         <el-button
           class="btn btn-save"
-          v-if="highestRole == ADMIN || highestRole == LANDLORD"
+          v-if="highest_role == ADMIN || highest_role == LANDLORD"
           @click="handleSubmit"
           >{{ $t("common.save") }}</el-button
         >
-        <el-button v-if="isCreate.value" class="btn btn-refuse" @click="handleCancel">{{
+        <el-button v-if="isCreate" class="btn btn-refuse" @click="handleCancel">{{
           $t("common.cancel")
         }}</el-button>
       </div>
@@ -22,9 +22,9 @@
         <el-row :gutter="20" class="bill-details-collapse">
           <el-col :span="10">
             <BillRoomInforCard
-              :billDetails="billDetails.value"
+              :data="billDetails.value"
               :validation="validation"
-              :isCreate="isCreate.value"
+              :isCreate="isCreate"
               :listRoomsByRole="listRoomsByRole.value"
               :listStatuses="listStatuses.value"
               :listRoomTenants="listTenants.value"
@@ -32,7 +32,7 @@
             />
           </el-col>
           <el-col :span="14">
-            <BillFeeCard :isCreate="isCreate.value" :data="billDetails.value" />
+            <BillFeeCard :isCreate="isCreate" :data="billDetails.value" />
           </el-col>
         </el-row>
       </div>
@@ -45,6 +45,7 @@ import IconBackMain from "@/svg/IconBackMain.vue";
 import PAGE_NAME from "@/constants/route-name.js";
 import BillRoomInforCard from "./item/BillRoomInforCard.vue";
 import BillFeeCard from "./item/BillFeeCard.vue";
+import Cookies from "js-cookie";
 import { onMounted, onUnmounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -66,7 +67,8 @@ export default {
     const userStore = useUserStore();
     const roomStore = useRoomStore();
     const billStore = useBillStore();
-    const isCreate = reactive({value: !route.params.id});
+    const isCreate = ref(false);
+    const highest_role = Cookies.get("highest_role");
     const { listTenants, getListUsersByRole } = userStore;
     const { getListRoomsByRole, listRoomsByRole, getRoomDetails, roomDetails } =
       roomStore;
@@ -82,7 +84,8 @@ export default {
     } = billStore;
 
     onMounted(() => {
-      if (!isCreate.value) getBillDetails(route.params.id);
+      isCreate.value = !route.params.id;
+      if (route.params.id) getBillDetails(route.params.id);
       getListRoomsByRole(true);
       getListUsersByRole();
     });
@@ -109,6 +112,7 @@ export default {
 
     return {
       listTenants,
+      highest_role,
       validation,
       billDetails,
       listRoomsByRole,

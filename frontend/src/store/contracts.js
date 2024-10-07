@@ -122,7 +122,7 @@ export const useContractStore = defineStore("contract", () => {
   const createNewContract = async () => {
     mixinMethods.startLoading();
     await $services.ContractAPI.create(
-      { ...contractDetails.value },
+      { ...contractDetails.value, language: $globalLocale.value._value },
       (response) => {
         listContracts.value.push(response.data.contract);
         isShowModalSave.value = false;

@@ -1,9 +1,5 @@
 <template>
   <div>
-    <h1>{{ message }}</h1>
-    <!-- No need for .value in the template -->
-    <button @click="handleClick()">click here</button>
-    {{$t('common.password')}}
   </div>
 </template>
 

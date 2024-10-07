@@ -22,7 +22,7 @@ const PAGE_NAME = {
   HOME: "home",
   PROFILE: "profile",
   FORBIDDEN: "forbidden",
-  ROLECLAIMMANAGEMENT: "user-management",
+  USERMANAGEMENT: "user-management",
 };
 
 export default PAGE_NAME;

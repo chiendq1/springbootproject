@@ -13,7 +13,7 @@
           align="right"
         ></el-table-column>
 
-        <el-table-column min-width="150">
+        <el-table-column min-width="130">
           <template #header>
             <p v-html="$t('room.table.header.room_code')"></p>
           </template>
@@ -23,7 +23,17 @@
           </template>
         </el-table-column>
 
-        <el-table-column min-width="155">
+        <el-table-column min-width="120">
+          <template #header>
+            <p v-html="$t('room.table.header.landlord')"></p>
+          </template>
+
+          <template #default="scope">
+            <span class="data-table">{{ scope.row.landlord.username }} </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column min-width="100">
           <template #header>
             <p v-html="$t('room.table.header.area')"></p>
           </template>

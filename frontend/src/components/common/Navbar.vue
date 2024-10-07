@@ -31,8 +31,12 @@
                 selectedLanguage === EN_LOCALE ? "ENGLISH" : "日本語"
               }}</template
             >
-            <el-menu-item @click="changeLocale(EN_LOCALE)" index="3-1">ENGLISH</el-menu-item>
-            <el-menu-item @click="changeLocale(JA_LOCALE)" index="3-2">日本語</el-menu-item>
+            <el-menu-item @click="changeLocale(EN_LOCALE)" index="3-1"
+              >ENGLISH</el-menu-item
+            >
+            <el-menu-item @click="changeLocale(JA_LOCALE)" index="3-2"
+              >日本語</el-menu-item
+            >
           </el-sub-menu>
         </el-menu>
       </div>
@@ -58,7 +62,9 @@ export default {
     clickOutside: vClickOutside.directive,
   },
   setup() {
-    const selectedLanguage = ref(localStorage.getItem('CurrentLanguage') || EN_LOCALE);
+    const selectedLanguage = ref(
+      localStorage.getItem("CurrentLanguage") || EN_LOCALE
+    );
     const authStore = useAuthStore();
     const { handleLogout } = authStore;
     const router = useRouter();
@@ -67,9 +73,9 @@ export default {
 
     const changeLocale = (val) => {
       selectedLanguage.value = val;
-      localStorage.setItem('CurrentLanguage', val);
+      localStorage.setItem("CurrentLanguage", val);
       $globalLocale.update(val);
-      i18n.global.locale.value = val; 
+      i18n.global.locale.value = val;
       getExchangeRate(val);
     };
 
@@ -81,7 +87,7 @@ export default {
         (response) => {
           location.reload();
           let exchangeRate = response.data.result.rate;
-          localStorage.setItem('CurrentExchangeRate', exchangeRate);
+          localStorage.setItem("CurrentExchangeRate", exchangeRate);
           $exchangeRate.update(exchangeRate);
         },
         (error) => {}
@@ -116,3 +122,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.logo_zoom_in {
+  width: 60px;
+}
+</style>

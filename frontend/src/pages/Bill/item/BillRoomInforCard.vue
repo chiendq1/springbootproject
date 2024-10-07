@@ -3,10 +3,25 @@
     <div class="d-flex bill-details-header">
       <h3>{{ $t("bill.bill_details_title") }}</h3>
     </div>
-    <el-form class="bill-details-body" :model="billDetails" label-width="140px">
+    <el-form class="bill-details-body" :model="data" label-width="140px">
+      <el-form-item :label="`${$t('bill.form.label_room_code')}`">
+        <SingleOptionSelect
+          v-model="data.room.roomId"
+          :listData="listRoomsByRole"
+          :placeholder="$t('bill.room_placeholder')"
+          :isRemote="false"
+          @change="$emit('changeRoom', data.room.roomId)"
+          :disabled="!isCreate"
+        />
+        <p v-if="validation.value.roomId" class="error-feedback">
+          {{
+            $t(validation.value.roomId.code, validation.value.roomId.options)
+          }}
+        </p>
+      </el-form-item>
       <el-form-item :label="$t('bill.form.label_bill_code')">
         <el-input
-          v-model="billDetails.billCode"
+          v-model="data.billCode"
           :placeholder="$t('bill.form.placeholder_bill_code')"
           :disabled="!isCreate"
         ></el-input>
@@ -19,25 +34,10 @@
           }}
         </p>
       </el-form-item>
-      <el-form-item :label="`${$t('bill.form.label_room_code')}`">
-        <SingleOptionSelect
-          v-model="billDetails.room.roomId"
-          :listData="listRoomsByRole"
-          :placeholder="$t('bill.room_placeholder')"
-          :isRemote="false"
-          @change="$emit('changeRoom', billDetails.room.roomId)"
-          :disabled="!isCreate"
-        />
-        <p v-if="validation.value.roomId" class="error-feedback">
-          {{
-            $t(validation.value.roomId.code, validation.value.roomId.options)
-          }}
-        </p>
-      </el-form-item>
       <el-form-item :label="`${$t('bill.form.label_bill_date')}`">
         <el-date-picker
           style="width: 100%"
-          v-model="billDetails.date"
+          v-model="data.date"
           type="month"
           :placeholder="$t('bill.form.bill_date_placeholder')"
           :size="default"
@@ -49,7 +49,7 @@
       </el-form-item>
       <el-form-item :label="$t('bill.form.label_room_tenants')">
         <MultipleOptionSelect
-          v-model="billDetails.room.tenants"
+          v-model="data.room.tenants"
           :placeholder="$t('bill.form.room_tenants_placeholder')"
           :list-data="listRoomTenants"
           :showClearable="true"
@@ -59,18 +59,18 @@
       </el-form-item>
       <el-form-item :label="$t('bill.form.label_room_landlord')">
         <el-input
-          v-model="billDetails.landlord.fullName"
+          v-model="data.landlord.fullName"
           :placeholder="$t('bill.form.room_landlord_placeholder')"
           :disabled="true"
         ></el-input>
       </el-form-item>
       <el-form-item :label="$t('bill.form.label_bill_status')">
         <SingleOptionSelect
-          v-model="billDetails.status"
+          v-model="data.status"
           :listData="listStatuses"
           :placeholder="$t('bill.form.bill_status_placeholder')"
           :isRemote="false"
-          :disabled="billDetails.status == BILL_STATUS_PAID"
+          :disabled="data.status == BILL_STATUS_PAID"
         />
         <p v-if="validation.value.status" class="error-feedback">
           {{
@@ -92,7 +92,7 @@ export default {
     MultipleOptionSelect,
   },
   props: {
-    billDetails: {
+    data: {
       type: Object,
       default: {},
     },

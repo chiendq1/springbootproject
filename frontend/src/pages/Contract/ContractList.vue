@@ -134,7 +134,7 @@
       :isViewDetails="isViewDetails.value"
       :rangeDate="dateRangeModal"
       :listRoomsByRole="listRoomsByRole.value"
-      :listTenants="listTenants.value"
+      :listTenants="listFreeTenants.value"
       @close="handleCloseModal"
       @submit="handleSaveContract"
       @extend="handleSaveContract"
@@ -217,9 +217,11 @@ export default {
       createNewContract,
     } = contractStore;
     const {
-      getListUsersByRole,
+      listFreeTenants,
       listLandlords,
       listTenants,
+      getListUsersByRole,
+      getListFreeTenants,
     } = userStore;
     const { getListRoomsByRole, listRoomsByRole } = roomStore;
     const modalTitle = ref("");
@@ -244,6 +246,7 @@ export default {
 
     onMounted(() => {
       getListContracts(searchForms.value);
+      getListFreeTenants();
       getListUsersByRole();
       getListRoomsByRole();
     });
@@ -306,7 +309,7 @@ export default {
     const handleGetContractDetails = (id) => {
       getContractDetails(id);
       handleOpenModal();
-    }
+    };
 
     const handleCloseModal = () => {
       dateRangeModal.value = [];
@@ -319,6 +322,9 @@ export default {
 
     const handleSaveContract = () => {
       if (!isViewDetails.value) {
+        contractDetails.value.deposit = mixinMethods.handleChangeNumber(
+          contractDetails.value.deposit
+        );
         dateRangeModal.value = [];
         createNewContract();
       } else {
@@ -327,17 +333,17 @@ export default {
     };
 
     const handleTerminateContract = () => {
-      isShowModalConfirm.value = true; 
-    }
+      isShowModalConfirm.value = true;
+    };
 
     const handleCloseModalConfirm = () => {
       isShowModalConfirm.value = false;
-    }
+    };
 
     const handleConfirm = () => {
       isShowModalConfirm.value = false;
       updateContract();
-    }
+    };
 
     return {
       searchForms,
@@ -359,7 +365,7 @@ export default {
       listContracts,
       listStatuses,
       listTenants,
-      listTenants,
+      listFreeTenants,
       listTypes,
       dateRangeModal,
       dateRange,

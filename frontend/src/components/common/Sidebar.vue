@@ -25,6 +25,7 @@
         >
           <div>
             <a
+              v-if="route.isShow"
               href="#"
               @click.prevent="navigateChangeRoute(route)"
               :class="classActive(route)"
@@ -53,6 +54,7 @@
         >
           <a
             href="#"
+            v-if="route.isShow"
             @click.prevent="navigateChangeRoute(route)"
             :class="classActive(route)"
             class="js-sidenav-tooltip"
@@ -82,9 +84,11 @@ import IconContract from "@/svg/IconContract.vue";
 import IconBill from "@/svg/IconBill.vue";
 import IconRoom from "@/svg/IconRoom.vue";
 import IconUtility from "@/svg/IconUtility.vue";
+import PAGE_NAME from "@/constants/route-name.js";
+import Cookies from "js-cookie";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import PAGE_NAME from "@/constants/route-name.js";
+import { ADMIN } from "@/constants/roles.js";
 
 export default {
   name: "Sidebar",
@@ -99,6 +103,7 @@ export default {
   },
   setup() {
     const { t } = useI18n();
+    const highest_role = Cookies.get("highest_role");
     const router = useRouter();
     const isShowComponent = ref(true);
     const menuOpen = ref("");
@@ -107,26 +112,31 @@ export default {
         function_name: t("side_bar.label.user"),
         function_page_name: PAGE_NAME.USER.LIST,
         function_icon: "IconUserGroup",
+        isShow: highest_role == ADMIN,
       },
       {
         function_name: t("side_bar.label.room"),
         function_page_name: PAGE_NAME.ROOM.LIST,
         function_icon: "IconRoom",
+        isShow: true,
       },
       {
         function_name: t("side_bar.label.contract"),
         function_page_name: PAGE_NAME.CONTRACT.LIST,
         function_icon: "IconContract",
+        isShow: true,
       },
       {
         function_name: t("side_bar.label.bill"),
         function_page_name: PAGE_NAME.BILL.LIST,
         function_icon: "IconBill",
+        isShow: true,
       },
       {
         function_name: t("side_bar.label.utility"),
         function_page_name: PAGE_NAME.UTILITY.LIST,
         function_icon: "IconUtility",
+        isShow: highest_role == ADMIN,
       },
     ]);
 
@@ -135,6 +145,7 @@ export default {
         function_name: t("side_bar.label.profile"),
         function_page_name: PAGE_NAME.PROFILE,
         function_icon: "IconUser",
+        isShow: true,
       },
     ]);
     const currentPath = ref("");

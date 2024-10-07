@@ -29,6 +29,10 @@ const getListUsersByRole = async (params, success, error) => {
   await get(API_CODE.API_USER_004, success, error, params);
 };
 
+const getListFreeTenants = async (params, success, error) => {
+  await get(API_CODE.API_USER_005, success, error, params);
+};
+
 export const UserAPI = {
   index,
   remove,
@@ -37,4 +41,5 @@ export const UserAPI = {
   store,
   changePassword,
   getListUsersByRole,
+  getListFreeTenants,
 };

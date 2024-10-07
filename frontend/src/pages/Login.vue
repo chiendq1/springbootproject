@@ -184,23 +184,19 @@
 import { ref, computed, watch, onMounted, reactive } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
-import Cookies from "js-cookie";
 import { JA_LOCALE, EN_LOCALE } from "@/constants/application";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/store/auth.js";
-import { useRouter } from "vue-router";
-import { $PAGES, $globalLocale } from "@/utils/variables";
+import { $exchangeRate, $globalLocale } from "@/utils/variables";
 import { i18n } from "@/utils/i18n";
-import { COOKIE_EXPIRE_TIME } from "@/constants/application";
 import Modal from "@/components/common/Modal.vue";
-import PAGE_NAME from "@/constants/route-name.js";
+import { $services } from "@/utils/variables";
 
 export default {
   name: "Login",
   components: { Form, Field, ErrorMessage, Modal },
   setup() {
     const { t } = useI18n();
-    const router = useRouter();
     const authStore = useAuthStore();
     const {
       loadingButton,
@@ -224,11 +220,11 @@ export default {
         username: yup
           .string()
           .trim()
-          .required(t("E-CM-100", { item: t("common.username") })),
+          .required(t("E-CM-002", { item: t("common.username") })),
         password: yup
           .string()
           .trim()
-          .required(t("E-CM-100", { item: t("common.password") })),
+          .required(t("E-CM-002", { item: t("common.password") })),
       });
     });
 
@@ -238,12 +234,6 @@ export default {
       );
     });
 
-    watch(() => {
-      if (loggedIn.value) {
-        router.push({name: PAGE_NAME.HOME}); // Redirect to home if logged in
-      }
-    });
-
     onMounted(() => {
       handleCloseModal();
     });
@@ -251,11 +241,24 @@ export default {
     const changeLocale = (val) => {
       selectedLanguage.value = val;
       // Save the new language in cookies
-      Cookies.set("CurrentLanguage", val, {
-        expires: parseInt(COOKIE_EXPIRE_TIME),
-      });
+      localStorage.setItem("CurrentLanguage", val);
       i18n.global.locale.value = val;
       $globalLocale.update(val);
+      getExchangeRate(val);
+    };
+
+    const getExchangeRate = async (locale) => {
+      await $services.CurrencyAPI.getExchangeRate(
+        {
+          language: locale,
+        },
+        (response) => {
+          let exchangeRate = response.data.result.rate;
+          localStorage.setItem("CurrentExchangeRate", exchangeRate);
+          $exchangeRate.update(exchangeRate);
+        },
+        (error) => {}
+      );
     };
 
     const openResetPassModal = () => {

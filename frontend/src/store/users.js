@@ -10,6 +10,7 @@ export const useUserStore = defineStore("user", () => {
   const listUsers = reactive({ value: [] });
   const listLandlords = reactive({ value: [] });
   const listTenants = reactive({ value: [] });
+  const listFreeTenants = reactive({ value: [] });
   const totalItems = reactive({ value: 0 });
   const currentPage = reactive({ value: 0 });
   const showModalConfirm = reactive({ value: false });
@@ -69,7 +70,7 @@ export const useUserStore = defineStore("user", () => {
               });
             }
 
-            if(user.highestRole === TENANT) {
+            if (user.highestRole === TENANT) {
               listTenants.value.push({
                 id: user.id,
                 fullName: user.fullName,
@@ -78,6 +79,28 @@ export const useUserStore = defineStore("user", () => {
                 value: user.username,
               });
             }
+          });
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  };
+
+  const getListFreeTenants = async () => {
+    await $services.UserAPI.getListFreeTenants(
+      {},
+      (response) => {
+        if (response.data.users) {
+          listFreeTenants.value = response.data.users.map((user) => {
+            return {
+              id: user.id,
+              fullName: user.fullName,
+              phoneNumber: user.phoneNumber,
+              email: user.email,
+              value: user.username,
+            };
           });
         }
       },
@@ -214,6 +237,7 @@ export const useUserStore = defineStore("user", () => {
     currentPage,
     listLandlords,
     listTenants,
+    listFreeTenants,
     deleteUser,
     createNewUser,
     clearUserDetailsAttr,
@@ -221,6 +245,7 @@ export const useUserStore = defineStore("user", () => {
     getUserProfile,
     updateUserProfile,
     getListUsersByRole,
+    getListFreeTenants,
     changeUserPassword,
   };
 });

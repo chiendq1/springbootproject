@@ -314,7 +314,8 @@
         "month": "月",
         "action": "アクション",
         "status": "支払い状況",
-        "total_bill": "合計請求額"
+        "total_bill": "合計請求額",
+        "landlord": "家主"
       },
       "utilities": {
         "header": {
@@ -468,7 +469,8 @@
         "price": "価格",
         "status": "ステータス",
         "utilities": "ユーティリティ",
-        "action": "アクション"
+        "action": "アクション",
+        "landlord": "家主"
       },
       "utilities": {
         "header": {
@@ -482,7 +484,7 @@
       "label_room_code": "部屋コード",
       "label_room_area": "面積",
       "label_room_capacity": "定員",
-      "label_room_rent_price": "家賃(VND)",
+      "label_room_rent_price": "家賃",
       "label_room_status": "ステータス",
       "label_room_utilities": "ユーティリティ",
       "label_room_landlord": "家主",

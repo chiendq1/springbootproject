@@ -1,17 +1,16 @@
+import PAGE_NAME from "@/constants/route-name.js";
 import { defineStore } from "pinia";
 import { mixinMethods, $services } from "@/utils/variables";
-import { computed, reactive } from "vue";
+import { reactive } from "vue";
 import { EN_LOCALE } from "@/constants/application.js";
-import { ROOM_STATUSES } from "@/constants/room.js";
 import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/store/users.js";
-import PAGE_NAME from "@/constants/route-name.js";
 import { useRouter } from "vue-router";
 
 export const useRoomStore = defineStore("room", () => {
   const userStore = useUserStore();
   const { listLandlords } = userStore;
-  const currentLanguage = localStorage.getItem('CurrentLanguage');
+  const currentLanguage = localStorage.getItem("CurrentLanguage");
   const { t } = useI18n();
   const validation = reactive({ value: {} });
   const listRooms = reactive({ value: [] });
@@ -21,7 +20,6 @@ export const useRoomStore = defineStore("room", () => {
   const isOpenDataUsersModal = reactive({ value: false });
   const showModalConfirm = reactive({ value: false });
   const roomUsers = reactive({ value: [] });
-  const allowUpdate = reactive({ value: false });
   const isShowModalConfirm = reactive({ value: false });
   const isCreate = reactive({ value: false });
   const router = useRouter();
@@ -34,7 +32,7 @@ export const useRoomStore = defineStore("room", () => {
       area: 0,
       capacity: 0,
       rentPrice: 0,
-      status: "",
+      status: 0,
       utilities: [],
       utilityDetails: [],
       contracts: [],
@@ -77,10 +75,9 @@ export const useRoomStore = defineStore("room", () => {
         response.data.roomDetails.bills.map((bill) => {
           const billDate = new Date(bill.date).getMonth();
           if (currentDate.getMonth() === billDate) {
-            getCurrentMonthBillUtility(bill.billDetails)
+            getCurrentMonthBillUtility(bill.billDetails);
           }
         });
-        allowUpdate.value = ROOM_STATUSES[roomDetails.value.status] == "rented";
 
         mixinMethods.endLoading();
       },
@@ -99,9 +96,9 @@ export const useRoomStore = defineStore("room", () => {
       );
 
       if (existingUtility) {
-        existingUtility.amount += (details.amount - existingUtility.amount);
+        existingUtility.amount += details.amount - existingUtility.amount;
         existingUtility.price = mixinMethods.formatCurrency(
-          details.utility.unitPrice * existingUtility.amount,
+          details.utility.unitPrice * existingUtility.amount
         );
       } else {
         utilitiesConsumer.value.push({
@@ -112,7 +109,7 @@ export const useRoomStore = defineStore("room", () => {
           amount: details.amount,
           unit: details.utility.unit,
           price: mixinMethods.formatCurrency(
-            details.utility.unitPrice * details.amount,
+            details.utility.unitPrice * details.amount
           ),
         });
       }
@@ -164,10 +161,9 @@ export const useRoomStore = defineStore("room", () => {
     mixinMethods.startLoading();
     await $services.RoomAPI.update(
       id,
-      roomDetails.value,
+      { ...roomDetails.value },
       (response) => {
         setRoomDetails(response.data.roomDetails);
-        allowUpdate.value = ROOM_STATUSES[roomDetails.value.status] == "rented";
         validation.value = {};
         mixinMethods.notifySuccess(t("response.message.update_success"));
         mixinMethods.endLoading();
@@ -287,7 +283,6 @@ export const useRoomStore = defineStore("room", () => {
     roomUsers,
     roomDetails,
     utilitiesConsumer,
-    allowUpdate,
     isOpenDataUsersModal,
     isShowModalConfirm,
     isCreate,

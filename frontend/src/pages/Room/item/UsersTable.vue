@@ -9,7 +9,7 @@
         <span class="data-table">{{ scope.row.fullName }} </span>
       </template>
     </el-table-column>
-    <el-table-column min-width="150">
+    <el-table-column min-width="130">
       <template #header>
         <p v-html="$t('user.table.header.phone')"></p>
       </template>
@@ -18,7 +18,7 @@
         <span class="data-table">{{ scope.row.phoneNumber }} </span>
       </template>
     </el-table-column>
-    <el-table-column min-width="150">
+    <el-table-column min-width="190">
       <template #header>
         <p v-html="$t('user.table.header.email')"></p>
       </template>
@@ -36,12 +36,12 @@
           <button
             @click="$emit('delete', scope.row.id)"
             class="btn-edit"
-            v-if="disabled"
+            v-if="!isPicker && disabled"
           >
             <IconTrash />
           </button>
           <el-checkbox
-            v-if="!disabled"
+            v-if="isPicker"
             @change="onPickUser(scope.row.id)"
           >
           </el-checkbox>
@@ -66,6 +66,10 @@ export default {
     disabled: {
       type: Boolean,
       default: true,
+    },
+    isPicker: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

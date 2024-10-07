@@ -10,6 +10,7 @@ const API_CODE = {
   API_USER_002: '/users/password/',
   API_USER_003: '/users/free',
   API_USER_004: '/users/list-by-role',
+  API_USER_005: '/users/free-tenants',
 
   //Rooms
   API_ROOM_001: '/rooms',

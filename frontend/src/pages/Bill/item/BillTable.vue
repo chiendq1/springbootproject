@@ -31,6 +31,15 @@
     </el-table-column>
     <el-table-column min-width="120">
       <template #header>
+        <p v-html="$t('bill.table.header.landlord')"></p>
+      </template>
+
+      <template #default="scope">
+        <span class="data-table">{{ scope.row.room.landlord.username }} </span>
+      </template>
+    </el-table-column>
+    <el-table-column min-width="120">
+      <template #header>
         <p v-html="$t('bill.table.header.month')"></p>
       </template>
       <template #default="scope">

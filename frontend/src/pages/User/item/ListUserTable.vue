@@ -34,7 +34,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column min-width="200">
+        <el-table-column min-width="220">
           <template #header>
             <p v-html="$t('user.table.header.email')"></p>
           </template>
@@ -44,7 +44,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column min-width="140">
+        <el-table-column min-width="120">
           <template #header>
             <p v-html="$t('user.table.header.phone')"></p>
           </template>

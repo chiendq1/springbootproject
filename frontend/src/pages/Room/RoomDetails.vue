@@ -7,7 +7,7 @@
     <div class="room-details-infor">
       <div class="room-details-card-container">
         <RoomDetailsCard
-          :isDisabled="allowUpdate.value"
+          :isDisabled="!allowUpdate"
           :roomDetails="roomDetails.value"
           :validation="validation"
           :listUtilities="listUtilities.value"
@@ -26,6 +26,7 @@
               </template>
               <ListUsersCard
                 :data="roomUsers.value"
+                :disabled="allowUpdate"
                 @addNew="handleGetListNewTenants"
                 @delete="handleOpenModalConfirm"
               />
@@ -42,7 +43,7 @@
     </div>
     <AddUserModal
       @close="handleCloseModal"
-      :dataUsers="listTenants.value"
+      :dataUsers="listFreeTenants.value"
       :show="isOpenDataUsersModal.value"
       @submit="handleAddTenants"
     />
@@ -61,20 +62,24 @@
 <script>
 import Modal from "@/components/common/Modal.vue";
 import ModalConfirm from "@/components/common/ModalConfirm.vue";
-import { onMounted, onUnmounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
 import ListUsersCard from "./item/ListUsersCard.vue";
 import RoomDetailsCard from "./item/RoomDetailsCard.vue";
 import RoomUtilities from "./item/RoomUtilities.vue";
 import AddUserModal from "./item/AddUserModal.vue";
+import IconBackMain from "@/svg/IconBackMain.vue";
+import PAGE_NAME from "@/constants/route-name.js";
+import Cookies from "js-cookie";
+import { VACANT_STATUS } from "@/constants/room.js";
+import { TENANT } from "@/constants/roles.js";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 import { useRoomStore } from "@/store/rooms.js";
 import { useUserStore } from "@/store/users.js";
 import { useUtilityStore } from "@/store/utility.js";
 import { TEXT_CONFIRM_DELETE } from "@/constants/application.js";
 import { ACTIVE_STATUS } from "@/constants/utility.js";
-import IconBackMain from "@/svg/IconBackMain.vue";
-import PAGE_NAME from "@/constants/route-name.js";
+import { mixinMethods } from "@/utils/variables";
 
 export default {
   name: "RoomDetails",
@@ -94,9 +99,16 @@ export default {
     const roomStore = useRoomStore();
     const userStore = useUserStore();
     const utilityStore = useUtilityStore();
+    const highest_role = Cookies.get("highest_role");
     const activeCollapseItems = ref(["1", "2"]);
     const deleteId = ref(0);
-    const { listLandlords, listTenants, getListUsersByRole } = userStore;
+    const {
+      listLandlords,
+      listTenants,
+      listFreeTenants,
+      getListUsersByRole,
+      getListFreeTenants,
+    } = userStore;
     const {
       getRoomDetails,
       roomUsers,
@@ -105,7 +117,6 @@ export default {
       resetData,
       isCreate,
       validation,
-      allowUpdate,
       isOpenDataUsersModal,
       isShowModalConfirm,
       addRoomTenants,
@@ -113,6 +124,7 @@ export default {
       deleteRoomTenant,
       createNewRoom,
     } = roomStore;
+    const allowUpdate = computed(() => highest_role != TENANT && roomDetails.value.status == VACANT_STATUS);
     const { listUtilities, getListAllUtilities } = utilityStore;
     const listStatus = ref([
       {
@@ -129,13 +141,14 @@ export default {
       },
     ]);
 
-    onMounted(() => {
-      getListAllUtilities({status: ACTIVE_STATUS});
-      getListUsersByRole();
+    onMounted(async () => {
+      getListAllUtilities({ status: ACTIVE_STATUS });
+      await getListUsersByRole();
+      await getListFreeTenants();
       if (!route.params.id) {
         isCreate.value = true;
       }
-      if (!isCreate.value) getRoomDetails(route.params.id);      
+      if (!isCreate.value) getRoomDetails(route.params.id);
     });
 
     onUnmounted(() => {
@@ -149,6 +162,9 @@ export default {
     };
 
     const onSubmit = (isUpdate) => {
+      roomDetails.value.rentPrice = mixinMethods.handleChangeNumber(
+        roomDetails.value.rentPrice
+      );
       if (isCreate.value) {
         createNewRoom();
         return;
@@ -160,7 +176,7 @@ export default {
     const handleOpenModalConfirm = (id) => {
       if (isCreate.value) {
         let user = roomUsers.value.find((user) => user.id == id);
-        listTenants.value.push({
+        listFreeTenants.value.push({
           id: user.id,
           fullName: user.fullName,
           phoneNumber: user.phoneNumber,
@@ -187,9 +203,9 @@ export default {
       if (isCreate.value) {
         roomUsers.value.push.apply(
           roomUsers.value,
-          listTenants.value.filter((user) => listAddTenants.includes(user.id))
+          listFreeTenants.value.filter((user) => listAddTenants.includes(user.id))
         );
-        listTenants.value = listTenants.value.filter(
+        listFreeTenants.value = listTenants.value.filter(
           (user) => !listAddTenants.includes(user.id)
         );
         isOpenDataUsersModal.value = false;
@@ -216,6 +232,7 @@ export default {
       activeCollapseItems,
       isCreate,
       isShowModalConfirm,
+      listFreeTenants,
       TEXT_CONFIRM_DELETE,
       handleBack,
       handleCloseModal,

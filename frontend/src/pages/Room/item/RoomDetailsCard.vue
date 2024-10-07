@@ -49,7 +49,7 @@
       <el-form-item :label="$t('room.form.label_room_rent_price')">
         <el-input
           v-model="roomDetails.rentPrice"
-          type="number"
+          :formatter="(value) => mixinMethods.formatInputCurrency(value)"
           :placeholder="$t('room.form.placeholder_room_rent_price')"
           :disabled="isDisabled"
         ></el-input>
@@ -112,11 +112,11 @@
         </p>
       </el-form-item>
     </el-form>
-    <div class="room-details-buttons">
-      <el-button class="btn btn-save" @click="$emit('save', true)" :disabled="isDisabled">{{
+    <div v-if="!isDisabled" class="room-details-buttons">
+      <el-button class="btn btn-save" @click="$emit('save', true)">{{
         $t("common.save")
       }}</el-button>
-      <el-button class="btn btn-refuse" @click="$emit('save', false)" :disabled="isDisabled">{{
+      <el-button class="btn btn-refuse" @click="$emit('save', false)">{{
         $t("common.cancel")
       }}</el-button>
     </div>
@@ -125,6 +125,7 @@
 <script>
 import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
 import MultipleOptionSelect from "@/components/common/MultipleOptionSelect.vue";
+import { mixinMethods } from "@/utils/variables";
 
 export default {
   components: {
@@ -160,7 +161,12 @@ export default {
       type: Boolean,
       default:false
     }
-  }, 
+  },
+  setup() {
+    return {
+      mixinMethods
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

@@ -11,7 +11,7 @@
       :label="$t('common.no')"
       align="right"
     ></el-table-column>
-    <el-table-column min-width="120">
+    <el-table-column min-width="150">
       <template #header>
         <p v-html="$t('contract.table.header.name')"></p>
       </template>
