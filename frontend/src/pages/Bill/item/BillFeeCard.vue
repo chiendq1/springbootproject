@@ -32,7 +32,8 @@
             :placeholder="$t('bill.form.bill_utility_amount_placeholder')"
             @change="handleChangeAmount(scope.row.amount, scope.row)"
             :disabled="!isCreate"
-          ><template #append>{{ scope.row.unit }}</template></el-input>
+            ><template #append>{{ scope.row.unit }}</template></el-input
+          >
         </template>
       </el-table-column>
 
@@ -57,16 +58,19 @@
 
     <!-- Display rent price and total price -->
     <div class="summary-info">
-        <div>
-            <h4>
-              {{ $t("bill.rent_price") }}:
-              {{ formatMoney(data.rentPrice) }}
-            </h4>
-            <h4>
-              {{ $t("bill.total_price") }}:
-              {{ formatMoney(totalPrice) }}
-            </h4>
-        </div>
+      <div>
+        <h4>
+          {{ $t("bill.rent_price") }}:
+          {{ formatMoney(data.rentPrice) }}
+        </h4>
+        <h4>
+          {{ $t("bill.total_price") }}:
+          {{ formatMoney(totalPrice) }}
+        </h4>
+      </div>
+    </div>
+    <div v-if="!isCreate && data.status == BILL_STATUS_UNPAID" class="payment-method">
+      <PayPal :price="totalPrice" @update="handlePayBill" />
     </div>
   </el-card>
 </template>
@@ -75,9 +79,13 @@
 import { mixinMethods } from "@/utils/variables";
 import { useI18n } from "vue-i18n";
 import { computed, ref } from "vue";
+import PayPal from "@/components/common/PayPal.vue";
+import { BILL_STATUS_UNPAID } from "@/constants/bill";
 
 export default {
-  components: {},
+  components: {
+    PayPal,
+  },
   props: {
     data: {
       type: Object, // Change to Object as it holds both `details` and `rentPrice`
@@ -88,8 +96,8 @@ export default {
     },
     isCreate: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -129,12 +137,18 @@ export default {
       return totalUtilityPrice.value + props.data.rentPrice ?? 0;
     });
 
+    const handlePayBill = () => {
+      emit("payBill");
+    };
+
     return {
       mixinMethods,
       formatMoney,
+      BILL_STATUS_UNPAID,
       getSummaries,
       handleChangeAmount,
       totalPrice,
+      handlePayBill,
     };
   },
 };
@@ -159,5 +173,9 @@ export default {
   padding-right: 60px;
   display: flex;
   justify-content: end;
+}
+
+.payment-method {
+  padding-bottom: 52px;
 }
 </style>

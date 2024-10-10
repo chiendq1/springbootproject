@@ -30,7 +30,7 @@
         aria-label="Search"
       />
     </div>
-    <div v-if="!checkEmpty(filteredSearchData)">
+    <div v-if="!mixinMethods.checkEmpty(filteredSearchData)">
       <el-option
         v-for="item in filteredSearchData"
         :key="item.id"
@@ -44,7 +44,7 @@
         </div>
       </el-option>
     </div>
-    <div v-else-if="checkEmpty(filteredSearchData) && !checkEmpty(listData) || isSearching">
+    <div v-else-if="mixinMethods.checkEmpty(filteredSearchData) && !mixinMethods.checkEmpty(listData) || isSearching">
       <el-option value="" disabled>{{ $t('common.no_results_found') }}</el-option>
     </div>
     <div v-else>
@@ -56,7 +56,7 @@
 <script>
 import { ref, computed, watch, onMounted } from 'vue';
 import { debounce } from 'lodash';
-
+import { mixinMethods } from '@/utils/variables';
 export default {
   name: "SingleOptionSelect",
   props: {
@@ -154,6 +154,7 @@ export default {
     return {
       searchName,
       selectedItem,
+      mixinMethods,
       isSearching,
       resetDataSelect,
       remoteSearch,

@@ -26,6 +26,7 @@
               </template>
               <ListUsersCard
                 :data="roomUsers.value"
+                :roomDetails="roomDetails.value"
                 :disabled="allowUpdate"
                 @addNew="handleGetListNewTenants"
                 @delete="handleOpenModalConfirm"
@@ -69,7 +70,6 @@ import AddUserModal from "./item/AddUserModal.vue";
 import IconBackMain from "@/svg/IconBackMain.vue";
 import PAGE_NAME from "@/constants/route-name.js";
 import Cookies from "js-cookie";
-import { VACANT_STATUS } from "@/constants/room.js";
 import { TENANT } from "@/constants/roles.js";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -124,7 +124,7 @@ export default {
       deleteRoomTenant,
       createNewRoom,
     } = roomStore;
-    const allowUpdate = computed(() => highest_role != TENANT && roomDetails.value.status == VACANT_STATUS);
+    const allowUpdate = computed(() => highest_role != TENANT && !route.params.id);
     const { listUtilities, getListAllUtilities } = utilityStore;
     const listStatus = ref([
       {

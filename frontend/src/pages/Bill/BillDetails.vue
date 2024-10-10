@@ -8,13 +8,24 @@
       <div class="bill-header-item">
         <el-button
           class="btn btn-save"
-          v-if="highest_role == ADMIN || highest_role == LANDLORD"
+          v-if="(highest_role == ADMIN || highest_role == LANDLORD) && billDetails.value.status == BILL_STATUS_UNPAID"
           @click="handleSubmit"
           >{{ $t("common.save") }}</el-button
         >
-        <el-button v-if="isCreate" class="btn btn-refuse" @click="handleCancel">{{
-          $t("common.cancel")
-        }}</el-button>
+        <el-button
+          class="btn btn-pdf"
+          v-if="!isCreate"
+          @click="handleExportPdf"
+          ><IconDownload
+            :fill="'#fff'"
+          />{{ $t("common.export_pdf") }}</el-button
+        >
+        <el-button
+          v-if="isCreate"
+          class="btn btn-refuse"
+          @click="handleCancel"
+          >{{ $t("common.cancel") }}</el-button
+        >
       </div>
     </div>
     <div class="bill-details-infor">
@@ -32,7 +43,11 @@
             />
           </el-col>
           <el-col :span="14">
-            <BillFeeCard :isCreate="isCreate" :data="billDetails.value" />
+            <BillFeeCard
+              :isCreate="isCreate"
+              :data="billDetails.value"
+              @payBill="handlePayBill"
+            />
           </el-col>
         </el-row>
       </div>
@@ -45,6 +60,7 @@ import IconBackMain from "@/svg/IconBackMain.vue";
 import PAGE_NAME from "@/constants/route-name.js";
 import BillRoomInforCard from "./item/BillRoomInforCard.vue";
 import BillFeeCard from "./item/BillFeeCard.vue";
+import IconDownload from "@/svg/IconDownload.vue";
 import Cookies from "js-cookie";
 import { LANDLORD, ADMIN } from "@/constants/roles.js";
 import { onMounted, onUnmounted, ref } from "vue";
@@ -53,11 +69,13 @@ import { useRoute, useRouter } from "vue-router";
 import { useBillStore } from "@/store/bills.js";
 import { useUserStore } from "@/store/users.js";
 import { useRoomStore } from "@/store/rooms.js";
+import { BILL_STATUS_PAID, BILL_STATUS_UNPAID } from "@/constants/bill";
 
 export default {
   name: "BillSave",
   components: {
     IconBackMain,
+    IconDownload,
     BillRoomInforCard,
     BillFeeCard,
   },
@@ -79,6 +97,7 @@ export default {
       billDetails,
       setBillDetails,
       resetBillDetails,
+      getBillPdf,
       updateBill,
       getBillDetails,
       createNewBill,
@@ -103,13 +122,21 @@ export default {
     };
 
     const handleSubmit = () => {
-      if(isCreate.value) createNewBill();
+      if (isCreate.value) createNewBill();
       else updateBill(route.params.id);
     };
 
     const handleCancel = () => {
       resetBillDetails();
     };
+
+    const handlePayBill = () => {
+      updateBill(route.params.id, BILL_STATUS_PAID);
+    };
+
+    const handleExportPdf = () => {
+      getBillPdf(route.params.id);
+    }
 
     return {
       listTenants,
@@ -118,6 +145,7 @@ export default {
       ADMIN,
       validation,
       billDetails,
+      BILL_STATUS_UNPAID,
       listRoomsByRole,
       listStatuses,
       isCreate,
@@ -125,6 +153,8 @@ export default {
       handleCancel,
       handleSubmit,
       handleChangeRoom,
+      handleExportPdf,
+      handlePayBill,
     };
   },
 };

@@ -134,7 +134,7 @@
       :isViewDetails="isViewDetails.value"
       :rangeDate="dateRangeModal"
       :listRoomsByRole="listRoomsByRole.value"
-      :listTenants="listFreeTenants.value"
+      :listLandlord="listLandlords.value"
       @close="handleCloseModal"
       @submit="handleSaveContract"
       @extend="handleSaveContract"

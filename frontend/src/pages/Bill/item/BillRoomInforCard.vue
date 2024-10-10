@@ -70,7 +70,7 @@
           :listData="listStatuses"
           :placeholder="$t('bill.form.bill_status_placeholder')"
           :isRemote="false"
-          :disabled="data.status == BILL_STATUS_PAID"
+          :disabled="data.status == BILL_STATUS_PAID || (highest_role == TENANT)"
         />
         <p v-if="validation.value.status" class="error-feedback">
           {{
@@ -85,6 +85,8 @@
 import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
 import MultipleOptionSelect from "@/components/common/MultipleOptionSelect.vue";
 import { BILL_STATUS_PAID } from "@/constants/bill.js";
+import { TENANT } from "@/constants/roles.js";
+import Cookies from "js-cookie";
 
 export default {
   components: {
@@ -118,8 +120,11 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const highest_role = Cookies.get("highest_role");
     return {
-      BILL_STATUS_PAID
+      highest_role,
+      TENANT,
+      BILL_STATUS_PAID,
     };
   },
 };

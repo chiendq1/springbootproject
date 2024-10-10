@@ -11,6 +11,7 @@
     "start_date": "開始日",
     "end_date": "終了日",
     "old": "旧",
+    "export_pdf": "PDFにエクスポート",
     "terminate": "終了する",
     "new": "新規",
     "extend": "延長する",
@@ -215,8 +216,8 @@
       "terminate_contract_failed": "契約の解約に失敗しました",
       "create_bill_success": "請求書の作成に成功しました",
       "create_bill_failed": "請求書の作成に失敗しました。契約と部屋を再確認してください",
-      "update_bill_success": "請求書の更新に成功しました",
-      "update_bill_failed": "請求書の更新に失敗しました",
+      "pay_bill_success": "請求書の支払いに成功しました",
+      "pay_bill_failed": "請求書の支払いに失敗しました",
       "create_utility_success": "公共料金の作成に成功しました",
       "create_utility_failed": "公共料金の作成に失敗しました",
       "update_utility_success": "公共料金の更新に成功しました",
@@ -253,7 +254,8 @@
       "deposit": "デポジット",
       "room": "部屋",
       "type": "タイプ",
-      "tenants": "テナント"
+      "tenants": "テナント",
+      "landlord": "家主"
     },
     "detail": {
       "title": "契約の詳細"
@@ -268,7 +270,8 @@
         "attachment": "契約添付ファイル",
         "action": "アクション",
         "status": "ステータス",
-        "type": "タイプ"
+        "type": "タイプ",
+        "landlord":"家主"
       }
     },
     "modal_confirm": {

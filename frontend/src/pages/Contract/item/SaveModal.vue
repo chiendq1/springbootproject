@@ -87,11 +87,21 @@
             </p>
           </el-form-item>
 
+          <el-form-item :label="$t('contract.create.landlord')">
+            <SingleOptionSelect
+              v-model="contractDetails.landlordId"
+              :isDisabled="isViewDetails"
+              :listData="listLandlord"
+              :placeholder="$t('contract.landlord_placeholder')"
+              :isRemote="true"
+              @handleSelectedParams="handleChangeListRoom"
+            />
+          </el-form-item>
           <el-form-item :label="$t('contract.create.room')">
             <SingleOptionSelect
               v-model="contractDetails.roomId"
               :isDisabled="isViewDetails"
-              :listData="listRoomsByRole"
+              :listData="isViewDetails ? listRoomsByRole : listFilteredRooms"
               :placeholder="$t('contract.room_placeholder')"
               :isRemote="true"
             />
@@ -105,7 +115,7 @@
             </p>
           </el-form-item>
 
-          <el-form-item v-if="false" :label="$t('contract.create.tenants')">
+          <!-- <el-form-item v-if="false" :label="$t('contract.create.tenants')">
             <MultipleOptionSelect
               v-model="contractDetails.tenants"
               :list-data="listTenants"
@@ -122,7 +132,7 @@
                 )
               }}
             </p>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       </div>
 
@@ -138,7 +148,12 @@
             $t("common.cancel")
           }}</el-button>
         </div>
-        <div v-if="isViewDetails && contractDetails.status != CONTRACT_STATUS_TERMINATED">
+        <div
+          v-if="
+            isViewDetails &&
+            contractDetails.status != CONTRACT_STATUS_TERMINATED
+          "
+        >
           <el-button
             class="btn btn-save"
             v-if="highestRole == ADMIN || highestRole == LANDLORD"
@@ -164,6 +179,7 @@ import SingleOptionSelect from "@/components/common/SingleOptionSelect.vue";
 import MultipleOptionSelect from "@/components/common/MultipleOptionSelect.vue";
 import { ADMIN, LANDLORD } from "@/constants/roles.js";
 import { CONTRACT_STATUS_TERMINATED } from "@/constants/contract.js";
+import { ref } from "vue";
 
 export default {
   name: "ContractSaveModal",
@@ -199,7 +215,7 @@ export default {
       type: Array,
       default: [],
     },
-    listTenants: {
+    listLandlord: {
       type: Array,
       default: [],
     },
@@ -221,6 +237,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const listFilteredRooms = ref(props.listRoomsByRole);
     const handleSubmit = () => {
       emit("submit");
     };
@@ -230,12 +247,20 @@ export default {
       props.contractDetails.endDate = mixinMethods.showDateTime(date[1]);
     };
 
+    const handleChangeListRoom = (landlordId) => {
+      listFilteredRooms.value = props.listRoomsByRole.filter(
+        (room) => room.landlordId == landlordId
+      );
+    };
+
     return {
       ADMIN,
       LANDLORD,
       CONTRACT_STATUS_TERMINATED,
+      listFilteredRooms,
       handleChangeDate,
       handleSubmit,
+      handleChangeListRoom,
       mixinMethods,
     };
   },

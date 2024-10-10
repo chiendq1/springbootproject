@@ -1,8 +1,10 @@
 package org.example.springbootproject.service;
 
+import com.lowagie.text.pdf.BaseFont;
 import org.example.springbootproject.repository.ParameterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
@@ -40,6 +42,10 @@ public class FileService extends BaseService {
 
             // Generate PDF with ITextRenderer
             ITextRenderer renderer = new ITextRenderer();
+            String jpPath = ResourceUtils.getURL("classpath:NotoSansJP-Regular.ttf").getPath();
+            String enPath = ResourceUtils.getURL("classpath:Roboto-Regular.ttf").getPath();
+            renderer.getFontResolver().addFont(jpPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            renderer.getFontResolver().addFont(enPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             renderer.setDocumentFromString(htmlContent);
             renderer.layout();
             renderer.createPDF(outputStream);

@@ -85,7 +85,7 @@
           :listData="listStatus"
           :placeholder="$t('room.status_placeholder')"
           :isRemote="true"
-          :disabled="isDisabled"
+          :disabled="isDisabled || !isCreate"
         />
         <p v-if="validation.value.status" class="error-feedback">
           {{

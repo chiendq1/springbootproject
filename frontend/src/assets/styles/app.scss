@@ -374,6 +374,20 @@ input::-webkit-inner-spin-button {
   }
 }
 
+.btn-pdf {
+  width: fit-content;
+  border: 1px solid;
+  background: #169c16 !important;
+  color: #fff !important;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: #4aac4a;
+    opacity: 0.8;
+    color: #fff !important;
+  }
+}
+
 .btn-refuse {
   color: #fff !important;
   background-color: #e16060 !important;

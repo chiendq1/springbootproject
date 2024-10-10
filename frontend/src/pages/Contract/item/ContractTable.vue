@@ -51,6 +51,15 @@
         <span class="data-table">{{ scope.row.room.roomCode }} </span>
       </template>
     </el-table-column>
+    <el-table-column min-width="120">
+      <template #header>
+        <p v-html="$t('contract.table.header.landlord')"></p>
+      </template>
+
+      <template #default="scope">
+        <span class="data-table">{{ scope.row.room.landlord.username }} </span>
+      </template>
+    </el-table-column>
     <el-table-column min-width="130">
       <template #header>
         <p v-html="$t('contract.table.header.type')"></p>

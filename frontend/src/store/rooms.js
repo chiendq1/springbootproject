@@ -129,6 +129,7 @@ export const useRoomStore = defineStore("room", () => {
             id: room.roomId,
             value: room.roomCode,
             status: room.status,
+            landlordId: room.landlord.id
           };
         });
       },
@@ -261,9 +262,10 @@ export const useRoomStore = defineStore("room", () => {
     roomDetails.value.area = "";
     roomDetails.value.capacity = "";
     roomDetails.value.rentPrice = "";
-    roomDetails.value.status = "";
+    roomDetails.value.status = 0;
     roomDetails.value.utilities = [];
     utilitiesConsumer.value = [];
+    roomDetails.value.landlordId = "";
   };
 
   const setRoomUsers = (data) => {

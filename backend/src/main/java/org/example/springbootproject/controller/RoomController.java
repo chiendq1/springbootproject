@@ -84,7 +84,7 @@ public class RoomController extends BaseController {
     @PreAuthorize("@roomService.hasRoom(#id, authentication.name, true) or hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, Object>>> delete(@PathVariable int id) {
         try {
-            roomService.deleteRoom(id);
+                roomService.deleteRoom(id);
 
             return new ResponseEntity<>(new ApiResponse<>(true, "delete room success", null, HttpStatus.OK), HttpStatus.OK);
         } catch(Exception ex) {

@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "rooms")
 @AllArgsConstructor
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE rooms SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE rooms SET deleted = true WHERE room_id=?")
 @Where(clause = "deleted=false")
 @Setter
 @Getter

@@ -11,14 +11,14 @@
     ref="multipleOptionSelect"
     multiple
   >
-    <div class="bs-searchbox" onclick="event.stopPropagation()">
+    <div class="bs-searchbox" @click.stop>
       <input
         v-if="isDisplaySearch && !isRemote"
         type="text"
         class="form-control"
         autocomplete="off"
         v-model="searchName"
-        role="tetxbox"
+        role="textbox"
         aria-label="Search"
       />
       <input
@@ -26,18 +26,18 @@
         type="text"
         class="form-control"
         autocomplete="off"
-        @keyup="remoteSearch($event)"
-        role="tetxbox"
+        @keyup="remoteSearch"
+        role="textbox"
         aria-label="Search"
       />
     </div>
-    <div v-if="!checkEmpty(filteredSearchData)">
+    <div v-if="!mixinMethods.checkEmpty(filteredSearchData)">
       <el-option
         v-for="item in filteredSearchData"
         :key="item.id"
         :label="item.value"
         :value="item.id"
-        :class="item.id == -1 && 'border-top'"
+        :class="item.id == -1 ? 'border-top' : ''"
         :disabled="usingListItems.includes(item.id)"
       >
         <div class="el-custom-select-dropdown">
@@ -47,27 +47,22 @@
         </div>
       </el-option>
     </div>
-    <div
-      v-else-if="
-        (checkEmpty(filteredSearchData) && !checkEmpty(listData)) || isSearching
-      "
-    >
-      <el-option value="" disabled>{{
-        $t('common.no_results_found')
-      }}</el-option>
+    <div v-else-if="(mixinMethods.checkEmpty(filteredSearchData) && !mixinMethods.checkEmpty(listData)) || isSearching">
+      <el-option value="" disabled>{{ $t('common.no_results_found') }}</el-option>
     </div>
     <div v-else>
       <p class="no-data">{{ $t('common.no_data') }}</p>
     </div>
   </el-select>
 </template>
+
 <script>
-import mixins from "@/helpers/mixins";
+import { ref, computed, watch, onMounted } from 'vue';
+import { mixinMethods } from "@/utils/variables";
 
 export default {
   name: "SingleOptionSelect",
   emits: ["handleSelectedParams"],
-  mixins: [mixins],
   props: {
     listData: {
       type: Array,
@@ -87,7 +82,7 @@ export default {
     },
     defaultList: {
       type: [String, Number, Array],
-      default: () => [] || 0 || "",
+      default: () => [],
     },
     labelShow: {
       type: String,
@@ -103,12 +98,10 @@ export default {
     },
     optionIndex: {
       type: Object,
-      default: () => {
-        return {
-          haveIndex: false,
-          index: 0,
-        };
-      },
+      default: () => ({
+        haveIndex: false,
+        index: 0,
+      }),
     },
     placeholder: {
       type: String,
@@ -123,61 +116,69 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      searchName: "",
-      selectedItem: "",
-      isSearching: false,
-    };
-  },
-  created() {
-    if (!this.checkEmpty(this.defaultList)) {
-      this.selectedItem = this.defaultList;
-    }
-  },
-  computed: {
-    filteredSearchData() {
-      let lowerCaseSearch = this.searchName.toLowerCase() || "";
-      let searchList = [];
-      searchList = this.listData.filter((item) =>
+  setup(props, { emit }) {
+    const searchName = ref("");
+    const selectedItem = ref("");
+    const isSearching = ref(false);
+
+    // Set selected item on creation
+    onMounted(() => {
+      if (!mixinMethods.checkEmpty(props.defaultList)) {
+        selectedItem.value = props.defaultList;
+      }
+    });
+
+    const filteredSearchData = computed(() => {
+      let lowerCaseSearch = searchName.value.toLowerCase() || "";
+      let searchList = props.listData.filter(item =>
         item.value.toLowerCase().includes(lowerCaseSearch)
       );
-      //Add option select all
-      if (this.haveSelectAllOption && !this.checkEmpty(searchList))
+      // Add option select all
+      if (props.haveSelectAllOption && !mixinMethods.checkEmpty(searchList)) {
         searchList.push({
           id: -1,
           value: "All",
         });
-      return searchList;
-    },
-  },
-  watch: {
-    defaultList(value) {
-      this.selectedItem = value;
-    },
-    selectedItem() {
-      if (this.optionIndex.haveIndex) {
-        this.$emit(
-          "handleSelectedParams",
-          this.selectedItem,
-          this.optionIndex.index
-        );
-      } else {
-        this.$emit("handleSelectedParams", this.selectedItem);
       }
-    },
-  },
-  methods: {
-    resetDataSelect() {
-      this.searchName = "";
-    },
-    remoteSearch($event) {
-      this.isSearching = true;
-      this.$emit("remoteSearch", $event.target.value);
-    },
+      return searchList;
+    });
+
+    // Watchers
+    watch(() => props.defaultList, (value) => {
+      selectedItem.value = value;
+    });
+
+    watch(selectedItem, () => {
+      if (props.optionIndex.haveIndex) {
+        emit("handleSelectedParams", selectedItem.value, props.optionIndex.index);
+      } else {
+        emit("handleSelectedParams", selectedItem.value);
+      }
+    });
+
+    // Methods
+    const resetDataSelect = () => {
+      searchName.value = "";
+    };
+
+    const remoteSearch = (event) => {
+      isSearching.value = true;
+      emit("remoteSearch", event.target.value);
+    };
+
+    return {
+      searchName,
+      selectedItem,
+      mixinMethods,
+      isSearching,
+      filteredSearchData,
+      resetDataSelect,
+      remoteSearch,
+    };
   },
 };
 </script>
+
 <style scoped>
 .dropdown-option-icon {
   margin-top: 50%;

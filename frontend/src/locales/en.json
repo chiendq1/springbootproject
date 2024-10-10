@@ -11,6 +11,7 @@
     "start_date": "Start Date",
     "end_date": "End Date",
     "old": "Old",
+    "export_pdf": "Export to PDF",
     "terminate": "Terminate",
     "new": "New",
     "extend": "Extend",
@@ -215,8 +216,8 @@
       "terminate_contract_failed": "Terminate contract failed",
       "create_bill_success": "Create bill success",
       "create_bill_failed": "Create bill failed, please check contract and room again",
-      "update_bill_success": "Update bill success",
-      "update_bill_failed": "Update bill failed",
+      "update_bill_success": "Pay bill success",
+      "update_bill_failed": "Pay bill failed",
       "create_utility_success": "Create utility success",
       "create_utility_failed": "Create utility failed",
       "update_utility_success": "Update utility success",
@@ -254,7 +255,8 @@
       "deposit": "Deposit",
       "room": "Room",
       "type": "Type",
-      "tenants": "Tenants"
+      "tenants": "Tenants",
+      "landlord": "Landlord"
     },
     "detail": {
       "title": "Contract Detail"
@@ -269,7 +271,8 @@
         "attachment": "Contract Attachment",
         "action": "Action",
         "status": "Status",
-        "type": "Type"
+        "type": "Type",
+        "landlord": "Landlord"
       }
     },
     "modal_confirm": {

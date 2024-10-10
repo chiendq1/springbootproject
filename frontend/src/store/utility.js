@@ -5,7 +5,7 @@ import { EN_LOCALE } from "@/constants/application.js";
 import { useI18n } from "vue-i18n";
 
 export const useUtilityStore = defineStore("utility", () => {
-  const currentLanguage = localStorage.getItem('CurrentLanguage');
+  const currentLanguage = localStorage.getItem("CurrentLanguage");
   const { t } = useI18n();
   const isShowUtilityModal = reactive({ value: false });
   const showModalConfirm = reactive({ value: false });
@@ -33,7 +33,7 @@ export const useUtilityStore = defineStore("utility", () => {
             value:
               currentLanguage == EN_LOCALE ? utility.enName : utility.jaName,
             unit: utility.unit,
-            status: utility.status
+            status: utility.status,
           };
         });
         if (isLoading) mixinMethods.endLoading();
@@ -62,7 +62,11 @@ export const useUtilityStore = defineStore("utility", () => {
   const createNewUtility = async () => {
     mixinMethods.startLoading();
     await $services.UtilityAPI.create(
-      { ...utilityDetails.value },
+      {
+        name: utilityDetails.value.name,
+        unitPrice: utilityDetails.value.unitPrice,
+        unit: utilityDetails.value.unit,
+      },
       (response) => {
         listUtilities.value.push({
           value: EN_LOCALE
@@ -70,6 +74,7 @@ export const useUtilityStore = defineStore("utility", () => {
             : response.data.utility.jaName,
           unit: response.data.utility.unit,
           id: response.data.utility.id,
+          status: response.data.utility.status,
           unitPrice: response.data.utility.unitPrice,
         });
         isShowUtilityModal.value = false;
@@ -134,7 +139,7 @@ export const useUtilityStore = defineStore("utility", () => {
         listUtilities.value.forEach((utility, index) => {
           if (utility.id == id) {
             listUtilities.value[index].status = response.data.utility.status;
-          };
+          }
         });
         showModalConfirm.value = false;
         mixinMethods.notifySuccess(
@@ -148,7 +153,7 @@ export const useUtilityStore = defineStore("utility", () => {
         mixinMethods.endLoading();
       }
     );
-  }
+  };
 
   const setUtilityDetails = (utility) => {
     utilityDetails.value.name =

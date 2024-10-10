@@ -131,6 +131,7 @@ export default {
 <style lang="scss" scoped>
 .user_table {
   margin-top: 16px;
+  padding-bottom: 20px;
   max-height: calc(77vh - 70px);
   overflow-y: auto;
 }

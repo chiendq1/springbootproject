@@ -22,6 +22,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,8 +183,14 @@ public class RoomService extends BaseService {
     @Transactional
     public void deleteRoom(int id) {
         Room room = roomRepository.getRoomByRoomId(id);
-        room.getContracts().forEach(contract -> contract.setStatus(Constants.CONTRACT_STATUS_TERMINATED));
-        room.getBills().forEach(bill -> bill.setPaymentStatus(Constants.BILL_STATUS_TERMINATED));
+        if (room.getContracts() != null && !room.getContracts().isEmpty()) {
+            room.getContracts().forEach(contract -> contract.setStatus(Constants.CONTRACT_STATUS_TERMINATED));
+        }
+
+        // Check if bills are available before processing
+        if (room.getBills() != null && !room.getBills().isEmpty()) {
+            room.getBills().forEach(bill -> bill.setPaymentStatus(Constants.BILL_STATUS_TERMINATED));
+        }
         roomRepository.delete(room);
     }
 

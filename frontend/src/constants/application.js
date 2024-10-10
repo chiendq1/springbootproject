@@ -31,6 +31,7 @@ export const TEXT_CONFIRM_DELETE="Delete"
 export const DEFAULT_EXCHANGE_RATE = 1;
 export const TEXT_CONFIRM_TERMINATE="Terminate"
 export const TEXT_CONFIRM_INACTIVE="Deactivate"
+export const PAYPAL_SUCCESS_STATUS="COMPLETED"
 export const BILL_DATE_FORMAT="YYYY-MM"
 export const IMPORT_VALID_EXTENSIONS = [".xlsx"];
 export const PDF_CONTENT_TYPE = /^application\/pdf/;

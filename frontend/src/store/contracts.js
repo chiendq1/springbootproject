@@ -27,6 +27,7 @@ export const useContractStore = defineStore("contract", () => {
       status: 0,
       roomId: "",
       tenants: [],
+      landlordId: 0,
     },
   });
   const listTypes = reactive({
@@ -205,6 +206,7 @@ export const useContractStore = defineStore("contract", () => {
     contractDetails.value.tenants = contractResponse.room.roomsTenants.map(
       (tenant) => tenant.id
     );
+    contractDetails.value.landlordId = contractResponse.room.landlord.id;
     dateRangeModal.value[0] = contractResponse.startDate;
     dateRangeModal.value[1] = contractResponse.endDate;
   };

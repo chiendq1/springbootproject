@@ -21,7 +21,6 @@ export const useBillStore = defineStore("bill", () => {
   const userStore = useUserStore();
   const router = useRouter();
   const route = useRoute();
-  const currentLanguage = localStorage.getItem('CurrentLanguage');
   const roomStore = useRoomStore();
   const { listTenants } = userStore;
   const { setRoomDetails, roomDetails } = roomStore;
@@ -145,7 +144,7 @@ export const useBillStore = defineStore("bill", () => {
         billCode: billDetails.value.billCode,
         roomId: billDetails.value.room.roomId,
         details: billDetails.value.details,
-        language: currentLanguage,
+        language: $globalLocale.value._value,
       },
       (response) => {
         validation.value = {};
@@ -162,14 +161,15 @@ export const useBillStore = defineStore("bill", () => {
     );
   };
 
-  const updateBill = async (id) => {
+  const updateBill = async (id, status = null) => {
     mixinMethods.startLoading();
     await $services.BillAPI.update(
       id,
       {
-        status: billDetails.value.status
+        status: status ?? billDetails.value.status
       },
       (response) => {
+        billDetails.value.status = response.data.bill.paymentStatus;
         validation.value = {};
         mixinMethods.notifySuccess(t("response.message.update_bill_success"));
         mixinMethods.endLoading();
@@ -218,7 +218,7 @@ export const useBillStore = defineStore("bill", () => {
         let utilUnitPrice = contracts.contractDetails.find(contract => contract.utilityId == utility.id).unitPrice;
         return {
           utilityId: utility.id,
-          name: currentLanguage == EN_LOCALE ? utility.enName : utility.jaName,
+          name: $globalLocale.value._value == EN_LOCALE ? utility.enName : utility.jaName,
           amount: isCreate ? 0 : billAmount,
           unitPrice: utilUnitPrice,
           unit: utility.unit,

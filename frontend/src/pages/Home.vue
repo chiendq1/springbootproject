@@ -16,13 +16,11 @@ export default {
     const message = ref("Home page");
     const authStore = useAuthStore();
     const router = useRouter();
-    const {
-      loggedIn,
-    } = authStore;
+    const { loggedIn } = authStore;
 
     watch(() => {
       if (loggedIn.value) {
-        router.push({name: PAGE_NAME.HOME}); // Redirect to home if logged in
+        router.push({ name: PAGE_NAME.HOME }); // Redirect to home if logged in
       }
     });
 
