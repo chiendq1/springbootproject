@@ -126,7 +126,7 @@ public class BillService {
         if (bill.getPaymentStatus() == Constants.BILL_STATUS_PAID) return null;
         bill.setPaymentStatus(status);
         billRepository.save(bill);
-        response.put("bill", bill);
+        response.put("bill", billMapper.toBillDto(bill));
 
         return response;
     }

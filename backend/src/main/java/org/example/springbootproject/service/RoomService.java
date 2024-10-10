@@ -107,7 +107,7 @@ public class RoomService extends BaseService {
     }
 
     @Transactional
-    public Map<String, Object> createRoom(CreateRoomRequest request) {
+    public Map<String, Object> createRoom(CreateRoomRequest request, float exchangeRate) {
         Map<String, Object> response = new HashMap<>();
         Room room = new Room();
         if (request.getCapacity() < request.getListTenants().size()) {
@@ -118,7 +118,7 @@ public class RoomService extends BaseService {
         room.setArea(request.getArea());
         room.setCapacity(request.getCapacity());
         room.setStatus(request.getStatus());
-        room.setRentPrice(request.getRentPrice());
+        room.setRentPrice(request.getRentPrice() / exchangeRate);
         room.setLandlord(userRepository.findUserById(request.getLandlordId()));
         room.setUtilities(utilityRepository.findAllByIdIn(request.getUtilities()));
         room.setRoomsTenants(userRepository.getUsersByIdIn(request.getListTenants()));
@@ -130,7 +130,7 @@ public class RoomService extends BaseService {
     }
 
     @Transactional
-    public Map<String, Object> updateRoomDetails(int id, UpdateRoomDetailsRequest request) {
+    public Map<String, Object> updateRoomDetails(int id, UpdateRoomDetailsRequest request, float exchangeRate) {
         Map<String, Object> response = new HashMap<>();
         Room roomDetails = roomRepository.getRoomByRoomId(id);
         if (roomDetails.getStatus() == Constants.ROOM_STATUS_RENT) return null;
@@ -139,7 +139,7 @@ public class RoomService extends BaseService {
         roomDetails.setArea(request.getArea());
         roomDetails.setStatus(request.getStatus());
         roomDetails.setCapacity(request.getCapacity());
-        roomDetails.setRentPrice(request.getRentPrice());
+        roomDetails.setRentPrice(request.getRentPrice() / exchangeRate);
         roomDetails.setUtilities(utilityRepository.findAllByIdIn(request.getUtilities()));
         response.put("roomDetails", roomMapper.toRoomDto(roomDetails, true));
 

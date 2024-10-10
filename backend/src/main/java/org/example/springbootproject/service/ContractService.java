@@ -100,7 +100,7 @@ public class ContractService {
     }
 
     @Transactional
-    public Map<String, Object> createContract(CreateContractRequest request) {
+    public Map<String, Object> createContract(CreateContractRequest request, float exchangeRate) {
         Map<String, Object> response = new HashMap<>();
         Contract contract = new Contract();
         Room room = roomRepository.getRoomByRoomId(request.getRoomId());
@@ -110,7 +110,7 @@ public class ContractService {
         contract.setType(request.getType());
         contract.setStartDate(Date.valueOf(request.getStartDate()));
         contract.setEndDate(Date.valueOf(request.getEndDate()));
-        contract.setDeposit(request.getDeposit());
+        contract.setDeposit(request.getDeposit() / exchangeRate);
         contract.setContractDetails(room.getUtilities().stream().map(utility -> {
             ContractDetails contractDetails = new ContractDetails();
             contractDetails.setContract(contract);
@@ -179,7 +179,7 @@ public class ContractService {
     }
 
     public boolean checkContractDateValid(Date date, int roomId) {
-        return contractRepository.existsContractByDateWithinRange(date, roomId);
+        return contractRepository.existsContractByDateWithinRange(date, roomId, Constants.CONTRACT_STATUS_TERMINATED);
     }
 
     public boolean checkContractRelatedTo(int contractId, String userName, boolean isCheckTenant) {

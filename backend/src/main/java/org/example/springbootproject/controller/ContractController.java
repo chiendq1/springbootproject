@@ -7,6 +7,7 @@ import org.example.springbootproject.payload.request.GenerateContractPdfRequest;
 import org.example.springbootproject.payload.request.GetContractListRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
 import org.example.springbootproject.service.*;
+import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -81,7 +82,8 @@ public class ContractController extends BaseController {
     @PreAuthorize("@roomService.hasRoom(#request.roomId, authentication.name, true) or hasRole('ADMIN')")
     public ResponseEntity<?> create(@RequestBody @Valid CreateContractRequest request) {
         try {
-            Map<String, Object> contractData = contractService.createContract(request);
+            float exchangeRate = currencyService.getCurrentExchangeRate();
+            Map<String, Object> contractData = contractService.createContract(request, exchangeRate);
             if(contractData == null) {
                 return new ResponseEntity<>(new ApiResponse<>(false, "create contract failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
             }
@@ -90,10 +92,9 @@ public class ContractController extends BaseController {
                 return new ResponseEntity<>(contractData, HttpStatus.BAD_REQUEST);
             }
 
-            String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
+            String language = request.getLanguage().isEmpty() ? Constants.EN_LANGUAGE : request.getLanguage();
             String templateName = "contract_template_" + language;
             ContractDto contractDto = (ContractDto) contractData.get("contract");
-            float exchangeRate = currencyService.getCurrentExchangeRate();
             Map<String, Object> contractDataPdf = contractService.getContractData(contractDto.getId(), exchangeRate);
             String htmlContent = fileService.parseThymeleafTemplate(templateName, contractDataPdf);
             ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);
@@ -137,7 +138,7 @@ public class ContractController extends BaseController {
 
     @PostMapping("/pdf")
     public ResponseEntity<?> exportPdf(@RequestBody GenerateContractPdfRequest request) {
-        String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
+        String language = request.getLanguage().isEmpty() ? Constants.EN_LANGUAGE : request.getLanguage();
         String templateName = "contract_template_" + language;
         float exchangeRate = currencyService.getCurrentExchangeRate();
         Map<String, Object> contractData = contractService.getContractData(request.getContractId(), exchangeRate);

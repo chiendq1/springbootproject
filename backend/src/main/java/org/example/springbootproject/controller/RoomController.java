@@ -7,6 +7,7 @@ import org.example.springbootproject.payload.request.GetRoomListRequest;
 import org.example.springbootproject.payload.request.UpdateRoomDetailsRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
 import org.example.springbootproject.service.AuthService;
+import org.example.springbootproject.service.CurrencyService;
 import org.example.springbootproject.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,9 @@ public class RoomController extends BaseController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private CurrencyService currencyService;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<Map<String, Object>>> index(
@@ -99,8 +103,8 @@ public class RoomController extends BaseController {
             errors.put("roomCode", roomCodeError);
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-
-        Map<String, Object> roomDetails = roomService.createRoom(request);
+        float exchangeRate = currencyService.getCurrentExchangeRate();
+        Map<String, Object> roomDetails = roomService.createRoom(request, exchangeRate);
 
         if(roomDetails.get("errors") != null) {
             return new ResponseEntity<>(roomDetails, HttpStatus.BAD_REQUEST);
@@ -121,8 +125,8 @@ public class RoomController extends BaseController {
                 errors.put("roomCode", roomCodeError);
                 return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
             }
-
-            Map<String, Object> roomDetails = roomService.updateRoomDetails(id, request);
+            float exchangeRate = currencyService.getCurrentExchangeRate();
+            Map<String, Object> roomDetails = roomService.updateRoomDetails(id, request, exchangeRate);
 
             if(roomDetails == null) {
                 return new ResponseEntity<>(new ApiResponse<>(false, "update room details failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);

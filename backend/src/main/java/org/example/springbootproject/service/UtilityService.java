@@ -38,20 +38,20 @@ public class UtilityService {
         return response;
     }
 
-    public Map<String, Object> createNewUtility(CreateUtilityRequest request) {
+    public Map<String, Object> createNewUtility(CreateUtilityRequest request, float exchangeRate) {
         Map<String, Object> response = new HashMap<>();
         Utility utility = new Utility();
         utility.setEnName(request.getName());
         utility.setJaName(request.getName());
         utility.setUnit(request.getUnit());
-        utility.setUnitPrice(request.getUnitPrice());
-//        utilityRepository.save(utility);
+        utility.setUnitPrice(request.getUnitPrice() / exchangeRate);
+        utilityRepository.save(utility);
         response.put("utility", utilityMapper.toDto(utility));
 
         return response;
     }
 
-    public Map<String, Object> updateUtility(UpdateUtilityRequest request, int id) {
+    public Map<String, Object> updateUtility(UpdateUtilityRequest request, int id, float exchangeRate) {
         Map<String, Object> response = new HashMap<>();
         Utility utility = utilityRepository.getUtilityById(id);
         utility.setEnName(request.getName());
@@ -59,7 +59,7 @@ public class UtilityService {
         utility.setStatus(Constants.ROOM_UTILITY_STATUS_ACTIVE);
         if (utility.getBillDetails().stream().noneMatch(billDetails -> billDetails.getBill().getPaymentStatus() == Constants.BILL_STATUS_UNPAID)) {
             utility.setUnit(request.getUnit());
-            utility.setUnitPrice(request.getUnitPrice());
+            utility.setUnitPrice(request.getUnitPrice() / exchangeRate);
         }
         utilityRepository.save(utility);
         response.put("utility", utilityMapper.toDto(utility));

@@ -8,6 +8,7 @@ import org.example.springbootproject.payload.request.GetBillListRequest;
 import org.example.springbootproject.payload.request.UpdateBillRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
 import org.example.springbootproject.service.*;
+import org.example.springbootproject.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -73,15 +74,15 @@ public class BillController extends BaseController {
     @PreAuthorize("@roomService.hasRoom(#request.roomId, authentication.name, true) or hasRole('ADMIN')")
     public ResponseEntity<?> create(@RequestBody @Valid CreateBillRequest request) {
         try {
-            String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
+            String language = request.getLanguage().isEmpty() ? Constants.EN_LANGUAGE : request.getLanguage();
             String templateName = "bill_template_" + language;
-            float exhangeRate = currencyService.getCurrentExchangeRate();
+            float exchangeRate = currencyService.getCurrentExchangeRate();
             Map<String, Object> bill = billService.createBill(request);
             if (bill == null) {
                 return new ResponseEntity<>(new ApiResponse<>(false, "create bill failed", null, HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
             }
 
-            Map<String, Object> billPdfData = billService.getBillPdfData((Bill) bill.get("bill"), exhangeRate);
+            Map<String, Object> billPdfData = billService.getBillPdfData((Bill) bill.get("bill"), exchangeRate);
             String htmlContent = fileService.parseThymeleafTemplate("bill_details_" + language, billPdfData);
             ByteArrayOutputStream outputStream = fileService.generatePdfFromHtml(htmlContent);
             emailService.sendEmailBill(templateName, billPdfData, outputStream);
@@ -106,7 +107,7 @@ public class BillController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@billService.checkBillRelatedTo(#id, authentication.name, false) or hasRole('ADMIN')")
+    @PreAuthorize("@billService.checkBillRelatedTo(#id, authentication.name, true) or hasRole('ADMIN')")
     ResponseEntity<ApiResponse<Map<String, Object>>> update(@PathVariable int id, @RequestBody UpdateBillRequest request) {
         Map<String, Object> bill = billService.updateBill(id, request.getStatus());
 
@@ -119,7 +120,7 @@ public class BillController extends BaseController {
 
     @PostMapping("/pdf")
     public ResponseEntity<?> exportPdf(@RequestBody GenerateBillPdfRequest request) {
-        String language = request.getLanguage().isEmpty() ? "en" : request.getLanguage();
+        String language = request.getLanguage().isEmpty() ? Constants.EN_LANGUAGE : request.getLanguage();
         String templateName = "bill_details_" + language;
         float exhangeRate = currencyService.getCurrentExchangeRate();
         Map<String, Object> bill = billService.getBillDetails(request.getBillId(), false);

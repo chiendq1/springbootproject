@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.example.springbootproject.payload.request.CreateUtilityRequest;
 import org.example.springbootproject.payload.request.UpdateUtilityRequest;
 import org.example.springbootproject.payload.response.ApiResponse;
+import org.example.springbootproject.service.CurrencyService;
 import org.example.springbootproject.service.UtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,9 @@ public class UtilityController extends BaseController {
 
     @Autowired
     private UtilityService utilityService;
+
+    @Autowired
+    private CurrencyService currencyService;
 
     @GetMapping()
     public ResponseEntity<ApiResponse<Map<String, Object>>> index(
@@ -52,7 +56,8 @@ public class UtilityController extends BaseController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, Object>>> create(@RequestBody @Valid CreateUtilityRequest request) {
         try {
-            Map<String, Object> response = utilityService.createNewUtility(request);
+            float exchangeRate = currencyService.getCurrentExchangeRate();
+            Map<String, Object> response = utilityService.createNewUtility(request, exchangeRate);
             return new ResponseEntity<>(new ApiResponse<>(true, "create utility success", response, HttpStatus.OK), HttpStatus.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -69,8 +74,8 @@ public class UtilityController extends BaseController {
                 errors.put("name", "E-CM-026");
                 return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
             }
-
-            Map<String, Object> response = utilityService.updateUtility(request, id);
+            float exchangeRate = currencyService.getCurrentExchangeRate();
+            Map<String, Object> response = utilityService.updateUtility(request, id, exchangeRate);
             return new ResponseEntity<>(new ApiResponse<>(true, "create utility success", response, HttpStatus.OK), HttpStatus.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());

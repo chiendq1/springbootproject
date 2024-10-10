@@ -68,10 +68,12 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
     FROM Contract c
     WHERE c.room.roomId = :roomId
     AND :date BETWEEN c.startDate AND c.endDate
+    AND c.status <> :status
 """)
     boolean existsContractByDateWithinRange(
             @Param("date") Date date,
-            @Param("roomId") int roomId
+            @Param("roomId") int roomId,
+            @Param("status") int status
     );
 
     Contract getContractsByStatusAndRoom_RoomId(int status, int roomId);
